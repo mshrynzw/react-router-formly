@@ -14,6 +14,7 @@ test("mvp routes are reachable", async ({ page }) => {
 
   await page.getByRole("link", { name: "コード", exact: true }).click();
   await expect(page).toHaveURL(/\/code$/);
+  await expect(page.getByRole("heading", { level: 1, name: "生成コード" })).toBeVisible();
 
   await page.getByRole("link", { name: "設定", exact: true }).click();
   await expect(page).toHaveURL(/\/settings$/);

@@ -184,7 +184,42 @@
   },
   "code": {
     "title": "Generated Code",
-    "description": "View and copy HTML, CSS, and JavaScript. Implemented in Phase 4."
+    "description": "Review HTML, CSS, and JavaScript generated from the Form Schema.",
+    "workspace": {
+      "subtitle": "Generate standalone frontend code from the same Form Schema."
+    },
+    "tabsLabel": "Generated languages",
+    "languages": {
+      "html": "HTML",
+      "css": "CSS",
+      "javascript": "JavaScript"
+    },
+    "viewer": {
+      "label": "{{language}} code",
+      "lineCount": "{{count}} lines"
+    },
+    "actions": {
+      "copy": "Copy",
+      "export": "Export",
+      "exportCombined": "Combined HTML",
+      "openBuilder": "Open Builder",
+      "openPreview": "Open Preview"
+    },
+    "feedback": {
+      "copied": "Copied to clipboard.",
+      "copyFailed": "Failed to copy. Select the text and copy it manually.",
+      "exported": "File downloaded."
+    },
+    "empty": {
+      "title": "This form has few fields",
+      "description": "Add fields in the Builder to generate more practical code."
+    },
+    "status": {
+      "invalidRestored": "Saved data was invalid, so code is generated from an empty form."
+    },
+    "security": {
+      "notice": "Generated code does not depend on Formly. User content is escaped. Generated JavaScript is not executed on this screen."
+    }
   },
   "settings": {
     "title": "Settings",

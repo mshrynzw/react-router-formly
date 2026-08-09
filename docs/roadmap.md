@@ -646,72 +646,72 @@ If JavaScript-based submission handling is required, the necessary behavior shou
 
 ### Generator Architecture
 
-- [ ] Design generator architecture
-- [ ] Define generator interfaces
-- [ ] Define generator output structure
+- [x] Design generator architecture
+- [x] Define generator interfaces
+- [x] Define generator output structure
 
 ### HTML
 
-- [ ] Implement HTML generator
-- [ ] Generate form element
-- [ ] Generate action
-- [ ] Generate method
-- [ ] Generate fields
-- [ ] Generate labels
-- [ ] Generate validation attributes
-- [ ] Generate Submit Button
-- [ ] Generate accessible relationships
+- [x] Implement HTML generator
+- [x] Generate form element
+- [x] Generate action
+- [x] Generate method
+- [x] Generate fields
+- [x] Generate labels
+- [x] Generate validation attributes
+- [x] Generate Submit Button
+- [x] Generate accessible relationships
 
 ### CSS
 
-- [ ] Implement CSS generator
-- [ ] Generate form styles
-- [ ] Generate field styles
-- [ ] Generate button styles
-- [ ] Generate responsive styles
-- [ ] Generate validation states
-- [ ] Generate submission states
+- [x] Implement CSS generator
+- [x] Generate form styles
+- [x] Generate field styles
+- [x] Generate button styles
+- [x] Generate responsive styles
+- [x] Generate validation states
+- [x] Generate submission states
 
 ### JavaScript
 
-- [ ] Implement JavaScript generator
-- [ ] Implement client-side validation generation
-- [ ] Implement submission handling generation
-- [ ] Implement submission error handling
-- [ ] Implement submission success handling
+- [x] Implement JavaScript generator
+- [x] Implement client-side validation generation
+- [x] Implement submission handling generation
+- [x] Implement submission error handling
+- [x] Implement submission success handling
 
 ### Code Viewer / Export
 
-- [ ] Implement generated-code viewer
-- [ ] Implement syntax highlighting
-- [ ] Implement copy to clipboard
-- [ ] Implement code export
+- [x] Implement generated-code viewer
+- [x] Implement syntax highlighting
+- [x] Implement copy to clipboard
+- [x] Implement code export
 
 ### Testing
 
-- [ ] Add generator unit tests
-- [ ] Add validation generation tests
-- [ ] Add submission generation tests
-- [ ] Add escaping tests
-- [ ] Add malicious-input tests
-- [ ] Verify generated output against Preview
+- [x] Add generator unit tests
+- [x] Add validation generation tests
+- [x] Add submission generation tests
+- [x] Add escaping tests
+- [x] Add malicious-input tests
+- [x] Verify generated output against Preview
 
 ## Completion Criteria
 
 Phase 4 is complete when:
 
-- A Form Schema can generate HTML.
-- A Form Schema can generate CSS.
-- A Form Schema can generate JavaScript.
-- Submission configuration is reflected in generated code.
-- Validation configuration is reflected in generated code.
-- Generated output is readable.
-- Generated output is maintainable.
-- Generated output can be copied.
-- Generated output can be exported.
-- Generated output does not require Formly itself to run.
-- Generated output can submit to the configured endpoint.
-- Generated output is tested against representative Form Schemas.
+- [x] A Form Schema can generate HTML.
+- [x] A Form Schema can generate CSS.
+- [x] A Form Schema can generate JavaScript.
+- [x] Submission configuration is reflected in generated code.
+- [x] Validation configuration is reflected in generated code.
+- [x] Generated output is readable.
+- [x] Generated output is maintainable.
+- [x] Generated output can be copied.
+- [x] Generated output can be exported.
+- [x] Generated output does not require Formly itself to run.
+- [x] Generated output can submit to the configured endpoint.
+- [x] Generated output is tested against representative Form Schemas.
 
 ---
 

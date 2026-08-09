@@ -184,7 +184,42 @@
   },
   "code": {
     "title": "生成代码",
-    "description": "查看并复制 HTML / CSS / JavaScript。将在 Phase 4 实现。"
+    "description": "查看由 Form Schema 生成的 HTML / CSS / JavaScript。",
+    "workspace": {
+      "subtitle": "从相同的 Form Schema 生成独立的前端代码。"
+    },
+    "tabsLabel": "生成语言",
+    "languages": {
+      "html": "HTML",
+      "css": "CSS",
+      "javascript": "JavaScript"
+    },
+    "viewer": {
+      "label": "{{language}} 代码",
+      "lineCount": "{{count}} 行"
+    },
+    "actions": {
+      "copy": "复制",
+      "export": "导出",
+      "exportCombined": "合并 HTML",
+      "openBuilder": "打开构建器",
+      "openPreview": "打开预览"
+    },
+    "feedback": {
+      "copied": "已复制到剪贴板。",
+      "copyFailed": "复制失败。请选择文本后手动复制。",
+      "exported": "已下载文件。"
+    },
+    "empty": {
+      "title": "表单字段较少",
+      "description": "在构建器中添加字段后，可生成更实用的代码。"
+    },
+    "status": {
+      "invalidRestored": "已保存的数据无效，因此从空表单生成代码。"
+    },
+    "security": {
+      "notice": "生成代码不依赖 Formly。用户内容会被转义。此屏幕不会执行生成的 JavaScript。"
+    }
   },
   "settings": {
     "title": "设置",

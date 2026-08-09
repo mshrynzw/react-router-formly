@@ -6,6 +6,39 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-09 — Phase 4 Code Generator
+
+### Summary
+
+Phase 4（Code Generator）を実装した。
+
+### Implemented
+
+- HTML / CSS / JavaScript Generator（Form Schema 駆動）
+- `/code` Code Viewer（タブ切替・行番号・Copy / Export）
+- Combined HTML Export（CSS/JS 埋め込み）
+- Submission（action / method）と Validation 設定の反映
+- User content の HTML / JS エスケープ
+- Unit / Integration tests（malicious input 含む）
+
+### Notes
+
+- 生成コードは Formly Runtime に依存しない
+- `/code` 画面では生成 JavaScript を実行しない
+- Syntax highlighting は重いライブラリを入れず、読みやすい行番号付き Viewer で対応
+- action 未設定時は生成 JS が native submit を抑止し、ローカル成功メッセージを表示
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+---
+
 ## 2026-08-09 — Phase 3 Preview
 
 ### Summary

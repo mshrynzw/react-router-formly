@@ -184,7 +184,42 @@
   },
   "code": {
     "title": "생성된 코드",
-    "description": "HTML / CSS / JavaScript를 확인하고 복사하는 화면입니다. Phase 4에서 구현합니다."
+    "description": "Form Schema에서 생성된 HTML / CSS / JavaScript를 확인합니다.",
+    "workspace": {
+      "subtitle": "동일한 Form Schema에서 독립적인 프론트엔드 코드를 생성합니다."
+    },
+    "tabsLabel": "생성 언어",
+    "languages": {
+      "html": "HTML",
+      "css": "CSS",
+      "javascript": "JavaScript"
+    },
+    "viewer": {
+      "label": "{{language}} 코드",
+      "lineCount": "{{count}}줄"
+    },
+    "actions": {
+      "copy": "복사",
+      "export": "내보내기",
+      "exportCombined": "결합 HTML",
+      "openBuilder": "빌더 열기",
+      "openPreview": "미리보기 열기"
+    },
+    "feedback": {
+      "copied": "클립보드에 복사했습니다.",
+      "copyFailed": "복사에 실패했습니다. 텍스트를 선택해 수동으로 복사하세요.",
+      "exported": "파일을 다운로드했습니다."
+    },
+    "empty": {
+      "title": "필드가 적은 폼입니다",
+      "description": "빌더에서 필드를 추가하면 더 실용적인 코드가 생성됩니다."
+    },
+    "status": {
+      "invalidRestored": "저장된 데이터가 올바르지 않아 빈 폼에서 코드를 생성합니다."
+    },
+    "security": {
+      "notice": "생성 코드는 Formly에 의존하지 않습니다. 사용자 입력은 이스케이프됩니다. 이 화면에서는 생성 JS를 실행하지 않습니다."
+    }
   },
   "settings": {
     "title": "설정",
