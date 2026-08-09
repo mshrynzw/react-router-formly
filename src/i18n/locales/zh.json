@@ -119,7 +119,68 @@
   },
   "preview": {
     "title": "预览",
-    "description": "根据 Form Schema 预览表单外观与交互。将在 Phase 3 实现。"
+    "description": "根据 Form Schema 渲染并预览表单。",
+    "workspace": {
+      "subtitle": "使用相同的 Form Schema 渲染表单。不会向外部端点发送数据。"
+    },
+    "builderPanel": {
+      "title": "构建器预览",
+      "subtitle": "编辑时可即时确认 Form Schema。",
+      "expand": "展开",
+      "collapse": "折叠"
+    },
+    "toolbar": {
+      "viewportLabel": "预览宽度",
+      "viewport": {
+        "desktop": "桌面",
+        "tablet": "平板",
+        "mobile": "手机"
+      },
+      "simulateError": "模拟提交错误"
+    },
+    "actions": {
+      "submit": "提交",
+      "submitting": "提交中…",
+      "tryAgain": "重试",
+      "openBuilder": "打开构建器"
+    },
+    "field": {
+      "untitled": "未命名字段",
+      "selectPlaceholder": "请选择"
+    },
+    "form": {
+      "untitled": "未命名表单"
+    },
+    "empty": {
+      "title": "没有可预览的字段",
+      "description": "在构建器中添加字段后，将在此显示表单。"
+    },
+    "status": {
+      "invalidRestored": "已保存的数据无效，因此显示空表单。"
+    },
+    "security": {
+      "notice": "预览使用 React 渲染 Form Schema，不会执行生成代码，也不会向外部端点真实提交。"
+    },
+    "validation": {
+      "required": "此字段为必填项。",
+      "minLength": "字符数不足。",
+      "maxLength": "字符数超出上限。",
+      "min": "低于最小值。",
+      "max": "超过最大值。",
+      "pattern": "格式无效。",
+      "email": "请输入有效的电子邮件地址。",
+      "number": "请输入有效的数字。"
+    },
+    "submission": {
+      "successTitle": "模拟提交成功",
+      "successDescription": "预览不会向外部端点发送数据。",
+      "errorTitle": "模拟提交失败",
+      "forcedError": "已启用提交错误模拟。",
+      "genericError": "无法完成提交。",
+      "method": "Method",
+      "action": "Action",
+      "actionEmpty": "（未设置）"
+    }
   },
   "code": {
     "title": "生成代码",

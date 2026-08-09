@@ -119,7 +119,68 @@
   },
   "preview": {
     "title": "プレビュー",
-    "description": "Form Schema から生成されるフォームの見た目と操作を確認する画面です。Phase 3 で実装します。"
+    "description": "Form Schema から描画されるフォームの見た目と操作を確認します。",
+    "workspace": {
+      "subtitle": "同じ Form Schema からフォームを描画します。外部エンドポイントには送信しません。"
+    },
+    "builderPanel": {
+      "title": "ビルダープレビュー",
+      "subtitle": "編集中の Form Schema をその場で確認できます。",
+      "expand": "展開",
+      "collapse": "折りたたむ"
+    },
+    "toolbar": {
+      "viewportLabel": "プレビュー幅",
+      "viewport": {
+        "desktop": "デスクトップ",
+        "tablet": "タブレット",
+        "mobile": "モバイル"
+      },
+      "simulateError": "送信エラーを模擬"
+    },
+    "actions": {
+      "submit": "送信",
+      "submitting": "送信中…",
+      "tryAgain": "やり直す",
+      "openBuilder": "ビルダーを開く"
+    },
+    "field": {
+      "untitled": "無題のフィールド",
+      "selectPlaceholder": "選択してください"
+    },
+    "form": {
+      "untitled": "無題のフォーム"
+    },
+    "empty": {
+      "title": "プレビューするフィールドがありません",
+      "description": "ビルダーでフィールドを追加すると、ここにフォームが表示されます。"
+    },
+    "status": {
+      "invalidRestored": "保存データが不正だったため、空のフォームを表示しています。"
+    },
+    "security": {
+      "notice": "プレビューは React で Form Schema を描画します。生成コードの実行や外部への実送信は行いません。"
+    },
+    "validation": {
+      "required": "この項目は必須です。",
+      "minLength": "文字数が不足しています。",
+      "maxLength": "文字数が上限を超えています。",
+      "min": "最小値を下回っています。",
+      "max": "最大値を超えています。",
+      "pattern": "入力形式が正しくありません。",
+      "email": "有効なメールアドレスを入力してください。",
+      "number": "有効な数値を入力してください。"
+    },
+    "submission": {
+      "successTitle": "モック送信に成功しました",
+      "successDescription": "プレビューではデータは外部へ送信されません。",
+      "errorTitle": "モック送信に失敗しました",
+      "forcedError": "送信エラーの模擬が有効です。",
+      "genericError": "送信を完了できませんでした。",
+      "method": "Method",
+      "action": "Action",
+      "actionEmpty": "（未設定）"
+    }
   },
   "code": {
     "title": "生成コード",

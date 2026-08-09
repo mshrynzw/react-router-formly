@@ -54,5 +54,6 @@ pnpm deploy       # Cloudflare Workers へデプロイ
 
 - Phase 1 — Foundation 完了
 - Phase 2 — Core Form Builder 完了
+- Phase 3 — Preview 完了
 
-次は Phase 3 — Preview。
+次は Phase 4 — Code Generator。

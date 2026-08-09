@@ -23,7 +23,7 @@ describe("BuilderWorkspace", () => {
     await user.clear(labelInput);
     await user.type(labelInput, "お名前");
 
-    expect(screen.getByText("お名前")).toBeInTheDocument();
+    expect(screen.getAllByText("お名前").length).toBeGreaterThanOrEqual(1);
     expect(window.localStorage.getItem(FORM_STORAGE_KEY)).toContain("お名前");
   });
 

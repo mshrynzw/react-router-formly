@@ -6,6 +6,42 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-09 — Phase 3 Preview
+
+### Summary
+
+Phase 3（Preview）を実装した。
+
+### Implemented
+
+- `/preview` の Full Preview（LocalStorage の Form Schema を読み込み）
+- Builder 統合 Preview パネル（編集中 Schema を即座に反映）
+- 共有 `FormRenderer`（全 supported field types）
+- クライアント側バリデーション（required / length / min-max / pattern / email）
+- Mock Submission（`preventDefault`、外部エンドポイントへは送信しない）
+- Submission Success / Error State（エラーはツールバーで模擬可能）
+- Responsive viewport（Desktop / Tablet / Mobile）
+- Empty / invalid schema 状態
+- Unit / Integration tests
+
+### Security Notes
+
+- Preview は生成 HTML/JS を実行しない
+- React コンポーネントとして Form Schema を描画する
+- `eval` / `new Function` / 危険な `dangerouslySetInnerHTML` は使用しない
+- Mock submit のみ。`submission.action` への実送信は行わない
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+---
+
 ## 2026-08-09 — Phase 2 Core Form Builder
 
 ### Summary

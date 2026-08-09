@@ -10,6 +10,7 @@ test("mvp routes are reachable", async ({ page }) => {
 
   await page.getByRole("link", { name: "プレビュー", exact: true }).click();
   await expect(page).toHaveURL(/\/preview$/);
+  await expect(page.getByRole("heading", { level: 1, name: "プレビュー" })).toBeVisible();
 
   await page.getByRole("link", { name: "コード", exact: true }).click();
   await expect(page).toHaveURL(/\/code$/);

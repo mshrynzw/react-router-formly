@@ -119,7 +119,68 @@
   },
   "preview": {
     "title": "Preview",
-    "description": "Review the form derived from the Form Schema. Implemented in Phase 3."
+    "description": "Review the form rendered from the Form Schema.",
+    "workspace": {
+      "subtitle": "The form is rendered from the same Form Schema. Nothing is sent to external endpoints."
+    },
+    "builderPanel": {
+      "title": "Builder Preview",
+      "subtitle": "Verify the Form Schema while you edit.",
+      "expand": "Expand",
+      "collapse": "Collapse"
+    },
+    "toolbar": {
+      "viewportLabel": "Preview width",
+      "viewport": {
+        "desktop": "Desktop",
+        "tablet": "Tablet",
+        "mobile": "Mobile"
+      },
+      "simulateError": "Simulate submission error"
+    },
+    "actions": {
+      "submit": "Submit",
+      "submitting": "Submitting…",
+      "tryAgain": "Try again",
+      "openBuilder": "Open Builder"
+    },
+    "field": {
+      "untitled": "Untitled field",
+      "selectPlaceholder": "Select an option"
+    },
+    "form": {
+      "untitled": "Untitled form"
+    },
+    "empty": {
+      "title": "No fields to preview",
+      "description": "Add fields in the Builder to see the form here."
+    },
+    "status": {
+      "invalidRestored": "Saved data was invalid, so an empty form is shown."
+    },
+    "security": {
+      "notice": "Preview renders the Form Schema with React. It does not execute generated code or submit to external endpoints."
+    },
+    "validation": {
+      "required": "This field is required.",
+      "minLength": "Too few characters.",
+      "maxLength": "Too many characters.",
+      "min": "Value is below the minimum.",
+      "max": "Value is above the maximum.",
+      "pattern": "The format is invalid.",
+      "email": "Enter a valid email address.",
+      "number": "Enter a valid number."
+    },
+    "submission": {
+      "successTitle": "Mock submission succeeded",
+      "successDescription": "Preview never sends data to an external endpoint.",
+      "errorTitle": "Mock submission failed",
+      "forcedError": "Submission error simulation is enabled.",
+      "genericError": "The submission could not be completed.",
+      "method": "Method",
+      "action": "Action",
+      "actionEmpty": "(not set)"
+    }
   },
   "code": {
     "title": "Generated Code",

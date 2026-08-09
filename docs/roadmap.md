@@ -518,40 +518,40 @@ Preview should use a safe submission mechanism such as Mock Submission where app
 
 ## Tasks
 
-- [ ] Implement Preview route/view
-- [ ] Implement Builder Preview
-- [ ] Render supported field types
-- [ ] Render labels
-- [ ] Render placeholders
-- [ ] Render required indicators
-- [ ] Render buttons
-- [ ] Render validation states
-- [ ] Implement responsive Preview
-- [ ] Implement Preview states
-- [ ] Implement Submission Preview
-- [ ] Implement Submission Success State
-- [ ] Implement Submission Error State
-- [ ] Synchronize Builder and Preview
-- [ ] Add Preview tests
-- [ ] Add validation interaction tests
-- [ ] Add submission interaction tests
-- [ ] Review Preview security boundary
+- [x] Implement Preview route/view
+- [x] Implement Builder Preview
+- [x] Render supported field types
+- [x] Render labels
+- [x] Render placeholders
+- [x] Render required indicators
+- [x] Render buttons
+- [x] Render validation states
+- [x] Implement responsive Preview
+- [x] Implement Preview states
+- [x] Implement Submission Preview
+- [x] Implement Submission Success State
+- [x] Implement Submission Error State
+- [x] Synchronize Builder and Preview
+- [x] Add Preview tests
+- [x] Add validation interaction tests
+- [x] Add submission interaction tests
+- [x] Review Preview security boundary
 
 ## Completion Criteria
 
 Phase 3 is complete when:
 
-- Preview accurately reflects the Form Schema.
-- Builder changes are reflected in Preview.
-- Supported field types render correctly.
-- Validation behavior can be verified.
-- Submission behavior can be verified safely.
-- Submission Success State can be displayed.
-- Submission Error State can be displayed.
-- Preview works on desktop.
-- Preview works on mobile.
-- Preview does not execute untrusted generated code inside the main application context.
-- Preview does not unintentionally submit test data to external production endpoints.
+- [x] Preview accurately reflects the Form Schema.
+- [x] Builder changes are reflected in Preview.
+- [x] Supported field types render correctly.
+- [x] Validation behavior can be verified.
+- [x] Submission behavior can be verified safely.
+- [x] Submission Success State can be displayed.
+- [x] Submission Error State can be displayed.
+- [x] Preview works on desktop.
+- [x] Preview works on mobile.
+- [x] Preview does not execute untrusted generated code inside the main application context.
+- [x] Preview does not unintentionally submit test data to external production endpoints.
 
 ---
 

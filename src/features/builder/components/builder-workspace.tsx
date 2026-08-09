@@ -7,6 +7,7 @@ import { FormCanvas } from "@/features/builder/components/form-canvas";
 import { FormSettingsPanel } from "@/features/builder/components/form-settings-panel";
 import { SubmissionSettingsPanel } from "@/features/builder/components/submission-settings-panel";
 import { useFormBuilder, type BuilderPanel } from "@/features/builder/hooks/use-form-builder";
+import { BuilderPreviewPanel } from "@/features/preview/components/builder-preview-panel";
 import { cn } from "@/lib/utils";
 
 const panels: BuilderPanel[] = ["form", "field", "submission"];
@@ -107,6 +108,8 @@ export function BuilderWorkspace() {
           ) : null}
         </section>
       </div>
+
+      <BuilderPreviewPanel schema={builder.schema} />
     </div>
   );
 }

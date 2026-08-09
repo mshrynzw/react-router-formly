@@ -119,7 +119,68 @@
   },
   "preview": {
     "title": "미리보기",
-    "description": "Form Schema에서 파생된 폼의 모양과 동작을 확인하는 화면입니다. Phase 3에서 구현합니다."
+    "description": "Form Schema로 렌더링된 폼의 모양과 동작을 확인합니다.",
+    "workspace": {
+      "subtitle": "동일한 Form Schema로 폼을 렌더링합니다. 외부 엔드포인트로는 전송되지 않습니다."
+    },
+    "builderPanel": {
+      "title": "빌더 미리보기",
+      "subtitle": "편집 중인 Form Schema를 바로 확인할 수 있습니다.",
+      "expand": "펼치기",
+      "collapse": "접기"
+    },
+    "toolbar": {
+      "viewportLabel": "미리보기 너비",
+      "viewport": {
+        "desktop": "데스크톱",
+        "tablet": "태블릿",
+        "mobile": "모바일"
+      },
+      "simulateError": "제출 오류 시뮬레이션"
+    },
+    "actions": {
+      "submit": "제출",
+      "submitting": "제출 중…",
+      "tryAgain": "다시 시도",
+      "openBuilder": "빌더 열기"
+    },
+    "field": {
+      "untitled": "제목 없는 필드",
+      "selectPlaceholder": "선택하세요"
+    },
+    "form": {
+      "untitled": "제목 없는 폼"
+    },
+    "empty": {
+      "title": "미리볼 필드가 없습니다",
+      "description": "빌더에서 필드를 추가하면 여기에 폼이 표시됩니다."
+    },
+    "status": {
+      "invalidRestored": "저장된 데이터가 올바르지 않아 빈 폼을 표시합니다."
+    },
+    "security": {
+      "notice": "미리보기는 React로 Form Schema를 렌더링합니다. 생성된 코드를 실행하거나 외부로 실제 전송하지 않습니다."
+    },
+    "validation": {
+      "required": "이 항목은 필수입니다.",
+      "minLength": "글자 수가 부족합니다.",
+      "maxLength": "글자 수가 너무 많습니다.",
+      "min": "최솟값보다 작습니다.",
+      "max": "최댓값보다 큽니다.",
+      "pattern": "형식이 올바르지 않습니다.",
+      "email": "유효한 이메일을 입력하세요.",
+      "number": "유효한 숫자를 입력하세요."
+    },
+    "submission": {
+      "successTitle": "모의 제출에 성공했습니다",
+      "successDescription": "미리보기에서는 데이터가 외부로 전송되지 않습니다.",
+      "errorTitle": "모의 제출에 실패했습니다",
+      "forcedError": "제출 오류 시뮬레이션이 켜져 있습니다.",
+      "genericError": "제출을 완료할 수 없습니다.",
+      "method": "Method",
+      "action": "Action",
+      "actionEmpty": "(미설정)"
+    }
   },
   "code": {
     "title": "생성된 코드",
