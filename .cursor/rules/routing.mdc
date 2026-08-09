@@ -1,0 +1,1329 @@
+---
+description: Routing rules for the Formly project. Apply when creating, modifying, reviewing, or refactoring React Router routes, navigation, nested routes, route parameters, layouts, redirects, route-level loading and error states, or URL-based application state.
+alwaysApply: true
+---
+
+# Routing Rules
+
+You are working on Formly, a portfolio-quality Form Builder application built with React, React Router v8, Vite, and Cloudflare Workers.
+
+React Router is a core technology of this project.
+
+Routing must be designed intentionally rather than being treated as simple page navigation.
+
+The goal is to demonstrate production-quality React Router architecture while keeping the application understandable and maintainable.
+
+---
+
+# 1. Canonical Routing Documentation
+
+The canonical routing design is defined in the project's documentation under:
+
+```text
+docs/
+````
+
+Before creating or modifying routes:
+
+1. Read the relevant routing documentation.
+2. Read `docs/04_architecture.md`.
+3. Read `docs/screen-list.md`.
+4. Inspect the existing route configuration.
+5. Check whether the requested route already exists.
+6. Follow the established route hierarchy.
+
+Do not invent a new route structure when the existing documentation already defines one.
+
+If the route architecture changes intentionally, update the relevant documentation.
+
+---
+
+# 2. React Router Is the Routing Standard
+
+React Router v8 is the canonical routing solution for Formly.
+
+Use React Router for:
+
+* Application navigation
+* Route parameters
+* Nested routes
+* Layout routes
+* Navigation state
+* Route-level loading
+* Route-level error handling
+* Programmatic navigation
+* URL state
+
+Do not introduce another routing library.
+
+Do not implement application routing manually.
+
+---
+
+# 3. Never Implement Application Navigation Manually
+
+Do not use:
+
+```ts
+window.location.href = "/forms";
+```
+
+for normal application navigation.
+
+Do not use:
+
+```ts
+window.location.pathname = "/forms";
+```
+
+Do not use:
+
+```ts
+window.history.pushState(...)
+```
+
+as a replacement for React Router.
+
+Prefer:
+
+```tsx
+<Link to="/forms">
+  Forms
+</Link>
+```
+
+or:
+
+```tsx
+<NavLink to="/forms">
+  Forms
+</NavLink>
+```
+
+Use:
+
+```ts
+useNavigate()
+```
+
+when navigation must happen programmatically.
+
+---
+
+# 4. Declarative Navigation
+
+Prefer declarative navigation whenever possible.
+
+Good:
+
+```tsx
+<Link to="/forms">
+  Forms
+</Link>
+```
+
+Good:
+
+```tsx
+<NavLink to="/forms">
+  Forms
+</NavLink>
+```
+
+Avoid:
+
+```tsx
+<button onClick={() => navigate("/forms")}>
+  Forms
+</button>
+```
+
+when the element is simply a navigation link.
+
+Use a button when the action is actually an action rather than navigation.
+
+---
+
+# 5. Programmatic Navigation
+
+Use `useNavigate()` only when navigation depends on application behavior.
+
+Appropriate examples:
+
+* After creating a form.
+* After deleting a form.
+* After completing a workflow.
+* After successful form import.
+* After saving a resource when navigation is intentional.
+* When navigation depends on user interaction that is not naturally represented as a link.
+
+Example:
+
+```ts
+const navigate = useNavigate();
+
+const handleCreate = async () => {
+  const form = await createForm();
+
+  navigate(`/forms/${form.id}/builder`);
+};
+```
+
+Do not use `useNavigate()` for every navigation interaction.
+
+---
+
+# 6. Route Hierarchy
+
+Routes must reflect the application's information architecture.
+
+Formly's form-related screens should use a hierarchy similar to:
+
+```text
+/forms
+    ├── new
+    └── :formId
+          ├── builder
+          ├── preview
+          └── code
+```
+
+Conceptually:
+
+```text
+Forms
+ ├── Create Form
+ └── Form
+      ├── Builder
+      ├── Preview
+      └── Code
+```
+
+Keep related screens under a shared route hierarchy.
+
+Do not create unrelated top-level routes when a nested route better represents the relationship.
+
+---
+
+# 7. Nested Routes
+
+Use nested routes when multiple screens share:
+
+* Layout
+* Navigation
+* Form context
+* Header
+* Sidebar
+* Tabs
+* Route parameters
+
+Example:
+
+```text
+/forms/:formId
+├── builder
+├── preview
+└── code
+```
+
+Use a parent route with:
+
+```tsx
+<Outlet />
+```
+
+when appropriate.
+
+Conceptually:
+
+```tsx
+<FormLayout>
+  <Outlet />
+</FormLayout>
+```
+
+Do not duplicate the same layout across:
+
+```text
+Builder
+Preview
+Code
+```
+
+when a parent route can provide it.
+
+---
+
+# 8. Route Layouts
+
+Use route layouts to represent shared application structure.
+
+For example:
+
+```text
+Application Layout
+    ↓
+Forms Layout
+    ↓
+Form Layout
+    ↓
+Builder / Preview / Code
+```
+
+Each layout should have a clear responsibility.
+
+Do not create deeply nested layouts without a meaningful reason.
+
+Avoid layout components that exist only because of directory structure.
+
+---
+
+# 9. Outlet
+
+Use React Router's `Outlet` for nested route rendering.
+
+Example:
+
+```tsx
+function FormLayout() {
+  return (
+    <div>
+      <FormHeader />
+      <FormNavigation />
+      <main>
+        <Outlet />
+      </main>
+    </div>
+  );
+}
+```
+
+Do not manually inspect the current pathname to determine which child screen to render.
+
+Avoid:
+
+```ts
+if (pathname.includes("/builder")) {
+  // render Builder
+}
+```
+
+React Router should determine which route component is rendered.
+
+---
+
+# 10. Route Parameters
+
+Use route parameters for resource identifiers.
+
+Example:
+
+```text
+/forms/:formId
+```
+
+Access the parameter with:
+
+```ts
+const { formId } = useParams();
+```
+
+Do not manually parse:
+
+```ts
+window.location.pathname
+```
+
+to retrieve route parameters.
+
+Do not duplicate route parameter parsing logic across components.
+
+---
+
+# 11. Route Parameter Validation
+
+Treat route parameters as untrusted input.
+
+For example:
+
+```ts
+const { formId } = useParams();
+```
+
+does not guarantee that `formId` refers to an existing form.
+
+Handle:
+
+* Missing parameter
+* Invalid parameter
+* Non-existent form
+* Corrupted form data
+* Deleted form
+
+appropriately.
+
+Do not assume that a valid URL parameter guarantees valid domain data.
+
+---
+
+# 12. Resource Routes
+
+Resource-oriented routes should clearly communicate the resource.
+
+Prefer:
+
+```text
+/forms
+/forms/:formId
+```
+
+over vague routes such as:
+
+```text
+/data
+/item
+/edit
+/page
+```
+
+The URL should communicate what the user is viewing.
+
+---
+
+# 13. Form Builder Routes
+
+The Form Builder should be represented as a route rather than a boolean UI state when it represents a distinct application screen.
+
+Prefer:
+
+```text
+/forms/:formId/builder
+```
+
+over:
+
+```text
+/forms/:formId?mode=builder
+```
+
+when Builder, Preview, and Code are distinct navigable screens.
+
+This makes the screens:
+
+* Bookmarkable
+* Shareable
+* Browser-history friendly
+* Directly accessible
+* Clearly represented by the URL
+
+---
+
+# 14. Preview Routes
+
+Preview should have a dedicated route when it is a distinct screen.
+
+Example:
+
+```text
+/forms/:formId/preview
+```
+
+The Preview route should derive its form from the same Form Schema used by Builder.
+
+Do not maintain a separate preview-only form representation.
+
+---
+
+# 15. Code Routes
+
+The generated code screen should have a dedicated route.
+
+Example:
+
+```text
+/forms/:formId/code
+```
+
+The Code route should derive generated output from the same Form Schema used by:
+
+```text
+Builder
+Preview
+```
+
+Do not store a separate independent copy of generated HTML/CSS/JavaScript merely because the user navigated to the Code screen.
+
+---
+
+# 16. Route State vs Application State
+
+Use the URL when state should be:
+
+* Bookmarkable
+* Shareable
+* Restored by browser navigation
+* Meaningful as part of the current screen
+
+Examples:
+
+```text
+/forms/:formId
+/forms/:formId/builder
+/forms/:formId/preview
+/forms/:formId/code
+```
+
+Use component state for temporary UI state such as:
+
+* Modal open/closed
+* Hover state
+* Selected field
+* Drag state
+* Temporary input
+* Animation state
+
+Do not put every UI state into the URL.
+
+---
+
+# 17. Query Parameters
+
+Use query parameters when they represent shareable or navigable state.
+
+Appropriate examples may include:
+
+```text
+/forms?search=contact
+/forms?sort=updated
+/forms?filter=published
+```
+
+or:
+
+```text
+/forms/:formId/builder?field=field_123
+```
+
+only when the state is genuinely useful to preserve in the URL.
+
+Do not create query parameters for purely temporary UI state.
+
+Avoid unnecessary URL complexity.
+
+---
+
+# 18. Search Parameters
+
+When using query parameters for search/filter/sort state:
+
+* Parse them consistently.
+* Provide sensible defaults.
+* Handle missing values.
+* Handle invalid values.
+* Keep URLs readable.
+* Avoid storing duplicate state in React when the URL is already the source of truth.
+
+Do not allow invalid query parameters to crash the screen.
+
+---
+
+# 19. URL as Source of Truth
+
+If a value is intentionally represented by the URL, avoid maintaining a second independent source of truth.
+
+Bad:
+
+```text
+URL: ?sort=name
+
+React State:
+sort = "updated"
+```
+
+This can cause synchronization bugs.
+
+Prefer deriving the active state from the URL.
+
+---
+
+# 20. Navigation State
+
+Use React Router navigation state when it provides meaningful UX.
+
+Examples:
+
+* Showing pending navigation.
+* Disabling duplicate actions.
+* Displaying route transition feedback.
+* Optimistic navigation UI.
+
+Do not build a separate global navigation state system unnecessarily.
+
+---
+
+# 21. Browser History
+
+Navigation should behave naturally with browser history.
+
+Users should be able to:
+
+```text
+Builder
+  ↓
+Preview
+  ↓
+Back
+  ↓
+Builder
+```
+
+and:
+
+```text
+Form List
+  ↓
+Form Builder
+  ↓
+Back
+  ↓
+Form List
+```
+
+Do not replace browser navigation with custom application state unless necessary.
+
+---
+
+# 22. Relative Navigation
+
+Prefer relative navigation when it makes route relationships clearer.
+
+For example, from:
+
+```text
+/forms/:formId
+```
+
+navigating to:
+
+```text
+builder
+```
+
+may be preferable to manually constructing the entire path when appropriate.
+
+Use absolute paths when they improve clarity.
+
+Choose the approach that makes the route relationship easiest to understand.
+
+---
+
+# 23. Active Navigation
+
+Use `NavLink` for navigation items that need active state.
+
+Example:
+
+```tsx
+<NavLink to="/forms">
+  Forms
+</NavLink>
+```
+
+Use the active state to communicate:
+
+* Current location
+* Current section
+* Current Builder mode
+
+Do not manually compare `window.location.pathname` to determine active navigation.
+
+---
+
+# 24. Route-Based Tabs
+
+When Builder, Preview, and Code are navigable screens, represent them as route navigation rather than local tabs.
+
+Example:
+
+```text
+Builder
+Preview
+Code
+```
+
+maps to:
+
+```text
+/forms/:formId/builder
+/forms/:formId/preview
+/forms/:formId/code
+```
+
+This provides:
+
+* Browser history
+* Deep linking
+* Refresh support
+* Bookmarking
+* Shareable URLs
+
+Do not implement these as only:
+
+```ts
+const [activeTab, setActiveTab] = useState("builder");
+```
+
+when they represent independent application screens.
+
+---
+
+# 25. Route-Level Loading
+
+Provide appropriate loading behavior when a route depends on asynchronous data.
+
+For example:
+
+```text
+/forms/:formId
+```
+
+may need to load a saved form.
+
+The user should not see an unexplained blank screen while the route is resolving.
+
+Use appropriate:
+
+* Loading UI
+* Skeleton
+* Pending navigation feedback
+
+according to the UI guidelines.
+
+---
+
+# 26. Route-Level Error Handling
+
+Route-level errors must be handled intentionally.
+
+Examples:
+
+```text
+Form does not exist
+Invalid form ID
+Corrupted saved form
+Unexpected loading failure
+```
+
+Provide a user-friendly error screen or recovery UI.
+
+Do not expose raw exceptions.
+
+Do not leave the user with a blank page.
+
+---
+
+# 27. Not Found Routes
+
+Provide an application-level fallback for unknown routes.
+
+Example:
+
+```text
+/unknown-route
+```
+
+should render a meaningful Not Found experience.
+
+The Not Found UI should provide a clear recovery path such as:
+
+```text
+Go to Dashboard
+Go to Forms
+```
+
+Do not allow unknown routes to silently render an unrelated screen.
+
+---
+
+# 28. Invalid Form Routes
+
+For:
+
+```text
+/forms/:formId
+```
+
+if the form does not exist:
+
+Do not silently redirect to:
+
+```text
+/forms
+```
+
+unless that behavior is intentionally defined.
+
+Prefer an explicit Not Found or missing-resource state.
+
+The user should understand what happened.
+
+---
+
+# 29. Route Guards
+
+Do not create route guards unless the application actually requires them.
+
+If authentication is introduced later, route protection should be implemented at the routing boundary.
+
+Do not duplicate authentication checks inside every page component.
+
+For the current local-first Formly architecture, do not invent authentication infrastructure simply to create a route guard.
+
+---
+
+# 30. Redirects
+
+Use redirects intentionally.
+
+Appropriate examples:
+
+```text
+/forms/new
+    ↓
+/forms/:formId/builder
+```
+
+after successful creation.
+
+Or:
+
+```text
+/forms/:formId
+    ↓
+/forms/:formId/builder
+```
+
+if the parent route intentionally serves as an entry point.
+
+Avoid redirect chains.
+
+Do not redirect users unexpectedly merely to simplify component logic.
+
+---
+
+# 31. Route Configuration
+
+Keep route definitions organized and discoverable.
+
+Do not scatter route definitions throughout unrelated components.
+
+Prefer a centralized route configuration or clearly structured route module.
+
+Conceptually:
+
+```text
+routes
+├── application
+├── forms
+├── form
+├── settings
+└── not-found
+```
+
+The exact folder structure should follow the project's architecture.
+
+---
+
+# 32. Route Components
+
+A route component should primarily coordinate:
+
+* Route data
+* Layout
+* Feature components
+* Navigation
+* Route-level states
+
+Avoid putting all business logic directly inside route components.
+
+Prefer:
+
+```text
+Route
+  ↓
+Feature Component
+  ↓
+Hook / Service
+  ↓
+Domain Logic
+```
+
+---
+
+# 33. Route Components and UI
+
+Do not create a route component solely to render a large monolithic UI.
+
+If a screen becomes too large, extract meaningful feature components.
+
+For example:
+
+```text
+FormBuilderRoute
+├── BuilderToolbar
+├── FieldPalette
+├── FormCanvas
+├── FieldProperties
+└── BuilderStatusBar
+```
+
+The route should coordinate the screen rather than own every detail.
+
+---
+
+# 34. Route Reuse
+
+Do not duplicate route logic.
+
+Avoid:
+
+```text
+BuilderRoute
+PreviewRoute
+CodeRoute
+```
+
+each independently:
+
+* Loading the same form.
+* Validating the same form ID.
+* Handling the same missing-form state.
+* Rendering the same form layout.
+
+Use shared parent routes, hooks, or services when appropriate.
+
+---
+
+# 35. Form Context Across Nested Routes
+
+When Builder, Preview, and Code share a form resource:
+
+```text
+/forms/:formId
+```
+
+should provide the appropriate shared context or data access pattern.
+
+Conceptually:
+
+```text
+/forms/:formId
+       │
+       ├── Builder
+       ├── Preview
+       └── Code
+```
+
+All child routes must operate on the same logical Form resource.
+
+Do not create three separate mechanisms for loading the same form.
+
+---
+
+# 36. Route Naming
+
+Use clear, lowercase route segments.
+
+Prefer:
+
+```text
+/forms
+/forms/new
+/forms/:formId
+/forms/:formId/builder
+/forms/:formId/preview
+/forms/:formId/code
+/settings
+/profile
+```
+
+Avoid:
+
+```text
+/Forms
+/formBuilder
+/FormPreview
+/codeGeneratorPage
+```
+
+Use nouns for resources and clear names for actions/screens.
+
+---
+
+# 37. Avoid Route Overengineering
+
+Do not create routes for every UI component.
+
+These should generally remain component state:
+
+```text
+Modal
+Popover
+Dropdown
+Tooltip
+Sidebar
+Field Properties Panel
+```
+
+unless there is a strong reason for them to be directly navigable.
+
+A route should represent meaningful application navigation.
+
+---
+
+# 38. Modal Routes
+
+Use route-based modals only when the modal itself should be:
+
+* Bookmarkable
+* Shareable
+* Browser-history aware
+* Directly accessible
+
+Do not use route state for every Dialog.
+
+For ordinary UI dialogs, use component state or the project's Dialog component.
+
+---
+
+# 39. Navigation and Unsaved Changes
+
+The Form Builder may contain unsaved changes.
+
+If navigation can cause data loss:
+
+* Detect unsaved changes.
+* Provide appropriate confirmation.
+* Avoid surprising navigation.
+* Preserve user work whenever possible.
+
+Do not block every navigation by default.
+
+Only warn when there is a meaningful risk of losing user data.
+
+---
+
+# 40. Form Builder Navigation
+
+Builder navigation should make the current state clear.
+
+Example:
+
+```text
+Form Name
+    ↓
+Builder | Preview | Code
+```
+
+The active route should be visually obvious.
+
+Navigation should remain usable on mobile.
+
+Do not hide route navigation solely because the viewport is small.
+
+---
+
+# 41. Deep Linking
+
+Every meaningful application screen should be directly addressable.
+
+For example:
+
+```text
+/forms/abc123/builder
+```
+
+should be sufficient to open the Builder for form `abc123`.
+
+Do not require the user to first visit:
+
+```text
+/forms
+```
+
+and then click through several screens to reconstruct application state.
+
+---
+
+# 42. Refresh Safety
+
+Refreshing a route should preserve the route itself.
+
+For example:
+
+```text
+/forms/abc123/preview
+```
+
+should remain on:
+
+```text
+/forms/abc123/preview
+```
+
+after refresh.
+
+Do not rely solely on in-memory React state for route identity.
+
+Persist required domain data appropriately.
+
+---
+
+# 43. Cloudflare Deployment
+
+The routing architecture must work correctly in the Cloudflare Workers deployment environment.
+
+Do not assume a traditional Node.js server is available.
+
+Verify that:
+
+* Direct route access works.
+* Refreshing nested routes works.
+* SPA fallback behavior is correctly configured.
+* Production routing matches development routing.
+
+Do not solve deployment routing issues by replacing React Router with manual pathname logic.
+
+---
+
+# 44. Development vs Production
+
+A route that works through client-side navigation but fails on direct browser access is incomplete.
+
+Test both:
+
+```text
+Client Navigation
+```
+
+and:
+
+```text
+Direct URL Access
+```
+
+for important routes.
+
+Especially verify nested routes such as:
+
+```text
+/forms/:formId/builder
+/forms/:formId/preview
+/forms/:formId/code
+```
+
+---
+
+# 45. Route Testing
+
+Route behavior must be tested where it affects application functionality.
+
+Test:
+
+* Route renders.
+* Navigation works.
+* Dynamic parameters work.
+* Nested routes work.
+* Invalid routes work.
+* Missing resources work.
+* Browser history behaves correctly where important.
+* Direct URL access works in E2E tests.
+* Redirects behave correctly.
+* Route-level loading/error states appear appropriately.
+
+Do not test React Router internals.
+
+Test Formly's routing behavior.
+
+---
+
+# 46. Accessibility and Routing
+
+Navigation must be accessible.
+
+Use:
+
+```html
+<nav>
+```
+
+for navigation regions where appropriate.
+
+Links must have meaningful accessible names.
+
+Active navigation should be communicated appropriately.
+
+Keyboard users must be able to navigate between route links.
+
+Do not make route navigation dependent on hover.
+
+---
+
+# 47. Responsive Routing UI
+
+Routing UI must work across:
+
+```text
+Desktop
+Tablet
+Mobile
+```
+
+For example:
+
+```text
+Desktop
+Sidebar
+```
+
+may become:
+
+```text
+Mobile
+Navigation Drawer
+```
+
+The underlying route structure should remain consistent.
+
+Do not create separate route architectures solely for mobile.
+
+---
+
+# 48. Routing Documentation
+
+When adding or modifying routes, update the relevant documentation.
+
+At minimum, review:
+
+```text
+docs/04_architecture.md
+docs/screen-list.md
+```
+
+Also update the relevant screen documentation when applicable.
+
+The route implementation and documentation must remain synchronized.
+
+---
+
+# 49. Route Change Workflow
+
+Before changing a route:
+
+```text
+1. Read routing documentation
+        ↓
+2. Read architecture documentation
+        ↓
+3. Inspect existing route configuration
+        ↓
+4. Check existing screens
+        ↓
+5. Determine whether the route should be
+   top-level, nested, parameterized, or query-based
+        ↓
+6. Implement using React Router
+        ↓
+7. Handle loading/error/not-found states
+        ↓
+8. Update documentation
+        ↓
+9. Add/update tests
+        ↓
+10. Verify direct URL access
+```
+
+Do not modify route structure casually.
+
+---
+
+# 50. Routing Checklist
+
+Before completing a routing change:
+
+* [ ] Relevant routing documentation was read.
+* [ ] `docs/04_architecture.md` was reviewed.
+* [ ] `docs/screen-list.md` was reviewed.
+* [ ] Existing route configuration was inspected.
+* [ ] React Router v8 is used.
+* [ ] No second routing library was introduced.
+* [ ] Normal navigation uses `Link` or `NavLink`.
+* [ ] Programmatic navigation uses `useNavigate` only when appropriate.
+* [ ] Route parameters use `useParams`.
+* [ ] Nested routes use `Outlet` where appropriate.
+* [ ] Shared layouts are not duplicated.
+* [ ] URL state is not duplicated unnecessarily in React state.
+* [ ] Query parameters are validated.
+* [ ] Invalid routes have a Not Found experience.
+* [ ] Missing resources have an appropriate state.
+* [ ] Loading states are handled where necessary.
+* [ ] Error states are handled where necessary.
+* [ ] Deep links work.
+* [ ] Refreshing nested routes works.
+* [ ] Browser history behaves naturally.
+* [ ] Mobile navigation works.
+* [ ] Accessibility was considered.
+* [ ] Tests were added or updated.
+* [ ] Documentation was updated.
+
+---
+
+# 51. Final Routing Principles
+
+Always prefer:
+
+```text
+React Router
+    over
+Manual URL Handling
+
+Declarative Navigation
+    over
+Programmatic Navigation
+
+Nested Routes
+    over
+Duplicated Layouts
+
+URL State
+    over
+Duplicated Local State
+
+Resource-oriented URLs
+    over
+Generic URLs
+
+Deep Links
+    over
+Navigation-dependent Screens
+
+Shared Route Context
+    over
+Duplicated Data Loading
+
+Explicit Error States
+    over
+Silent Redirects
+
+Simple Route Trees
+    over
+Over-engineered Routing
+
+Documented Routes
+    over
+Undocumented Routes
+```
+
+React Router is a core architectural technology of Formly.
+
+Use it intentionally so that the application demonstrates real-world routing architecture rather than merely using React Router as a replacement for links.

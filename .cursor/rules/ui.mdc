@@ -1,0 +1,1561 @@
+---
+description: UI and UX rules for the Formly project. Apply when creating or modifying pages, routes, components, layouts, styles, animations, responsive behavior, accessibility, loading states, form builder interfaces, previews, and user interactions.
+alwaysApply: true
+---
+
+# UI / UX Rules
+
+You are working on Formly, a portfolio-quality Form Builder application.
+
+The UI must feel like a polished modern SaaS product rather than a generic administration dashboard.
+
+Prioritize:
+
+- Visual quality
+- Usability
+- Consistency
+- Accessibility
+- Responsiveness
+- Performance
+- Maintainability
+
+Follow the project-wide rules defined in:
+
+`AGENTS.md`
+
+The canonical UI design system is defined in:
+
+`docs/ui-guideline.md`
+
+The canonical component design is defined in:
+
+`docs/07_component_design.md`
+
+---
+
+# 1. Design Direction
+
+The visual direction should be inspired by products such as:
+
+- Linear
+- Vercel
+- Notion
+- Raycast
+- Stripe
+- Framer
+- GitHub
+
+Do not copy these products directly.
+
+Use them as references for:
+
+- Information hierarchy
+- Spacing
+- Typography
+- Interaction design
+- Navigation
+- Motion
+- Visual polish
+- Responsiveness
+
+Formly should feel:
+
+- Modern
+- Premium
+- Minimal
+- Professional
+- Calm
+- Fast
+- Precise
+- Creative
+
+Avoid generic dashboard aesthetics.
+
+Avoid Bootstrap-like visual patterns.
+
+Avoid excessive decoration.
+
+---
+
+# 2. UI Reference
+
+The project's visual prototypes are stored under:
+
+```text
+docs/ui-reference/
+````
+
+The current reference consists of:
+
+```text
+docs/ui-reference/
+├── index.html
+├── style.css
+└── script.js
+```
+
+These files were created during the design phase and represent the intended visual direction of Formly.
+
+They are design references, not production code.
+
+When implementing the production application:
+
+1. Read the relevant UI reference.
+2. Read the relevant screen design documentation.
+3. Read `docs/ui-guideline.md`.
+4. Read `docs/07_component_design.md`.
+5. Inspect existing production components.
+6. Implement the design using React and TypeScript.
+7. Preserve the visual intent of the reference.
+8. Do not blindly copy prototype implementation details.
+
+The prototype should guide:
+
+* Layout
+* Visual hierarchy
+* Typography
+* Spacing
+* Colors
+* Component appearance
+* Interaction patterns
+* Responsive behavior
+* Animation direction
+
+The prototype must not dictate:
+
+* Production architecture
+* State management
+* Routing implementation
+* DOM manipulation
+* Vanilla JavaScript implementation
+* CDN dependencies
+
+---
+
+# 3. Prototype vs Production
+
+The following files are reference materials:
+
+```text
+docs/ui-reference/index.html
+docs/ui-reference/style.css
+docs/ui-reference/script.js
+```
+
+Do not directly copy them into the React application.
+
+Do not reproduce the prototype's vanilla JavaScript architecture.
+
+Do not use DOM manipulation such as:
+
+```ts
+document.querySelector(...)
+```
+
+as a replacement for React state and component architecture.
+
+Instead:
+
+```text
+UI Reference
+     ↓
+Understand Design
+     ↓
+Identify Components
+     ↓
+Map to Production Components
+     ↓
+Apply Design Tokens
+     ↓
+Implement with React
+     ↓
+Test
+```
+
+The production implementation must follow:
+
+```text
+React
++
+TypeScript
++
+React Router
++
+Existing Components
++
+Design Tokens
+```
+
+---
+
+# 4. Design System
+
+Use the design tokens defined in:
+
+```text
+docs/ui-guideline.md
+```
+
+Do not create arbitrary colors, spacing values, radii, shadows, or typography values when an existing design token should be used.
+
+Prefer centralized design tokens.
+
+Examples:
+
+```css
+--bg-base
+--bg-surface
+--bg-elevated
+--text-primary
+--text-secondary
+--border-subtle
+--accent
+--accent-hover
+--radius-sm
+--radius-md
+--radius-lg
+```
+
+Do not create screen-specific versions of global tokens without a clear reason.
+
+If a new design token is genuinely required:
+
+1. Check whether an existing token can be reused.
+2. Determine whether the value should be global.
+3. Update `docs/ui-guideline.md` if it becomes part of the design system.
+
+---
+
+# 5. Visual Consistency
+
+All screens must feel like the same application.
+
+Maintain consistency across:
+
+* Navigation
+* Buttons
+* Inputs
+* Cards
+* Dialogs
+* Dropdowns
+* Popovers
+* Tabs
+* Badges
+* Tags
+* Tooltips
+* Empty States
+* Loading States
+* Error States
+* Icons
+* Typography
+* Spacing
+* Animations
+
+Do not create screen-specific visual styles without a clear reason.
+
+---
+
+# 6. shadcn/ui
+
+Use shadcn/ui for common UI primitives where appropriate.
+
+Examples:
+
+* Button
+* Dialog
+* Dropdown Menu
+* Select
+* Popover
+* Tooltip
+* Tabs
+* Input
+* Checkbox
+* Switch
+* Command
+* Toast
+* Sheet
+
+Prefer existing components before creating equivalent primitives.
+
+Do not recreate an existing primitive unnecessarily.
+
+Customize shadcn/ui components to match Formly's design system.
+
+Do not allow the default shadcn/ui appearance to determine the entire visual identity of the application.
+
+Formly should not look like an unmodified component-library demo.
+
+---
+
+# 7. Tailwind CSS
+
+Use Tailwind CSS according to the project's established configuration.
+
+Prefer:
+
+* Existing design tokens
+* Existing utility classes
+* Existing component patterns
+
+Avoid excessive arbitrary values.
+
+Avoid:
+
+```tsx
+className="mt-[17px] text-[#8B5CF6]"
+```
+
+when an existing design token or utility is appropriate.
+
+Do not duplicate large groups of utility classes.
+
+When a visual pattern is reused frequently, consider:
+
+* Existing component
+* Reusable component
+* Design token
+
+before duplicating styles.
+
+---
+
+# 8. Responsive Design
+
+Every screen must intentionally support:
+
+* Desktop
+* Tablet
+* Mobile
+
+Do not simply shrink the desktop layout.
+
+Responsive behavior must be designed intentionally.
+
+Consider:
+
+* Navigation
+* Sidebar
+* Form Builder
+* Field palette
+* Properties panel
+* Preview
+* Code editor
+* Forms list
+* Cards
+* Dialogs
+* Dropdowns
+* Command palette
+* Settings
+* Language selector
+
+---
+
+# 9. Mobile First Consideration
+
+Consider mobile constraints from the beginning.
+
+Do not wait until desktop implementation is complete before thinking about mobile.
+
+Consider:
+
+* Touch targets
+* Navigation access
+* Horizontal scrolling
+* Content density
+* Dialog size
+* Button placement
+* Form usability
+* Keyboard behavior
+* Builder controls
+* Properties panels
+
+Essential functionality must remain accessible on mobile.
+
+---
+
+# 10. Mobile Form Builder
+
+The Form Builder is a particularly important responsive screen.
+
+Desktop may use:
+
+```text
+┌─────────────┬──────────────────────┬──────────────┐
+│ Field Panel │      Canvas          │ Properties   │
+└─────────────┴──────────────────────┴──────────────┘
+```
+
+Mobile should not simply compress the three-column layout.
+
+Use an intentional mobile interaction model.
+
+Possible approaches include:
+
+```text
+Field Panel
+    ↓
+Sheet / Drawer
+```
+
+and:
+
+```text
+Properties
+    ↓
+Sheet / Drawer
+```
+
+The exact implementation should follow the UI reference and screen design.
+
+Do not hide essential Builder functionality without providing an alternative interaction.
+
+---
+
+# 11. Dark Theme
+
+The primary visual direction is a dark theme.
+
+Use the color tokens defined in:
+
+```text
+docs/ui-guideline.md
+```
+
+Do not use pure black everywhere.
+
+Prefer layered surfaces and subtle contrast.
+
+Conceptual hierarchy:
+
+```text
+Background
+    ↓
+Surface
+    ↓
+Elevated Surface
+    ↓
+Interactive Surface
+```
+
+Use:
+
+* Borders
+* Subtle shadows
+* Surface contrast
+* Accent colors
+
+carefully.
+
+Avoid excessive contrast.
+
+---
+
+# 12. Light Theme
+
+If light theme support is implemented, it must remain visually consistent with the Formly design system.
+
+Do not simply invert the dark theme.
+
+Define appropriate:
+
+* Backgrounds
+* Surfaces
+* Borders
+* Text colors
+* Accent colors
+* Shadows
+
+while preserving the same hierarchy.
+
+---
+
+# 13. Typography
+
+Typography must establish clear hierarchy.
+
+Prioritize:
+
+* Readability
+* Consistent hierarchy
+* Appropriate line height
+* Appropriate letter spacing
+* Clear heading/body distinction
+
+Avoid excessive font sizes merely to make the UI look impressive.
+
+Use the configured project font system.
+
+Do not introduce arbitrary fonts for individual screens.
+
+---
+
+# 14. Spacing
+
+Use the spacing system defined in:
+
+```text
+docs/ui-guideline.md
+```
+
+Prefer consistent spacing scales.
+
+Avoid arbitrary spacing values.
+
+Spacing should communicate hierarchy.
+
+For example:
+
+```text
+Page
+ ├── Section
+ │    ├── Heading
+ │    └── Content
+ │
+ └── Section
+```
+
+should have visually meaningful spacing between each level.
+
+---
+
+# 15. Cards
+
+Use cards intentionally.
+
+Do not wrap every piece of information inside a card.
+
+Use cards when they improve:
+
+* Grouping
+* Hierarchy
+* Scanning
+* Interaction
+
+Cards should have consistent:
+
+* Radius
+* Padding
+* Border
+* Shadow
+* Hover behavior
+
+according to the design system.
+
+---
+
+# 16. Borders and Shadows
+
+Use subtle borders and shadows.
+
+Avoid excessive visual noise.
+
+Prefer:
+
+```text
+Subtle border
++
+Layered surface
++
+Small elevation
+```
+
+over heavy drop shadows.
+
+Do not use strong shadows on every element.
+
+---
+
+# 17. Glassmorphism
+
+Glassmorphism may be used sparingly.
+
+Do not make the entire application glassmorphic.
+
+Use it only when it improves:
+
+* Hierarchy
+* Depth
+* Focus
+* Visual polish
+
+Avoid:
+
+* Excessive blur
+* Low-contrast text
+* Transparent surfaces everywhere
+* Performance-heavy effects
+
+---
+
+# 18. Icons
+
+Use Lucide icons or the project's established icon system.
+
+Do not use arbitrary Unicode characters as UI icons.
+
+Avoid mixing multiple icon libraries without a clear reason.
+
+Icons must communicate meaning clearly.
+
+Icon-only controls must have accessible names.
+
+---
+
+# 19. Buttons
+
+Buttons must clearly communicate hierarchy.
+
+Use appropriate visual levels:
+
+```text
+Primary
+Secondary
+Tertiary
+Destructive
+Ghost
+Icon
+```
+
+Do not make every button visually prominent.
+
+Primary actions should stand out.
+
+Destructive actions should be visually distinguishable.
+
+Buttons must have appropriate:
+
+* Hover
+* Focus
+* Active
+* Disabled
+* Loading
+
+states.
+
+---
+
+# 20. Forms
+
+Formly itself is a Form Builder, so form UI quality is critical.
+
+Forms must provide:
+
+* Clear labels
+* Validation feedback
+* Error messages
+* Loading state
+* Success feedback where appropriate
+* Disabled state
+* Keyboard accessibility
+
+Do not rely only on placeholder text as a label.
+
+Use semantic form controls.
+
+Labels must be associated with their controls.
+
+---
+
+# 21. Form Builder UI
+
+The Builder is the primary feature of Formly.
+
+The interface should make the following relationship visually obvious:
+
+```text
+Field Library
+      ↓
+Builder Canvas
+      ↓
+Selected Field
+      ↓
+Properties
+```
+
+The Builder should clearly communicate:
+
+* Available fields
+* Current form structure
+* Selected field
+* Field configuration
+* Add/remove actions
+* Reordering
+* Preview
+* Save state
+
+Do not overload the canvas with unnecessary decoration.
+
+The form itself should remain the visual focus.
+
+---
+
+# 22. Form Builder Interaction
+
+Builder interactions should feel direct and responsive.
+
+Important interactions include:
+
+* Add field
+* Select field
+* Edit field
+* Reorder field
+* Delete field
+* Duplicate field
+* Configure field
+* Preview form
+* Switch Builder panels
+
+Provide clear feedback for each interaction.
+
+Do not make important actions dependent only on drag and drop.
+
+Provide accessible alternatives where practical.
+
+---
+
+# 23. Preview
+
+The Preview screen should visually represent the actual generated form.
+
+Preview must:
+
+* Use the current Form Schema.
+* Match generated styling.
+* Clearly communicate the form's final appearance.
+* Support responsive viewing.
+* Avoid exposing Builder-only controls.
+
+Preview should feel like a real end-user experience.
+
+Do not make the Preview look like another administration screen.
+
+---
+
+# 24. Code Screen
+
+The Code screen displays generated:
+
+```text
+HTML
+CSS
+JavaScript
+```
+
+The UI should prioritize:
+
+* Readability
+* Syntax clarity
+* Easy copying
+* Clear language selection
+* Responsive code viewing
+
+Do not overwhelm the user with unnecessary controls.
+
+Code should be visually separated from surrounding application UI.
+
+---
+
+# 25. Loading States
+
+Major asynchronous UI must provide an appropriate loading state.
+
+Use:
+
+* Skeleton
+* Spinner
+* Progress indicator
+* Button loading state
+
+depending on context.
+
+Prefer Skeleton when the final layout is predictable.
+
+Avoid blocking the entire application unnecessarily.
+
+---
+
+# 26. Skeleton
+
+Skeleton UI should resemble the final content layout.
+
+Avoid generic blocks that cause major layout shifts.
+
+Skeleton animation should be subtle.
+
+Respect reduced-motion preferences.
+
+Do not use Skeleton where the content appears instantaneously and a loading state would only create visual noise.
+
+---
+
+# 27. Empty States
+
+Every major data-driven screen must have an intentional Empty State.
+
+Examples:
+
+```text
+No forms yet.
+No templates yet.
+No saved forms.
+No search results.
+```
+
+An Empty State should explain:
+
+1. What is empty.
+2. Why it may be empty.
+3. What the user can do next.
+
+When appropriate, provide a primary action.
+
+Example:
+
+```text
+No forms yet.
+
+Create your first form to get started.
+
+[ Create Form ]
+```
+
+---
+
+# 28. Error States
+
+Errors must be visible and understandable.
+
+Do not leave blank screens when something fails.
+
+Provide:
+
+* Clear explanation
+* Appropriate recovery action
+* Retry when possible
+* User-friendly language
+
+Do not expose:
+
+* Stack traces
+* Internal implementation details
+* Raw exceptions
+
+to users.
+
+---
+
+# 29. Toast Notifications
+
+Use Toast notifications for short-lived feedback.
+
+Good examples:
+
+```text
+Form created
+Form saved
+Field added
+Field deleted
+Changes saved
+Copied to clipboard
+```
+
+Do not use Toasts for information that must remain visible.
+
+Do not show excessive Toast notifications.
+
+---
+
+# 30. Dialogs
+
+Use Dialogs for focused tasks requiring temporary attention.
+
+Examples:
+
+* Create Form
+* Rename Form
+* Delete Form
+* Import Form
+* Confirmation
+* Settings actions
+
+Dialogs must:
+
+* Trap focus appropriately.
+* Support Escape.
+* Have accessible labels.
+* Restore focus appropriately.
+* Work on mobile.
+
+---
+
+# 31. Dropdowns and Popovers
+
+Use Dropdowns and Popovers for contextual actions and compact controls.
+
+Examples:
+
+```text
+Sort
+Filter
+More Actions
+Language
+Theme
+Field Options
+```
+
+Do not hide important navigation or critical information inside ambiguous menus.
+
+---
+
+# 32. Command Palette
+
+Formly may provide a Command Palette for power users.
+
+Possible actions:
+
+```text
+Create Form
+Open Forms
+Open Templates
+Open Settings
+Search Forms
+Open Builder
+Open Preview
+Open Code
+Change Language
+Change Theme
+```
+
+Keyboard navigation must work.
+
+A common shortcut such as:
+
+```text
+⌘ K
+```
+
+or:
+
+```text
+Ctrl K
+```
+
+may be used depending on platform.
+
+---
+
+# 33. Tooltips
+
+Use Tooltips for:
+
+* Icon-only controls
+* Unfamiliar controls
+* Compact Builder controls
+
+Do not use Tooltips for information that must always be visible.
+
+Tooltips must not replace accessible names.
+
+Critical actions must remain accessible without a mouse.
+
+---
+
+# 34. Context Menus
+
+Context menus may be used for advanced Builder and Form interactions.
+
+Possible actions:
+
+```text
+Edit
+Duplicate
+Delete
+Move
+```
+
+Important actions must remain discoverable through normal UI controls.
+
+Do not make essential functionality available only through context menus.
+
+---
+
+# 35. Animation
+
+Animations should feel polished and restrained.
+
+Use animation to communicate:
+
+* State changes
+* Hierarchy
+* Feedback
+* Navigation
+* Appearance
+* Disappearance
+
+Do not animate everything.
+
+Avoid animation that delays usability.
+
+---
+
+# 36. GSAP
+
+GSAP may be used for sophisticated animations.
+
+Appropriate use cases include:
+
+* Page entrance
+* Card stagger
+* Sidebar transitions
+* Builder panel transitions
+* Modal transitions
+* Scroll-based effects
+* Micro-interactions
+* Page transitions
+
+Use GSAP only when it provides meaningful visual value.
+
+Do not use GSAP for animations that CSS can handle more simply.
+
+---
+
+# 37. Animation Timing
+
+Animations should be short and natural.
+
+Prefer subtle transitions.
+
+Avoid:
+
+* Long entrance animations
+* Excessive bouncing
+* Large-scale movement
+* Continuous decorative animation
+* Animations that delay interaction
+
+The application should feel fast even when animated.
+
+---
+
+# 38. Reduced Motion
+
+Respect:
+
+```css
+prefers-reduced-motion
+```
+
+Users who request reduced motion should receive a significantly reduced animation experience.
+
+Do not make essential functionality dependent on animation.
+
+When using GSAP, ensure the animation can be disabled or reduced appropriately.
+
+---
+
+# 39. Page Transitions
+
+Page transitions may use subtle fade or movement.
+
+Transitions must not block navigation.
+
+Avoid long transitions that make React Router navigation feel slow.
+
+Navigation should remain responsive.
+
+---
+
+# 40. Hover States
+
+Interactive elements should provide clear hover feedback on devices that support hover.
+
+Examples:
+
+* Background change
+* Border change
+* Elevation
+* Icon movement
+* Subtle color transition
+
+Do not rely on hover as the only indication of an action.
+
+---
+
+# 41. Focus States
+
+Keyboard focus must always remain visible.
+
+Do not remove focus outlines without providing an equivalent accessible focus indicator.
+
+Focus styles must be consistent with the Formly design system.
+
+---
+
+# 42. Accessibility
+
+Accessibility is mandatory.
+
+Use semantic HTML.
+
+Prefer:
+
+```html
+<button></button>
+```
+
+over:
+
+```html
+<div></div>
+```
+
+for actions.
+
+Use appropriate semantic elements such as:
+
+```html
+<header>
+<nav>
+<main>
+<section>
+<article>
+<footer>
+<form>
+<label>
+<button>
+```
+
+where appropriate.
+
+---
+
+# 43. Accessible Names
+
+Interactive elements must have accessible names.
+
+Icon-only buttons must use appropriate accessible labels.
+
+Example:
+
+```tsx
+<Button aria-label="Delete field">
+  <Trash2 />
+</Button>
+```
+
+Do not rely on visual icons alone.
+
+---
+
+# 44. Keyboard Navigation
+
+Interactive components must be keyboard accessible.
+
+Users should be able to navigate:
+
+* Buttons
+* Links
+* Forms
+* Dialogs
+* Dropdowns
+* Command Palette
+* Tabs
+* Menus
+* Builder controls
+
+Do not create custom interactions that work only with mouse events.
+
+---
+
+# 45. Color Contrast
+
+Do not use color as the only way to communicate information.
+
+For example:
+
+```text
+Red = Error
+Green = Success
+```
+
+should be accompanied by:
+
+* Text
+* Icon
+* Accessible status
+
+Ensure sufficient contrast between:
+
+* Text and background
+* Interactive elements
+* Borders and surfaces
+* Disabled states
+
+---
+
+# 46. Responsive Navigation
+
+Desktop navigation and mobile navigation may use different interaction patterns.
+
+For example:
+
+```text
+Desktop
+Sidebar
+
+Mobile
+Sheet / Drawer
+```
+
+Do not force a desktop sidebar onto a narrow viewport.
+
+Mobile navigation should remain easy to discover and operate.
+
+---
+
+# 47. Forms List
+
+The Forms List must remain usable on:
+
+* Desktop
+* Tablet
+* Mobile
+
+Possible approaches include:
+
+* Responsive cards
+* Compact list
+* Horizontal scrolling where appropriate
+* Mobile-specific actions
+
+Do not allow controls to become inaccessible on small screens.
+
+---
+
+# 48. Form Builder Responsive Behavior
+
+The Form Builder must be intentionally designed for:
+
+```text
+Mobile
+Tablet
+Desktop
+Large Desktop
+```
+
+Check:
+
+* Overflow
+* Field palette
+* Canvas
+* Properties panel
+* Dialogs
+* Buttons
+* Typography
+* Touch targets
+* Drag interactions
+* Alternative controls
+
+Do not assume desktop drag-and-drop behavior is sufficient on mobile.
+
+---
+
+# 49. Visual Hierarchy
+
+Every screen must have a clear hierarchy.
+
+The user should quickly understand:
+
+1. Where they are.
+2. What the screen is for.
+3. What the primary action is.
+4. What information is important.
+5. What actions are available.
+
+Do not make every element visually compete for attention.
+
+---
+
+# 50. Component Reuse
+
+Before creating a new UI component:
+
+1. Check existing UI components.
+2. Check shared components.
+3. Check `docs/07_component_design.md`.
+4. Check the UI reference.
+5. Reuse an existing component when appropriate.
+
+Do not duplicate:
+
+* Button
+* Dialog
+* Card
+* Input
+* Badge
+* Tooltip
+* Dropdown
+* Tabs
+* Sheet
+
+or equivalent primitives.
+
+---
+
+# 51. shadcn/ui Customization
+
+Use shadcn/ui as a foundation, not as a restriction.
+
+It is acceptable to customize:
+
+* Radius
+* Colors
+* Typography
+* Shadows
+* States
+* Spacing
+* Animation
+
+to match Formly's design system.
+
+Do not allow default component styling to make Formly look like an unmodified component-library demo.
+
+---
+
+# 52. Performance
+
+UI quality must not come at the expense of performance.
+
+Avoid:
+
+* Excessive JavaScript
+* Excessive animation
+* Expensive rendering loops
+* Unnecessary re-renders
+* Large libraries when CSS is sufficient
+* Repeated expensive calculations
+
+Prefer CSS transitions for simple animations.
+
+Use GSAP when its capabilities provide meaningful visual value.
+
+Builder interactions should remain responsive even when forms contain many fields.
+
+---
+
+# 53. Generated Code UI
+
+The Code screen displays generated HTML, CSS, and JavaScript.
+
+The generated code should be presented clearly without compromising application performance.
+
+Avoid rendering unnecessarily large DOM structures for syntax highlighting.
+
+Use appropriate code-rendering techniques.
+
+Do not execute generated JavaScript merely to display or preview code.
+
+---
+
+# 54. Prototype Fidelity
+
+When implementing a screen that has a corresponding UI reference:
+
+Preserve the important visual characteristics of the reference.
+
+This includes:
+
+* Layout proportions
+* Information hierarchy
+* Typography
+* Color relationships
+* Spacing
+* Component hierarchy
+* Interaction patterns
+* Animation direction
+* Responsive intent
+
+Do not arbitrarily redesign the screen during implementation.
+
+If the production architecture requires a visual deviation:
+
+1. Keep the visual intent.
+2. Make the smallest necessary deviation.
+3. Update the relevant documentation when the change becomes intentional.
+
+---
+
+# 55. Do Not Blindly Copy Prototype Code
+
+Never blindly copy:
+
+```text
+index.html
+style.css
+script.js
+```
+
+into production.
+
+The prototype may contain:
+
+* Vanilla DOM manipulation
+* CDN dependencies
+* Prototype-only state
+* Hardcoded data
+* Temporary event handlers
+* Demonstration logic
+
+Translate the design into the project's architecture.
+
+---
+
+# 56. UI Implementation Workflow
+
+Before implementing a screen:
+
+```text
+1. Read requirements
+        ↓
+2. Read screen detail design
+        ↓
+3. Read component design
+        ↓
+4. Read UI guideline
+        ↓
+5. Read corresponding UI reference
+        ↓
+6. Inspect existing components
+        ↓
+7. Implement
+        ↓
+8. Add responsive behavior
+        ↓
+9. Add accessibility
+        ↓
+10. Add loading / empty / error states
+        ↓
+11. Add appropriate animation
+        ↓
+12. Test
+```
+
+Do not skip the design reference when one exists.
+
+---
+
+# 57. UI Change Workflow
+
+Before significantly changing an existing screen:
+
+1. Inspect the current implementation.
+2. Read the relevant screen design.
+3. Read the UI guideline.
+4. Compare the implementation with the UI reference.
+5. Identify the intended change.
+6. Reuse existing components.
+7. Implement the smallest appropriate change.
+8. Test responsive behavior.
+9. Test accessibility.
+10. Review visual consistency.
+
+Do not redesign unrelated parts of the application.
+
+---
+
+# 58. Visual Regression Consideration
+
+When making significant UI changes, compare the implementation with the UI reference.
+
+Check:
+
+* Overall layout
+* Spacing
+* Typography
+* Colors
+* Component proportions
+* Responsive behavior
+* Hover states
+* Focus states
+* Dialogs
+* Animations
+
+The goal is not pixel-perfect reproduction of a prototype.
+
+The goal is consistent visual intent and production-quality implementation.
+
+---
+
+# 59. UI Checklist
+
+Before completing a screen:
+
+* [ ] Relevant design reference was reviewed.
+* [ ] `docs/ui-guideline.md` was followed.
+* [ ] `docs/07_component_design.md` was reviewed.
+* [ ] Existing components were reused where appropriate.
+* [ ] shadcn/ui was used for appropriate primitives.
+* [ ] Tailwind conventions were followed.
+* [ ] Design tokens were reused.
+* [ ] Desktop layout works.
+* [ ] Tablet layout works.
+* [ ] Mobile layout works.
+* [ ] Loading state exists where required.
+* [ ] Skeleton exists where appropriate.
+* [ ] Empty State exists where required.
+* [ ] Error State exists where required.
+* [ ] Interactive states exist.
+* [ ] Hover states exist where appropriate.
+* [ ] Focus states are visible.
+* [ ] Keyboard navigation works.
+* [ ] Accessible names exist.
+* [ ] Touch targets are appropriate.
+* [ ] Reduced motion is respected.
+* [ ] Animation does not block usability.
+* [ ] Visual hierarchy is clear.
+* [ ] The screen feels consistent with the rest of Formly.
+* [ ] Tests were added or updated where appropriate.
+
+---
+
+# 60. Final UI Principles
+
+Always prefer:
+
+```text
+Polished
+    over
+Decorated
+
+Consistent
+    over
+Novel
+
+Accessible
+    over
+Visually clever
+
+Responsive
+    over
+Desktop-only
+
+Fast
+    over
+Over-animated
+
+Reusable
+    over
+Duplicated
+
+Intentional
+    over
+Generic
+
+Production-quality
+    over
+Prototype-quality
+```
+
+The goal is to make Formly feel like a real, polished SaaS product.
+
+The UI should demonstrate professional frontend engineering ability while remaining usable, accessible, responsive, maintainable, and performant.

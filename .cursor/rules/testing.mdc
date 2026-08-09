@@ -1,0 +1,1483 @@
+---
+description: Testing rules for the Formly project. Apply when creating or modifying features, business logic, React components, React Router routes, form schemas, form builder behavior, code generation, persistence, internationalization, or user flows.
+alwaysApply: true
+---
+
+# Testing Rules
+
+Testing is a required part of development.
+
+The goal is not to maximize test count or coverage artificially.
+
+The goal is to verify important application behavior and prevent regressions.
+
+Follow the project-wide rules defined in:
+
+`AGENTS.md`
+
+---
+
+# 1. Core Principles
+
+- New functionality must have appropriate tests.
+- Bug fixes must include regression tests when practical.
+- Tests must verify behavior, not implementation details.
+- Prefer meaningful tests over large numbers of trivial tests.
+- Do not skip tests merely because implementation is inconvenient.
+- Do not delete existing tests without a clear reason.
+- Do not modify tests solely to make failing tests pass.
+- Investigate the cause of test failures.
+- Keep tests deterministic.
+- Keep tests isolated.
+- Avoid unnecessary external dependencies in tests.
+- Prefer the smallest test level that provides sufficient confidence.
+
+---
+
+# 2. Test Directory
+
+All project tests must be placed under the project root:
+
+```text
+tests/
+├── unit/
+├── integration/
+└── e2e/
+````
+
+Do not create feature tests inside arbitrary source directories unless explicitly required by the testing framework.
+
+The canonical test directory is:
+
+```text
+tests/
+```
+
+---
+
+# 3. Automatically Create tests/
+
+If `tests/` does not exist and tests are required:
+
+Create:
+
+```text
+tests/
+```
+
+with the appropriate subdirectory:
+
+```text
+tests/unit/
+tests/integration/
+tests/e2e/
+```
+
+Do not create unnecessary empty test directories.
+
+For example, if only Unit Tests are currently required:
+
+```text
+tests/
+└── unit/
+```
+
+is sufficient.
+
+The complete structure may be created when the project reaches the stage where all test types are used.
+
+---
+
+# 4. Testing Tools
+
+Use the following tools according to test type.
+
+## Unit Tests
+
+Use:
+
+```text
+Vitest
+```
+
+for:
+
+* Utility functions
+* Validation
+* Business logic
+* Form schema operations
+* Form field transformations
+* Code generation
+* Data serialization
+* localStorage helpers
+* i18n utilities
+* Pure functions
+
+---
+
+## Component Tests
+
+Use:
+
+```text
+Vitest
+Testing Library
+```
+
+for React component behavior when component-level testing provides meaningful value.
+
+Test:
+
+* User interaction
+* Rendered behavior
+* Accessible elements
+* State changes
+* User-visible output
+* Form input behavior
+* Dialog behavior
+* Dropdown behavior
+* Builder interactions
+
+Do not test implementation details such as internal React state.
+
+---
+
+## Integration Tests
+
+Use:
+
+```text
+Vitest
+Testing Library
+```
+
+for interactions between multiple application layers.
+
+Examples:
+
+```text
+Form Schema
+    ↓
+Form Service
+    ↓
+Storage Repository
+```
+
+or:
+
+```text
+Builder
+    ↓
+Form State
+    ↓
+Code Generator
+```
+
+or:
+
+```text
+Route
+    ↓
+Feature
+    ↓
+Persistence
+```
+
+Integration tests should verify that the layers work correctly together.
+
+---
+
+## E2E Tests
+
+Use:
+
+```text
+Playwright
+```
+
+for important user journeys through the actual application.
+
+Examples:
+
+```text
+Open Application
+    ↓
+Create Form
+    ↓
+Open Builder
+    ↓
+Add Field
+    ↓
+Configure Field
+    ↓
+Preview Form
+    ↓
+View Generated Code
+```
+
+Additional critical flows may include:
+
+```text
+Create Form
+Edit Form
+Save Form
+Delete Form
+Open Existing Form
+Change Language
+Switch Theme
+Responsive Navigation
+```
+
+Do not use E2E tests for every small function or UI interaction.
+
+---
+
+# 5. Test Type Selection
+
+Choose the smallest test level that provides sufficient confidence.
+
+Use:
+
+```text
+Unit
+```
+
+when behavior can be tested in isolation.
+
+Use:
+
+```text
+Integration
+```
+
+when multiple application layers must work together.
+
+Use:
+
+```text
+E2E
+```
+
+when verifying a critical user journey through the actual application.
+
+Prefer:
+
+```text
+Unit
+```
+
+over:
+
+```text
+Integration
+```
+
+when Unit testing is sufficient.
+
+Prefer:
+
+```text
+Integration
+```
+
+over:
+
+```text
+E2E
+```
+
+when E2E testing provides no additional meaningful confidence.
+
+---
+
+# 6. Test Pyramid
+
+Prefer the following balance:
+
+```text
+           E2E
+          /   \
+         /     \
+    Integration
+       /       \
+      /         \
+     Unit Tests
+```
+
+The majority of tests should be Unit Tests.
+
+Integration Tests should cover important boundaries.
+
+E2E Tests should cover critical user journeys.
+
+Do not build an application where every behavior is tested exclusively through E2E tests.
+
+---
+
+# 7. Unit Test Rules
+
+Unit tests should be:
+
+* Fast
+* Deterministic
+* Isolated
+* Easy to understand
+
+Example:
+
+```ts
+describe("calculateFormCompletion", () => {
+  it("calculates completion percentage correctly", () => {
+    // ...
+  });
+});
+```
+
+Test important cases such as:
+
+* Normal input
+* Empty input
+* Boundary values
+* Invalid input
+* Error conditions
+* Duplicate IDs
+* Missing fields
+* Unexpected data
+
+---
+
+# 8. Business Logic Tests
+
+Business logic must be tested independently from UI whenever practical.
+
+Examples:
+
+```text
+createForm()
+updateForm()
+deleteForm()
+addField()
+removeField()
+moveField()
+updateField()
+validateForm()
+generateFormHtml()
+generateFormCss()
+generateFormJavaScript()
+```
+
+These should preferably be testable without rendering a React component.
+
+This keeps business logic:
+
+* Reusable
+* Deterministic
+* Easy to test
+
+---
+
+# 9. Form Schema Tests
+
+The Form Schema is the source of truth for:
+
+```text
+Builder
+Preview
+Code Generator
+Persistence
+```
+
+Therefore, form schema behavior must be thoroughly tested.
+
+Test:
+
+* Form creation
+* Form updates
+* Field creation
+* Field deletion
+* Field reordering
+* Field configuration
+* Stable field IDs
+* Required fields
+* Default values
+* Invalid field configuration
+* Schema serialization
+* Schema deserialization
+
+Example:
+
+```text
+Form Schema
+    ↓
+Builder
+    ↓
+Preview
+    ↓
+Code Generator
+```
+
+All consumers must behave consistently with the same schema.
+
+---
+
+# 10. Form Field Tests
+
+Form fields use a type-safe model.
+
+Test each supported field type where appropriate.
+
+Examples:
+
+```text
+text
+email
+textarea
+select
+checkbox
+radio
+number
+date
+```
+
+Test:
+
+* Required configuration
+* Optional configuration
+* Default values
+* Validation rules
+* Labels
+* Placeholders
+* Options
+* Invalid configuration
+
+Do not duplicate identical tests unnecessarily for fields that share the same behavior.
+
+Use parameterized tests when they improve clarity.
+
+---
+
+# 11. Form Builder Tests
+
+The Form Builder is one of the core features of Formly.
+
+Test user-visible behavior such as:
+
+```text
+Add field
+    ↓
+Field appears in canvas
+```
+
+```text
+Select field
+    ↓
+Properties panel appears
+```
+
+```text
+Change field property
+    ↓
+Field configuration updates
+```
+
+```text
+Remove field
+    ↓
+Field disappears
+```
+
+```text
+Reorder fields
+    ↓
+Field order changes
+```
+
+Do not test internal drag-and-drop implementation details.
+
+Test the resulting user-visible state.
+
+---
+
+# 12. Code Generation Tests
+
+HTML, CSS, and JavaScript generation must be tested independently from the UI whenever practical.
+
+Test:
+
+```text
+Form Schema
+    ↓
+HTML Generator
+    ↓
+Expected HTML
+```
+
+```text
+Form Schema
+    ↓
+CSS Generator
+    ↓
+Expected CSS
+```
+
+```text
+Form Schema
+    ↓
+JavaScript Generator
+    ↓
+Expected JavaScript
+```
+
+Test important cases such as:
+
+* Empty form
+* Single field
+* Multiple fields
+* Required fields
+* Select options
+* Checkbox fields
+* Special characters
+* User-provided labels
+* User-provided placeholders
+* Invalid configuration
+
+Generated code must be deterministic.
+
+---
+
+# 13. Preview Tests
+
+The Preview screen must render the current Form Schema.
+
+Test:
+
+* Correct fields are displayed.
+* Labels are displayed.
+* Required indicators are displayed.
+* Field configuration is reflected.
+* Validation behavior is reflected where applicable.
+* Changes made in Builder are reflected in Preview.
+
+Do not test exact pixel positions.
+
+Test meaningful user-visible behavior.
+
+---
+
+# 14. Persistence Tests
+
+Formly currently uses browser-side persistence.
+
+The persistence layer must be tested independently from UI components whenever practical.
+
+Test:
+
+* Save
+* Load
+* Update
+* Delete
+* Missing data
+* Empty storage
+* Corrupted data
+* Invalid schema
+* Serialization
+* Deserialization
+
+Example:
+
+```text
+Form
+    ↓
+Storage Repository
+    ↓
+localStorage
+```
+
+Do not assume data in localStorage is always valid.
+
+---
+
+# 15. localStorage Tests
+
+When testing localStorage behavior:
+
+* Use an isolated test environment.
+* Reset storage between tests.
+* Do not depend on execution order.
+* Test missing keys.
+* Test malformed JSON.
+* Test invalid data.
+* Test serialization failures when applicable.
+
+Do not allow tests to modify a developer's real persistent browser state.
+
+---
+
+# 16. React Component Tests
+
+Use Testing Library for user-facing behavior.
+
+Prefer:
+
+```ts
+screen.getByRole(...)
+```
+
+over implementation-specific selectors when practical.
+
+Prefer:
+
+```ts
+userEvent
+```
+
+for simulating user interaction.
+
+Test:
+
+```text
+User sees
+User clicks
+User types
+User submits
+User receives feedback
+```
+
+Do not test:
+
+```text
+Internal state variable
+Internal implementation function
+Private component details
+```
+
+unless there is a compelling reason.
+
+---
+
+# 17. Accessibility Testing
+
+When testing UI components, prefer accessible queries.
+
+Good:
+
+```ts
+screen.getByRole("button", {
+  name: /create form/i,
+});
+```
+
+Avoid relying unnecessarily on:
+
+```text
+CSS classes
+DOM structure
+Internal component names
+Generated implementation details
+```
+
+Tests should encourage accessible UI implementation.
+
+Interactive elements should be testable using:
+
+* Roles
+* Accessible names
+* Labels
+* Visible text
+* Keyboard interaction
+
+---
+
+# 18. React Router Tests
+
+React Router behavior should be tested when routing is part of the feature.
+
+Test important cases such as:
+
+```text
+/forms
+/forms/new
+/forms/:formId
+/forms/:formId/builder
+/forms/:formId/preview
+/forms/:formId/code
+/settings
+```
+
+Test:
+
+* Correct route rendering.
+* Navigation between related screens.
+* Dynamic route parameters.
+* Nested routes.
+* Back navigation where appropriate.
+* Invalid routes.
+* Missing form IDs.
+* Navigation after creating a form.
+
+Do not test React Router's internal implementation.
+
+Test application behavior built on top of React Router.
+
+---
+
+# 19. Nested Route Tests
+
+Formly uses nested routes for:
+
+```text
+/forms/:formId
+├── builder
+├── preview
+└── code
+```
+
+Test that:
+
+```text
+FormLayout
+    ↓
+Outlet
+    ↓
+Correct child route
+```
+
+is rendered.
+
+Test that the correct `formId` is used by the child route.
+
+Do not duplicate the same routing test for every trivial link.
+
+Focus on route behavior that could break user workflows.
+
+---
+
+# 20. Internationalization Tests
+
+Formly supports:
+
+```text
+ja
+en
+zh
+ko
+```
+
+Test:
+
+* Language switching.
+* Correct language is rendered.
+* Default language behavior.
+* Missing translation fallback.
+* Persistence of language preference when applicable.
+* Important navigation and form-builder labels.
+
+Do not test every translated string individually.
+
+Test the translation system and representative user-facing behavior.
+
+---
+
+# 21. Theme Tests
+
+If the application supports light and dark themes, test:
+
+* Theme switching.
+* Theme persistence when applicable.
+* Correct theme state after reload.
+* Accessible theme controls.
+
+Do not test every CSS color value.
+
+Test that the intended theme behavior is applied.
+
+---
+
+# 22. Loading / Empty / Error UI
+
+Major data-driven components should have tests for relevant states:
+
+```text
+Loading
+Loaded
+Empty
+Error
+```
+
+Example:
+
+```text
+Forms List
+├── Loading
+├── Forms
+├── No Forms
+└── Error
+```
+
+Test that the correct state and user-facing behavior are displayed.
+
+Do not test every visual pixel.
+
+---
+
+# 23. Responsive Behavior
+
+Responsive behavior should be tested where it affects functionality.
+
+Examples:
+
+* Mobile navigation.
+* Sidebar drawer.
+* Mobile Builder layout.
+* Mobile property panel.
+* Responsive dialogs.
+* Mobile-specific controls.
+* Form Preview on small screens.
+
+Do not create a separate E2E test for every CSS breakpoint.
+
+Visual regression testing may be introduced later if necessary.
+
+---
+
+# 24. Animation
+
+Do not make tests depend on animation timing.
+
+When testing components using GSAP or other animations:
+
+* Test the resulting user-visible state.
+* Avoid arbitrary animation delays.
+* Disable or mock animation when necessary.
+* Respect `prefers-reduced-motion`.
+
+Example:
+
+```text
+Click button
+    ↓
+Dialog becomes visible
+```
+
+is more important than:
+
+```text
+GSAP animation completed after 0.4 seconds
+```
+
+Do not use:
+
+```ts
+await new Promise((resolve) => setTimeout(resolve, 500));
+```
+
+merely to wait for an animation.
+
+---
+
+# 25. Test Naming
+
+Test names should describe behavior.
+
+Good:
+
+```ts
+it("creates a form when valid data is submitted");
+```
+
+```ts
+it("adds a text field to the form builder");
+```
+
+```ts
+it("renders the selected form in preview mode");
+```
+
+```ts
+it("generates HTML for the configured form fields");
+```
+
+```ts
+it("loads a saved form from localStorage");
+```
+
+Avoid:
+
+```ts
+it("works");
+```
+
+```ts
+it("form test");
+```
+
+```ts
+it("button test");
+```
+
+---
+
+# 26. Test Organization
+
+Keep tests organized by domain or feature.
+
+Preferred:
+
+```text
+tests/
+├── unit/
+│   ├── forms/
+│   ├── builder/
+│   ├── preview/
+│   ├── code/
+│   ├── storage/
+│   └── i18n/
+│
+├── integration/
+│   ├── forms/
+│   ├── builder/
+│   ├── preview/
+│   ├── code/
+│   └── storage/
+│
+└── e2e/
+    ├── forms/
+    ├── builder/
+    ├── preview/
+    ├── code/
+    └── navigation/
+```
+
+Do not create excessively deep directory structures.
+
+---
+
+# 27. Naming Test Files
+
+Use descriptive test file names.
+
+Examples:
+
+```text
+form-schema.test.ts
+form-service.test.ts
+form-storage.test.ts
+field-validation.test.ts
+html-generator.test.ts
+css-generator.test.ts
+javascript-generator.test.ts
+form-builder.test.tsx
+form-preview.test.tsx
+language-switcher.test.tsx
+```
+
+For Playwright:
+
+```text
+form-creation.spec.ts
+form-builder.spec.ts
+form-preview.spec.ts
+code-generation.spec.ts
+navigation.spec.ts
+responsive-builder.spec.ts
+```
+
+Use:
+
+```text
+.test.ts
+.test.tsx
+```
+
+for Vitest tests.
+
+Use:
+
+```text
+.spec.ts
+.spec.tsx
+```
+
+for Playwright E2E tests when consistent with the project configuration.
+
+---
+
+# 28. Mocking
+
+Mock external dependencies only when appropriate.
+
+Good candidates:
+
+* Browser APIs
+* localStorage
+* Time
+* Randomness
+* External services
+* Cloudflare-specific APIs when testing application logic in isolation
+
+Avoid mocking the entire application.
+
+Do not mock business logic that the test is supposed to verify.
+
+Prefer realistic integration tests when the actual dependency is safe and practical to use.
+
+---
+
+# 29. Browser API Mocking
+
+When testing browser APIs such as:
+
+```text
+localStorage
+matchMedia
+ResizeObserver
+IntersectionObserver
+Clipboard
+```
+
+use controlled test environments or appropriate mocks.
+
+Do not let tests depend on the developer's actual browser environment.
+
+Mocks should reproduce only the behavior required by the test.
+
+---
+
+# 30. Time and Date
+
+Tests involving dates must be deterministic.
+
+Do not depend on the real current time when the result should be predictable.
+
+Control time using the testing framework when appropriate.
+
+Test important boundaries such as:
+
+```text
+Today
+Tomorrow
+Past
+End of Month
+Year Boundary
+Timezone Boundaries
+```
+
+---
+
+# 31. Async Tests
+
+Always properly await asynchronous operations.
+
+Good:
+
+```ts
+const form = await loadForm(formId);
+
+expect(form.name).toBe("Contact Form");
+```
+
+Do not leave unresolved Promises in tests.
+
+Avoid arbitrary:
+
+```ts
+setTimeout(...)
+```
+
+to wait for asynchronous behavior.
+
+Prefer explicit synchronization.
+
+---
+
+# 32. Error Tests
+
+Test expected errors explicitly.
+
+Example:
+
+```ts
+await expect(
+  loadForm("invalid-id")
+).rejects.toThrow();
+```
+
+For synchronous functions:
+
+```ts
+expect(() => validateForm(invalidForm)).toThrow();
+```
+
+Do not simply catch an error and ignore it.
+
+---
+
+# 33. Validation Tests
+
+Validation is important because Formly accepts user-created form configurations.
+
+Test:
+
+* Valid form schema.
+* Missing required properties.
+* Invalid field types.
+* Invalid field options.
+* Duplicate IDs.
+* Invalid values.
+* Malformed persisted data.
+* Unsupported schema versions when applicable.
+
+Validation tests should cover both expected valid and invalid input.
+
+---
+
+# 34. Test Data
+
+Use predictable test data.
+
+Prefer test factories or fixtures when data is reused.
+
+Example:
+
+```text
+tests/
+└── fixtures/
+```
+
+Use fixtures only when they improve clarity.
+
+Do not create huge global fixtures that make tests difficult to understand.
+
+Prefer small factory functions such as:
+
+```ts
+createTestForm()
+createTestField()
+createTestSelectField()
+```
+
+when appropriate.
+
+---
+
+# 35. Test Isolation
+
+Tests must not depend on execution order.
+
+Each test should establish the state it requires.
+
+Avoid:
+
+```text
+Test A creates a form
+    ↓
+Test B assumes Test A ran
+```
+
+Prefer:
+
+```text
+Test B creates its own required form
+```
+
+Tests should be safe to run individually.
+
+Reset localStorage and other shared state between tests where necessary.
+
+---
+
+# 36. Flaky Tests
+
+Do not ignore flaky tests.
+
+If a test intermittently fails:
+
+1. Investigate the cause.
+2. Identify timing, state, environment, or network issues.
+3. Fix the underlying problem.
+4. Avoid simply adding arbitrary retries.
+
+Retries may be used only when appropriate and should not hide real defects.
+
+---
+
+# 37. Test Coverage
+
+Coverage is useful but is not the primary goal.
+
+Do not write meaningless tests solely to increase coverage.
+
+Prioritize coverage of:
+
+* Form schema behavior.
+* Business rules.
+* Validation.
+* Data mutations.
+* Persistence.
+* Code generation.
+* Routing boundaries.
+* Error handling.
+* Important edge cases.
+* Critical user journeys.
+* Accessibility behavior.
+* Internationalization behavior where relevant.
+
+---
+
+# 38. Never Skip Tests Without Reason
+
+Do not use:
+
+```ts
+it.skip(...)
+```
+
+or:
+
+```ts
+describe.skip(...)
+```
+
+without a documented reason.
+
+Do not leave skipped tests in the codebase indefinitely.
+
+If a test must temporarily be skipped:
+
+* Document why.
+* Create a follow-up issue when appropriate.
+* Remove the skip as soon as possible.
+
+---
+
+# 39. Never Disable Test Failures
+
+Do not modify application code merely to satisfy an incorrect test.
+
+Do not modify a test merely because the implementation currently fails it.
+
+Determine whether:
+
+```text
+Implementation is wrong
+        or
+Test expectation is wrong
+```
+
+before changing either.
+
+---
+
+# 40. Test-First for Business Logic
+
+For complex business logic, prefer writing tests before or alongside implementation.
+
+Example:
+
+```text
+Requirement
+    ↓
+Test
+    ↓
+Implementation
+    ↓
+Refinement
+```
+
+This is especially useful for:
+
+* Form schema operations.
+* Field validation.
+* Field ordering.
+* Form persistence.
+* Code generation.
+* HTML escaping.
+* CSS generation.
+* JavaScript generation.
+* Form completion calculations.
+* Import/export behavior.
+
+---
+
+# 41. Regression Tests
+
+Every meaningful bug fix should consider a regression test.
+
+Example:
+
+```text
+Bug:
+Deleting a field caused the wrong field to be removed.
+
+Fix:
+Use stable field IDs instead of array indexes.
+
+Regression Test:
+Verify that deleting a selected field removes exactly that field.
+```
+
+Do not rely only on manually verifying the fix.
+
+---
+
+# 42. Form Schema Regression Tests
+
+Changes to the Form Schema should consider regression testing for all major consumers:
+
+```text
+Builder
+Preview
+Code Generator
+Persistence
+```
+
+If a schema bug affects one consumer, verify that the fix does not break the others.
+
+Example:
+
+```text
+Schema change
+    ↓
+Builder test
+Preview test
+Generator test
+Persistence test
+```
+
+when applicable.
+
+---
+
+# 43. Code Generation Regression Tests
+
+Generated code should remain stable when the same Form Schema is supplied.
+
+Where appropriate, test:
+
+```text
+Same Schema
+    ↓
+Same Generated Output
+```
+
+Avoid unnecessary snapshot tests for entire generated files when focused assertions provide better clarity.
+
+Snapshots may be used when the generated output is intentionally treated as a stable artifact and the snapshot remains easy to review.
+
+---
+
+# 44. Accessibility Regression Tests
+
+When fixing an accessibility issue, add a regression test when practical.
+
+Examples:
+
+```text
+Missing accessible name
+    ↓
+Add accessible name
+    ↓
+Regression test
+```
+
+```text
+Keyboard navigation broken
+    ↓
+Fix navigation
+    ↓
+Regression test
+```
+
+---
+
+# 45. Required Validation Before Completion
+
+Before considering a feature complete, run the appropriate checks.
+
+At minimum when applicable:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+```
+
+For E2E-related changes:
+
+```bash
+pnpm test:e2e
+```
+
+Use the actual scripts defined in `package.json`.
+
+Do not invent commands if the project uses different script names.
+
+---
+
+# 46. Test Checklist
+
+Before completing a feature:
+
+* [ ] Appropriate Unit Tests exist.
+* [ ] Appropriate Integration Tests exist.
+* [ ] E2E Tests exist for critical user journeys.
+* [ ] Form Schema behavior is tested where relevant.
+* [ ] Form Builder behavior is tested where relevant.
+* [ ] Preview behavior is tested where relevant.
+* [ ] Code generation is tested where relevant.
+* [ ] Persistence is tested where relevant.
+* [ ] React Router behavior is tested where relevant.
+* [ ] Internationalization is tested where relevant.
+* [ ] Accessibility is considered.
+* [ ] Responsive behavior is tested where functionality is affected.
+* [ ] Validation is tested.
+* [ ] Error handling is tested.
+* [ ] Important edge cases are tested.
+* [ ] Loading / Empty / Error states are tested where relevant.
+* [ ] Tests are deterministic.
+* [ ] Tests are isolated.
+* [ ] No unnecessary tests were added.
+* [ ] No tests were skipped without explanation.
+* [ ] Tests pass.
+
+---
+
+# 47. Final Testing Principles
+
+Always prefer:
+
+```text
+Behavior
+    over
+Implementation Details
+
+Meaningful Tests
+    over
+Test Quantity
+
+Unit Tests
+    over
+Unnecessary E2E Tests
+
+Integration Tests
+    for
+System Boundaries
+
+E2E Tests
+    for
+Critical User Journeys
+
+Deterministic Tests
+    over
+Flaky Tests
+
+Real Confidence
+    over
+Artificial Coverage
+```
+
+Testing exists to give the project confidence.
+
+Do not treat tests as an afterthought.
+
+Every test should answer an important question about whether Formly behaves correctly.

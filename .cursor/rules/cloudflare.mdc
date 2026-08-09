@@ -1,0 +1,1422 @@
+---
+description: Cloudflare deployment and runtime rules for the Formly project. Apply when creating or modifying Cloudflare Workers configuration, Vite configuration, deployment settings, environment variables, runtime code, bindings, assets, server-side code, or Cloudflare-specific infrastructure.
+alwaysApply: true
+---
+
+# Cloudflare Rules
+
+You are working on Formly, a production-oriented Form Builder application deployed to Cloudflare.
+
+The application is designed to run on the Cloudflare Workers platform.
+
+Cloudflare-specific implementation must respect the Workers runtime and the project's existing deployment architecture.
+
+Do not assume that Formly runs on a traditional Node.js server.
+
+---
+
+# 1. Cloudflare as the Runtime
+
+The production runtime is:
+
+```text
+Cloudflare Workers
+````
+
+The application must remain compatible with the Cloudflare Workers runtime.
+
+Do not introduce Node.js-only APIs into code that executes in the Worker runtime.
+
+---
+
+# 2. Canonical Architecture
+
+Before making Cloudflare-related architectural changes, read:
+
+```text
+docs/04_architecture.md
+```
+
+Also review:
+
+```text
+docs/05_database.md
+```
+
+and the existing Cloudflare configuration.
+
+The documentation and existing configuration are the source of truth for the project's infrastructure architecture.
+
+Do not replace the existing architecture without an explicit decision.
+
+---
+
+# 3. Cloudflare Configuration
+
+Cloudflare configuration must remain centralized and understandable.
+
+Review the project's existing configuration before modifying:
+
+```text
+wrangler.json
+wrangler.jsonc
+wrangler.toml
+vite.config.ts
+```
+
+or equivalent files.
+
+Do not create a second Cloudflare configuration file without a clear reason.
+
+---
+
+# 4. Vite and Cloudflare
+
+Formly uses Vite as part of its application and Cloudflare deployment setup.
+
+Do not modify the Vite configuration casually.
+
+Before changing:
+
+```text
+vite.config.ts
+```
+
+understand the existing:
+
+```text
+React configuration
+React Router configuration
+Cloudflare Vite plugin
+build configuration
+development configuration
+```
+
+Preserve existing plugin behavior unless the change explicitly requires it.
+
+---
+
+# 5. Cloudflare Vite Plugin
+
+If the project uses the Cloudflare Vite plugin, follow its existing configuration.
+
+Do not manually reproduce functionality already provided by the Cloudflare Vite integration.
+
+Avoid introducing unnecessary custom Worker build logic.
+
+Prefer the official project configuration already present in the repository.
+
+---
+
+# 6. Worker Runtime
+
+Worker-executed code must be compatible with the Workers runtime.
+
+Do not assume availability of:
+
+```text
+Node.js process
+Node.js filesystem APIs
+Node.js HTTP server APIs
+Node.js-specific globals
+```
+
+unless the project's Cloudflare runtime configuration explicitly supports the required functionality.
+
+---
+
+# 7. Node.js APIs
+
+Avoid Node.js-specific APIs in Worker runtime code.
+
+Examples that require careful review include:
+
+```ts
+import fs from "node:fs";
+import path from "node:path";
+import http from "node:http";
+```
+
+Do not introduce these APIs merely because they work in local Node.js development.
+
+Use Web-standard APIs or Cloudflare-supported APIs where appropriate.
+
+---
+
+# 8. Web Standard APIs
+
+Prefer Web Platform APIs when possible.
+
+Examples:
+
+```text
+fetch
+Request
+Response
+URL
+URLSearchParams
+Headers
+Web Streams
+FormData
+Blob
+crypto
+```
+
+This improves compatibility with Cloudflare Workers.
+
+---
+
+# 9. Browser APIs
+
+Browser-only APIs must remain inside browser-executed code.
+
+Examples:
+
+```text
+window
+document
+localStorage
+sessionStorage
+navigator
+```
+
+Do not access browser-only APIs from Worker-executed modules.
+
+Avoid importing browser-only modules into server/Worker code.
+
+---
+
+# 10. Runtime Boundaries
+
+Keep runtime boundaries explicit.
+
+Conceptually:
+
+```text
+Browser
+   ↓
+React
+   ↓
+React Router
+   ↓
+Cloudflare Worker
+   ↓
+Cloudflare Services
+```
+
+Do not assume code can freely move between browser and Worker environments.
+
+Before moving a module across a runtime boundary, verify its dependencies.
+
+---
+
+# 11. Environment Variables
+
+Environment variables and secrets must follow the project's Cloudflare configuration.
+
+Do not hardcode:
+
+```text
+API keys
+Tokens
+Secrets
+Passwords
+Database credentials
+Private keys
+```
+
+inside source code.
+
+---
+
+# 12. Secrets
+
+Secrets must never be committed to Git.
+
+Never place secrets in:
+
+```text
+.ts
+.tsx
+.js
+.json
+.env
+README
+documentation
+tests
+```
+
+unless the value is explicitly a non-secret example.
+
+Use Cloudflare's supported secret management mechanism.
+
+---
+
+# 13. Public Environment Variables
+
+Values intended for browser-side code must be treated as public.
+
+Never expose a secret merely because the application needs it in a React component.
+
+Before exposing an environment variable to the browser, verify that it is safe to make public.
+
+---
+
+# 14. Environment Separation
+
+Keep development and production configuration separate.
+
+At minimum, distinguish:
+
+```text
+Development
+Production
+```
+
+Do not accidentally use production credentials during local development.
+
+Do not accidentally deploy development configuration to production.
+
+---
+
+# 15. Environment Variable Validation
+
+Environment variables should be validated at the appropriate application boundary.
+
+Do not assume required configuration exists.
+
+If a required variable is missing:
+
+* Fail clearly.
+* Provide a useful developer-facing error.
+* Do not silently use an unsafe default.
+
+---
+
+# 16. Cloudflare Bindings
+
+If Formly uses Cloudflare bindings, access them through the established Worker environment.
+
+Examples may include:
+
+```text
+D1
+KV
+R2
+Queues
+Durable Objects
+Service Bindings
+```
+
+Only use bindings that are actually configured for the project.
+
+Do not invent bindings.
+
+---
+
+# 17. Binding Types
+
+Cloudflare binding types should remain explicit.
+
+Do not treat a binding as an arbitrary JavaScript object.
+
+Follow the project's generated or manually defined environment types.
+
+If the project uses a typed `Env` interface, keep it synchronized with the Cloudflare configuration.
+
+---
+
+# 18. D1
+
+If Cloudflare D1 is used:
+
+* Follow `docs/05_database.md`.
+* Use the project's established database access layer.
+* Do not access D1 directly from presentation components.
+* Do not create ad-hoc SQL calls throughout the application.
+* Keep migrations under the established migration workflow.
+
+The Forms feature should access persistence through the project's architecture.
+
+---
+
+# 19. Database Migrations
+
+Database schema changes must be intentional.
+
+Before modifying the database:
+
+1. Review `docs/05_database.md`.
+2. Review existing migrations.
+3. Determine whether a migration is required.
+4. Update documentation when the schema changes.
+5. Test the migration.
+6. Verify development and production implications.
+
+Do not modify production schema manually without a documented migration strategy.
+
+---
+
+# 20. Database Environment
+
+Do not assume local and production databases are interchangeable.
+
+Use the project's defined environments and migration workflow.
+
+Never point local development accidentally at a production database.
+
+---
+
+# 21. KV
+
+If Cloudflare KV is used:
+
+* Keep access behind the appropriate abstraction.
+* Do not scatter KV calls across UI components.
+* Define key naming conventions.
+* Avoid storing large structured domain objects in KV without an architectural reason.
+
+Do not introduce KV merely because it is available.
+
+---
+
+# 22. R2
+
+If Cloudflare R2 is introduced:
+
+* Keep object storage behind a data-access boundary.
+* Validate object names.
+* Validate uploaded content.
+* Do not expose private objects unintentionally.
+* Do not store application state in R2 unless the architecture requires it.
+
+Do not introduce R2 without a concrete product requirement.
+
+---
+
+# 23. Durable Objects
+
+Do not introduce Durable Objects for ordinary Formly state.
+
+Durable Objects are appropriate for specific coordination and stateful workloads.
+
+Do not use them merely because they are a Cloudflare feature.
+
+If collaboration, real-time editing, or coordination is introduced later:
+
+1. Update architecture documentation.
+2. Define the consistency model.
+3. Define object ownership.
+4. Define failure behavior.
+5. Define persistence.
+6. Add tests.
+
+---
+
+# 24. Queues
+
+Do not introduce Cloudflare Queues for synchronous application operations unless asynchronous processing is actually required.
+
+For example:
+
+```text
+Create Form
+Rename Form
+Delete Form
+```
+
+should not automatically become asynchronous jobs.
+
+Use Queues only when the architecture benefits from asynchronous processing.
+
+---
+
+# 25. Cloudflare Services
+
+Do not add Cloudflare services simply to demonstrate Cloudflare knowledge.
+
+Use a Cloudflare service when it provides a real architectural or product benefit.
+
+Prefer:
+
+```text
+Simple
+Understandable
+Maintainable
+```
+
+over:
+
+```text
+More Cloudflare services
+More infrastructure
+More abstraction
+```
+
+---
+
+# 26. Request Handling
+
+Worker request handling should use Web-standard request/response semantics.
+
+Prefer:
+
+```ts
+Request
+Response
+fetch
+```
+
+over Node-specific HTTP APIs.
+
+---
+
+# 27. Fetch Handler
+
+Do not create a custom Worker fetch handler if the existing React Router / Cloudflare integration already provides request handling.
+
+Before modifying the Worker entry point, understand how the current framework integration works.
+
+Do not bypass React Router's server/runtime integration without an architectural reason.
+
+---
+
+# 28. React Router Integration
+
+React Router is responsible for application routing.
+
+Cloudflare is responsible for the runtime and deployment environment.
+
+Keep these responsibilities separate.
+
+Conceptually:
+
+```text
+React Router
+    ↓
+Route Handling
+    ↓
+Cloudflare Worker Runtime
+```
+
+Do not create a second routing system inside the Worker.
+
+---
+
+# 29. Route Fallbacks
+
+Do not implement custom URL fallback logic without understanding the current React Router and Cloudflare configuration.
+
+Avoid manually checking:
+
+```ts
+request.url
+```
+
+to reproduce routing behavior that React Router already handles.
+
+---
+
+# 30. Static Assets
+
+Static assets should follow the project's Vite and Cloudflare asset handling.
+
+Do not manually copy assets into arbitrary Worker directories.
+
+Do not introduce a second asset pipeline without a clear reason.
+
+---
+
+# 31. Asset Paths
+
+Use stable asset references that work in both:
+
+```text
+Development
+Production
+```
+
+Do not hardcode local filesystem paths.
+
+Bad:
+
+```text
+D:\Code\react-router-formly\...
+```
+
+Do not use development-only URLs in production code.
+
+---
+
+# 32. Public Assets
+
+Only files intended to be publicly accessible should be placed in public/static asset locations.
+
+Do not put secrets or private application data into public assets.
+
+---
+
+# 33. Build Output
+
+Do not manually edit generated build output.
+
+Avoid modifying directories such as:
+
+```text
+dist/
+build/
+.wrangler/
+```
+
+unless the project's tooling explicitly requires it.
+
+Generated files should normally be recreated by the build process.
+
+---
+
+# 34. Wrangler
+
+Use the project's existing Wrangler configuration and scripts.
+
+Prefer package scripts such as:
+
+```text
+pnpm dev
+pnpm build
+pnpm deploy
+```
+
+when available.
+
+Do not invent alternative deployment commands without a reason.
+
+---
+
+# 35. Local Development
+
+Local development should reproduce the production runtime as closely as practical.
+
+When using Cloudflare's local development environment, test Worker-specific behavior locally rather than relying exclusively on a Node.js server.
+
+---
+
+# 36. Development Runtime Compatibility
+
+Cloudflare local development may use a local Worker runtime such as Miniflare/workerd.
+
+If a runtime compatibility error occurs:
+
+```text
+This Worker requires compatibility date ...
+```
+
+do not immediately rewrite application code.
+
+First check:
+
+```text
+Cloudflare tooling version
+Miniflare/workerd version
+Compatibility date
+Wrangler configuration
+```
+
+and update dependencies or configuration appropriately.
+
+---
+
+# 37. Compatibility Date
+
+The Cloudflare compatibility date must be intentionally configured.
+
+Do not randomly change the compatibility date simply to make a local runtime error disappear.
+
+When changing it:
+
+1. Verify the installed Cloudflare tooling supports the date.
+2. Check release compatibility.
+3. Run the application locally.
+4. Run tests.
+5. Run a production build.
+6. Verify deployment.
+
+---
+
+# 38. Cloudflare Dependency Updates
+
+Cloudflare dependencies may be tightly coupled.
+
+When updating:
+
+```text
+wrangler
+@cloudflare/vite-plugin
+miniflare
+workerd
+Cloudflare Workers types
+```
+
+check compatibility between them.
+
+Do not upgrade one Cloudflare package blindly if the project's other Cloudflare packages may depend on a compatible version range.
+
+---
+
+# 39. Type Definitions
+
+Keep Cloudflare Worker environment types accurate.
+
+If using:
+
+```ts
+interface Env {
+  ...
+}
+```
+
+or generated environment types, update them when bindings change.
+
+Do not use:
+
+```ts
+any
+```
+
+to bypass missing Cloudflare environment types.
+
+---
+
+# 40. Cloudflare Types
+
+Prefer the project's installed Cloudflare type definitions.
+
+Do not manually recreate Cloudflare API types if an official or existing project type is available.
+
+Keep type definitions synchronized with actual bindings.
+
+---
+
+# 41. Worker Exceptions
+
+Do not expose raw Worker exceptions to users.
+
+For example, do not display:
+
+```text
+MiniflareCoreError
+workerd
+stack trace
+internal binding error
+```
+
+in production UI.
+
+Provide a user-friendly error state and log diagnostic information appropriately.
+
+---
+
+# 42. Error Handling
+
+Cloudflare-specific errors should be mapped at the appropriate boundary.
+
+Conceptually:
+
+```text
+Cloudflare Error
+      ↓
+Application Error
+      ↓
+User-facing Error State
+```
+
+Do not let infrastructure-specific error messages leak into the UI.
+
+---
+
+# 43. Logging
+
+Logs should be useful for diagnosing production issues.
+
+Do not log:
+
+```text
+Passwords
+Secrets
+Access Tokens
+Private user data
+```
+
+unless explicitly required and safely redacted.
+
+Avoid excessive debug logging in production.
+
+---
+
+# 44. Observability
+
+Do not add a large observability stack without a requirement.
+
+When production monitoring is needed, prefer Cloudflare-supported or existing project tooling.
+
+Keep logging and error reporting separate from application domain logic.
+
+---
+
+# 45. Performance
+
+Cloudflare Workers are optimized for lightweight request handling.
+
+Avoid unnecessary:
+
+```text
+Large dependencies
+Heavy initialization
+Large serialized objects
+Repeated parsing
+Expensive computation
+```
+
+inside Worker request paths.
+
+Do not prematurely optimize.
+
+Measure first when performance becomes a concern.
+
+---
+
+# 46. Cold Start
+
+Do not perform unnecessary expensive initialization at module load time.
+
+Avoid loading large datasets or performing expensive computation during Worker initialization when it can be deferred appropriately.
+
+---
+
+# 47. Bundle Size
+
+Keep the Worker bundle reasonable.
+
+Before adding a large dependency:
+
+1. Determine whether the functionality is necessary.
+2. Check whether an existing dependency already provides it.
+3. Consider Web-standard APIs.
+4. Consider bundle impact.
+
+Do not add large libraries for trivial functionality.
+
+---
+
+# 48. Browser Bundle vs Worker Bundle
+
+Do not assume a dependency is appropriate for both environments.
+
+A package may work in the browser but fail in the Worker runtime, or vice versa.
+
+Check runtime compatibility before introducing infrastructure-related dependencies.
+
+---
+
+# 49. Dynamic Imports
+
+Use dynamic imports when they provide a meaningful performance or runtime benefit.
+
+Do not use dynamic imports merely to hide architectural problems.
+
+---
+
+# 50. Security
+
+Cloudflare configuration is part of the application's security boundary.
+
+Follow:
+
+```text
+.cursor/rules/security.mdc
+```
+
+for:
+
+* Secrets
+* Input validation
+* Authentication
+* Authorization
+* XSS
+* Injection
+* Security headers
+* Sensitive data
+
+Do not rely on Cloudflare alone for application security.
+
+---
+
+# 51. Authentication
+
+If authentication is implemented:
+
+* Keep authentication logic behind the established architecture.
+* Do not expose secrets to the browser.
+* Validate authentication at the appropriate server/Worker boundary.
+* Do not rely only on client-side route guards.
+
+Hiding a UI element is not an authorization boundary.
+
+---
+
+# 52. Authorization
+
+Authorization must be enforced server-side when protected resources are involved.
+
+Do not assume:
+
+```text
+User cannot see button
+```
+
+means:
+
+```text
+User cannot perform operation
+```
+
+The Worker/data-access layer must enforce access where required.
+
+---
+
+# 53. CORS
+
+Do not add permissive CORS by default.
+
+Avoid:
+
+```text
+Access-Control-Allow-Origin: *
+```
+
+unless the API is intentionally public.
+
+Define allowed origins according to the product requirements.
+
+---
+
+# 54. Headers
+
+Security-related HTTP headers should follow the project's security architecture.
+
+Do not add arbitrary headers without understanding their effect on:
+
+```text
+React
+React Router
+Assets
+Embedding
+API requests
+Generated form previews
+```
+
+Coordinate security changes with:
+
+```text
+.cursor/rules/security.mdc
+```
+
+---
+
+# 55. Generated Form Preview
+
+Formly may generate HTML, CSS, and JavaScript.
+
+Do not assume generated code can safely execute inside the same origin as the Formly application.
+
+If live preview executes user-generated or generated JavaScript:
+
+* Define an isolation boundary.
+* Consider iframe sandboxing.
+* Restrict capabilities.
+* Prevent access to the parent application.
+* Follow the security rules.
+
+Do not execute arbitrary generated code directly in the main application context.
+
+---
+
+# 56. Generated Code Download
+
+Generated files should be treated as user-created output.
+
+Do not execute generated JavaScript simply because it was generated by Formly.
+
+Code generation and code execution are separate concerns.
+
+---
+
+# 57. Cloudflare and i18n
+
+Cloudflare runtime code must not assume a browser-only i18n implementation.
+
+Follow:
+
+```text
+.cursor/rules/i18n.mdc
+```
+
+for locale behavior.
+
+Keep locale handling compatible with the runtime where server-side rendering or Worker-side processing is involved.
+
+---
+
+# 58. Cloudflare and State
+
+Follow:
+
+```text
+.cursor/rules/state-management.mdc
+```
+
+for state ownership.
+
+Do not use Worker memory as persistent application state.
+
+Worker instances may be short-lived and should not be treated as a reliable in-memory database.
+
+---
+
+# 59. Worker Memory
+
+Do not assume that data stored in module-level variables will persist reliably between requests.
+
+Avoid:
+
+```ts
+let forms = [];
+```
+
+as production persistence.
+
+Use the appropriate persistence layer.
+
+---
+
+# 60. Request Isolation
+
+Do not store user-specific request data in global mutable variables.
+
+Bad:
+
+```ts
+let currentUser;
+```
+
+This can create incorrect behavior across requests.
+
+Request-specific state must remain scoped to the request or appropriate execution context.
+
+---
+
+# 61. Caching
+
+Do not introduce caching without understanding:
+
+```text
+What is cached?
+Who can access it?
+How long does it live?
+When does it expire?
+How is it invalidated?
+```
+
+Be especially careful with user-specific Form data.
+
+Never cache private data publicly.
+
+---
+
+# 62. Cache-Control
+
+Do not mark user-specific responses as publicly cacheable unless explicitly intended.
+
+For example, private Form data should not accidentally receive:
+
+```text
+public
+```
+
+caching semantics.
+
+---
+
+# 63. Durable Caching
+
+Do not use Cloudflare caching as a replacement for application persistence.
+
+Cache:
+
+```text
+Derived / reusable data
+```
+
+when appropriate.
+
+Persist:
+
+```text
+User-owned Form data
+```
+
+in the appropriate database/storage layer.
+
+---
+
+# 64. Deployment Safety
+
+Before deploying infrastructure changes:
+
+1. Run type checking.
+2. Run linting.
+3. Run unit/integration tests.
+4. Run E2E tests where appropriate.
+5. Run production build.
+6. Review Cloudflare configuration changes.
+7. Verify environment variables and bindings.
+8. Deploy.
+9. Verify the deployed application.
+
+Do not deploy untested infrastructure changes.
+
+---
+
+# 65. Production Deployment
+
+Production deployment should use the project's canonical command.
+
+Prefer:
+
+```text
+pnpm deploy
+```
+
+or the documented deployment command.
+
+Do not manually upload build output unless explicitly required.
+
+---
+
+# 66. Preview Deployments
+
+If preview deployments are used:
+
+* Keep preview configuration separate from production.
+* Do not expose production secrets unnecessarily.
+* Verify bindings.
+* Verify database targets.
+* Verify generated asset URLs.
+
+---
+
+# 67. Rollback
+
+Infrastructure changes should be reversible where practical.
+
+When introducing:
+
+```text
+Database changes
+Binding changes
+Routing changes
+Environment changes
+```
+
+consider rollback behavior before deployment.
+
+Do not make irreversible infrastructure changes without documentation.
+
+---
+
+# 68. Cloudflare Configuration Changes
+
+When changing Cloudflare configuration:
+
+```text
+1. Identify the reason.
+2. Check existing architecture.
+3. Modify the minimum necessary configuration.
+4. Update documentation if architecture changes.
+5. Test locally.
+6. Build.
+7. Deploy to an appropriate environment.
+8. Verify behavior.
+```
+
+Do not make unrelated configuration changes in the same task.
+
+---
+
+# 69. Cloudflare Documentation
+
+When infrastructure architecture changes, update:
+
+```text
+docs/04_architecture.md
+```
+
+and, when relevant:
+
+```text
+docs/05_database.md
+docs/development-log.md
+```
+
+Do not allow Cloudflare configuration and documentation to drift apart.
+
+---
+
+# 70. Cloudflare-Specific Code
+
+Keep Cloudflare-specific code isolated where practical.
+
+Avoid spreading Cloudflare-specific APIs throughout domain logic.
+
+Prefer:
+
+```text
+Application Domain
+        ↓
+Infrastructure Adapter
+        ↓
+Cloudflare
+```
+
+when an abstraction provides meaningful value.
+
+Do not over-abstract trivial Cloudflare operations.
+
+---
+
+# 71. Portability
+
+Keep domain logic as platform-independent as practical.
+
+For example:
+
+```text
+Form validation
+Form Schema manipulation
+Form generation
+Form business rules
+```
+
+should not depend directly on Cloudflare APIs unless necessary.
+
+This keeps the core application easier to test.
+
+---
+
+# 72. Infrastructure Boundary
+
+Cloudflare-specific dependencies should remain near the infrastructure boundary.
+
+Conceptually:
+
+```text
+React UI
+    ↓
+Application / Feature Logic
+    ↓
+Domain
+    ↓
+Infrastructure
+    ↓
+Cloudflare
+```
+
+Do not import Cloudflare-specific APIs directly into presentational components.
+
+---
+
+# 73. Testing Cloudflare Code
+
+Cloudflare-specific behavior should be tested in an environment that represents the Worker runtime where practical.
+
+Do not rely exclusively on browser tests for Worker behavior.
+
+Test:
+
+* Environment bindings
+* Request handling
+* Persistence
+* Error handling
+* Authentication boundaries
+* Cloudflare-specific integration
+
+when applicable.
+
+---
+
+# 74. Local vs Production Differences
+
+Do not assume local development perfectly matches production.
+
+Be aware of differences involving:
+
+```text
+Bindings
+Secrets
+Database
+Environment variables
+Caching
+Worker runtime
+Compatibility dates
+Deployment configuration
+```
+
+When infrastructure behavior is important, verify it in an appropriate deployed environment.
+
+---
+
+# 75. Cloudflare Rule Workflow
+
+Before modifying Cloudflare infrastructure:
+
+```text
+1. Read architecture documentation.
+        ↓
+2. Inspect existing Cloudflare configuration.
+        ↓
+3. Identify the runtime boundary.
+        ↓
+4. Determine whether the change is actually required.
+        ↓
+5. Check existing Cloudflare dependencies.
+        ↓
+6. Implement the smallest change.
+        ↓
+7. Test locally.
+        ↓
+8. Run application tests.
+        ↓
+9. Build for production.
+        ↓
+10. Deploy when appropriate.
+        ↓
+11. Verify the deployed application.
+        ↓
+12. Update documentation.
+```
+
+---
+
+# 76. Do Not Overuse Cloudflare Features
+
+Cloudflare provides many powerful services.
+
+Do not use:
+
+```text
+D1
+KV
+R2
+Durable Objects
+Queues
+Workers AI
+Vectorize
+Analytics
+Caching
+```
+
+simply because they are available.
+
+Every infrastructure component should have a concrete purpose.
+
+Prefer a simple architecture that is easy to explain and maintain.
+
+---
+
+# 77. Cloudflare Checklist
+
+Before completing a Cloudflare-related change:
+
+* [ ] Cloudflare runtime compatibility has been considered.
+* [ ] Worker code does not rely on unsupported Node.js APIs.
+* [ ] Browser-only APIs remain in browser code.
+* [ ] Existing Vite configuration is preserved.
+* [ ] Existing Cloudflare Vite integration is preserved.
+* [ ] Wrangler configuration is understood.
+* [ ] Environment variables are validated.
+* [ ] Secrets are not committed.
+* [ ] Bindings are correctly typed.
+* [ ] Database changes follow the database architecture.
+* [ ] Persistence does not rely on Worker memory.
+* [ ] User-specific data is not publicly cached.
+* [ ] Cloudflare-specific code remains appropriately isolated.
+* [ ] React Router remains responsible for application routing.
+* [ ] Security rules are followed.
+* [ ] Local Worker runtime has been tested.
+* [ ] Type checking passes.
+* [ ] Linting passes.
+* [ ] Tests pass.
+* [ ] Production build passes.
+* [ ] Deployment has been verified when applicable.
+* [ ] Documentation has been updated when architecture changed.
+
+---
+
+# 78. Final Cloudflare Principles
+
+Always prefer:
+
+```text
+Cloudflare Workers
+    over
+Traditional Node.js Server Assumptions
+
+Web APIs
+    over
+Node-specific APIs
+
+Existing Cloudflare Integration
+    over
+Custom Runtime Infrastructure
+
+Typed Bindings
+    over
+any
+
+Explicit Environment Configuration
+    over
+Hardcoded Values
+
+Persistence
+    over
+Worker Memory
+
+Secure Secrets
+    over
+Source Code Credentials
+
+React Router
+    over
+Custom Routing
+
+Application Architecture
+    over
+Cloudflare-specific Coupling
+
+Required Cloudflare Services
+    over
+Unnecessary Infrastructure
+
+Simple Deployment
+    over
+Manual Deployment Steps
+
+Documented Infrastructure
+    over
+Implicit Configuration
+```
+
+Cloudflare is the runtime and infrastructure platform for Formly.
+
+It should enable the application architecture rather than dictate unnecessary complexity.
+
+Keep the application portable, the infrastructure explicit, and the deployment process reproducible.

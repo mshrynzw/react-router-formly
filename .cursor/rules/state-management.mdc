@@ -1,0 +1,1848 @@
+---
+description: State management rules for the Formly project. Apply when creating, modifying, reviewing, or refactoring React state, form state, builder state, URL state, server state, persisted state, global state, context, hooks, or state synchronization.
+alwaysApply: true
+---
+
+# State Management Rules
+
+You are working on Formly, a portfolio-quality Form Builder application built with React, React Router v8, Vite, and Cloudflare.
+
+State management must remain simple, predictable, and maintainable.
+
+Do not introduce global state merely because a value is used by multiple components.
+
+Choose the smallest appropriate state scope.
+
+---
+
+# 1. Core Principle
+
+Always ask:
+
+> Who owns this state?
+
+before creating or modifying state.
+
+Prefer the following hierarchy:
+
+```text
+Local Component State
+        ↓
+Feature State
+        ↓
+Route / URL State
+        ↓
+Shared Application State
+        ↓
+Persisted Domain State
+````
+
+Use the narrowest scope that satisfies the requirement.
+
+Do not move state to a broader scope without a clear reason.
+
+---
+
+# 2. State Categories
+
+Formly state should be classified into appropriate categories.
+
+The main categories are:
+
+```text
+UI State
+Form Builder State
+Domain State
+URL State
+Server / Persistence State
+Application State
+Session / Preference State
+```
+
+Do not treat all state as the same kind of state.
+
+---
+
+# 3. UI State
+
+Use local React state for temporary UI state.
+
+Examples:
+
+```text
+Modal open/closed
+Dropdown open/closed
+Popover open/closed
+Selected tab inside a component
+Hover state
+Focus state
+Temporary input state
+Animation state
+Sidebar open/closed
+```
+
+Prefer:
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+```
+
+over introducing a global store.
+
+---
+
+# 4. Local State First
+
+When state is only needed by one component, keep it local.
+
+Good:
+
+```tsx
+function SearchDialog() {
+  const [query, setQuery] = useState("");
+}
+```
+
+Do not create global state for:
+
+```text
+Dialog open state
+Tooltip state
+Temporary input state
+Hover state
+```
+
+unless there is a documented architectural reason.
+
+---
+
+# 5. Lift State Carefully
+
+Lift state when multiple sibling components genuinely need to coordinate around the same state.
+
+For example:
+
+```text
+Parent
+├── Toolbar
+└── Canvas
+```
+
+If both components need the same temporary state, the parent feature may own it.
+
+Do not immediately move the state into a global store.
+
+Prefer:
+
+```text
+Shared Parent
+    ↓
+Child Components
+```
+
+before:
+
+```text
+Global Store
+```
+
+---
+
+# 6. Avoid Prop Drilling
+
+Prop drilling is not automatically bad.
+
+A small amount of prop passing is often clearer than introducing global state.
+
+Use props when:
+
+* The data has a clear parent-child relationship.
+* The number of levels is small.
+* The dependency is explicit.
+* The state belongs to the parent feature.
+
+Do not introduce Context or a global store merely to avoid two or three levels of props.
+
+---
+
+# 7. React Context
+
+Use React Context only when a value is genuinely shared across a meaningful component subtree.
+
+Appropriate examples may include:
+
+```text
+Theme
+Internationalization
+Form Builder context
+Application configuration
+```
+
+Avoid using Context as a general-purpose state container.
+
+Do not put frequently changing, unrelated state into a single global Context.
+
+---
+
+# 8. Context Granularity
+
+Prefer focused Contexts.
+
+Avoid:
+
+```text
+AppContext
+```
+
+containing:
+
+```text
+User
+Forms
+Builder
+Theme
+Language
+Notifications
+Dialogs
+Search
+```
+
+This creates unnecessary coupling and re-renders.
+
+Prefer separate concerns where Context is actually justified.
+
+---
+
+# 9. Global State
+
+Do not introduce global state unless the state is genuinely application-wide.
+
+Potential examples:
+
+```text
+Current user/session
+Application-wide preferences
+Global notification state
+Theme
+```
+
+Even these should be evaluated against existing architecture before introducing a store.
+
+---
+
+# 10. Global Store
+
+Do not introduce a state-management library simply because the project is growing.
+
+Before adding a store, determine:
+
+1. Why local state is insufficient.
+2. Why props are insufficient.
+3. Why Context is insufficient.
+4. Why URL state is insufficient.
+5. Why persistence is insufficient.
+6. Which components need the state.
+7. How frequently the state changes.
+
+Only then consider a global state solution.
+
+---
+
+# 11. Do Not Use Global State for Domain Persistence
+
+A global React store must not become the source of truth for persisted Forms.
+
+Avoid:
+
+```text
+Global Store
+    ↓
+Forms
+```
+
+being the only place where Forms exist.
+
+Prefer:
+
+```text
+Persisted Form
+      ↓
+Domain / Data Access
+      ↓
+Feature
+      ↓
+UI State
+```
+
+The exact implementation must follow:
+
+```text
+docs/04_architecture.md
+docs/05_database.md
+```
+
+---
+
+# 12. Form State
+
+Form state requires special care because Formly itself is a Form Builder.
+
+Distinguish between:
+
+```text
+Formly application UI state
+```
+
+and:
+
+```text
+User-created Form Schema
+```
+
+These are different concerns.
+
+For example:
+
+```text
+Selected field
+```
+
+is UI / Builder state.
+
+While:
+
+```text
+Field label
+Field type
+Field validation
+Field options
+```
+
+are Form Schema data.
+
+Do not mix them unnecessarily.
+
+---
+
+# 13. Form Schema as Domain State
+
+The Form Schema is domain state.
+
+It represents the actual structure of the user-created form.
+
+Conceptually:
+
+```text
+Form
+ └── Form Schema
+      ├── Fields
+      ├── Field configuration
+      ├── Validation
+      └── Options
+```
+
+The canonical Form Schema must follow:
+
+```text
+docs/05_database.md
+```
+
+and the Forms rules defined in:
+
+```text
+.cursor/rules/forms.mdc
+```
+
+---
+
+# 14. Form Schema Source of Truth
+
+The Form Schema is the source of truth for:
+
+```text
+Builder
+Preview
+Code Generator
+```
+
+Prefer:
+
+```text
+Form Schema
+    ├── Builder
+    ├── Preview
+    └── Code Generator
+```
+
+Do not create independent state representations for each screen.
+
+---
+
+# 15. Builder State
+
+Builder-specific temporary state should be kept separate from the persisted Form Schema.
+
+Examples:
+
+```text
+Selected field
+Active properties panel
+Dragging field
+Hovered drop zone
+Focused field
+Open configuration panel
+Unsaved changes indicator
+```
+
+These are Builder UI state.
+
+They should not automatically become persisted Form data.
+
+---
+
+# 16. Selected Field
+
+A selected field should normally be represented by its stable field ID.
+
+Prefer:
+
+```ts
+const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
+```
+
+Avoid storing an entire mutable field object as the selected state when the canonical Form Schema already owns that data.
+
+Prefer:
+
+```text
+selectedFieldId
+        ↓
+Form Schema
+        ↓
+Selected Field
+```
+
+This reduces synchronization problems.
+
+---
+
+# 17. Do Not Duplicate Form Objects
+
+Avoid:
+
+```text
+Form Schema
++
+selectedField object
++
+previewForm
++
+generatorForm
+```
+
+when these contain duplicated copies of the same data.
+
+Duplicated mutable state can become inconsistent.
+
+Prefer deriving values from the canonical Form Schema.
+
+---
+
+# 18. Derived State
+
+Do not store values that can be calculated from existing state.
+
+Avoid:
+
+```tsx
+const [fieldCount, setFieldCount] = useState(0);
+```
+
+when:
+
+```ts
+form.fields.length
+```
+
+already provides the value.
+
+Prefer derived values:
+
+```ts
+const fieldCount = form.fields.length;
+```
+
+Store state only when it represents independent information.
+
+---
+
+# 19. Avoid Synchronization State
+
+Avoid patterns such as:
+
+```tsx
+const [form, setForm] = useState(...);
+const [previewForm, setPreviewForm] = useState(...);
+const [codeForm, setCodeForm] = useState(...);
+```
+
+when all three represent the same underlying Form.
+
+Prefer:
+
+```text
+Canonical Form
+    ↓
+Preview
+Code Generator
+```
+
+This eliminates synchronization logic.
+
+---
+
+# 20. State Machines
+
+Do not introduce a state machine library for simple UI state.
+
+For simple state:
+
+```text
+idle
+loading
+success
+error
+```
+
+ordinary React state or an established async abstraction may be sufficient.
+
+Use a state machine only when the domain has genuinely complex transitions that benefit from explicit modeling.
+
+---
+
+# 21. Loading State
+
+Loading state should represent an actual asynchronous operation.
+
+Prefer explicit states such as:
+
+```text
+idle
+loading
+success
+error
+```
+
+or the state representation provided by the project's data-fetching architecture.
+
+Do not use arbitrary booleans everywhere:
+
+```text
+isLoading
+isSaving
+isFetching
+isProcessing
+isWorking
+```
+
+when they represent the same underlying operation.
+
+---
+
+# 22. Async State
+
+Async state should clearly distinguish:
+
+```text
+Loading
+Success
+Error
+Empty
+```
+
+Do not treat:
+
+```text
+Empty
+```
+
+as:
+
+```text
+Loading
+```
+
+Do not treat:
+
+```text
+Error
+```
+
+as:
+
+```text
+Empty
+```
+
+The UI must represent these states intentionally.
+
+---
+
+# 23. Server / Persistence State
+
+Persisted data must not be treated as ordinary temporary UI state.
+
+Examples:
+
+```text
+Forms
+Form Schema
+Templates
+User profile
+Saved preferences
+```
+
+Follow the project's data-access architecture.
+
+Do not create a global React store simply to cache persisted data without understanding the existing persistence strategy.
+
+---
+
+# 24. Server State vs Client State
+
+Distinguish:
+
+```text
+Server / Persistence State
+```
+
+from:
+
+```text
+Client UI State
+```
+
+For example:
+
+```text
+Form name
+```
+
+may be persisted domain data.
+
+While:
+
+```text
+isDeleteDialogOpen
+```
+
+is UI state.
+
+Do not store both in the same state object merely because they happen to appear on the same screen.
+
+---
+
+# 25. URL State
+
+Use React Router for state that should be represented by the URL.
+
+Examples:
+
+```text
+Search
+Filter
+Sort
+Selected route
+Form ID
+Builder / Preview / Code
+```
+
+Follow:
+
+```text
+.cursor/rules/routing.mdc
+```
+
+for URL state rules.
+
+---
+
+# 26. URL as Source of Truth
+
+If state is intentionally represented in the URL, do not maintain a conflicting duplicate copy in React state.
+
+For example:
+
+```text
+/forms?search=contact
+```
+
+should not simultaneously maintain:
+
+```text
+React search = "invoice"
+```
+
+without an explicit synchronization model.
+
+Prefer deriving URL state from React Router.
+
+---
+
+# 27. Query Parameters
+
+Use query parameters for shareable, navigable state where appropriate.
+
+Examples:
+
+```text
+/forms?search=contact
+/forms?sort=updated
+/forms?filter=draft
+```
+
+Do not put temporary UI state into query parameters simply because it is technically possible.
+
+---
+
+# 28. Route Parameters
+
+Resource identity should be represented by route parameters when appropriate.
+
+Example:
+
+```text
+/forms/:formId
+```
+
+The Form ID is route state.
+
+Do not copy the Form ID into unrelated global state merely because multiple child components need it.
+
+Use React Router's route context appropriately.
+
+---
+
+# 29. State Persistence
+
+Do not persist temporary UI state unless there is a clear user benefit.
+
+Usually do not persist:
+
+```text
+Modal open
+Popover open
+Hover state
+Animation state
+Temporary drag state
+```
+
+Consider persistence for intentional preferences such as:
+
+```text
+Language
+Theme
+Sidebar preference
+```
+
+according to the project architecture.
+
+---
+
+# 30. localStorage
+
+Do not use `localStorage` as a general-purpose state-management solution.
+
+Avoid:
+
+```ts
+localStorage.setItem("form", JSON.stringify(form));
+```
+
+directly inside arbitrary components.
+
+If browser persistence is part of the current architecture, access it through the appropriate data-access abstraction.
+
+---
+
+# 31. State Initialization
+
+Initialize state from the correct source.
+
+For example:
+
+```text
+Route
+    ↓
+Form ID
+    ↓
+Persisted Form
+    ↓
+Builder State
+```
+
+Do not initialize Builder state with hardcoded mock data in production.
+
+---
+
+# 32. State Synchronization
+
+Avoid manual synchronization between multiple sources of truth.
+
+Bad:
+
+```text
+URL
+React State
+Context
+localStorage
+```
+
+all storing the same value.
+
+Choose one canonical source.
+
+Other layers should derive or synchronize intentionally.
+
+---
+
+# 33. State Ownership
+
+Every important state value should have a clear owner.
+
+Before adding state, be able to answer:
+
+```text
+Who owns this state?
+Who modifies it?
+Who reads it?
+How long does it live?
+Should it survive navigation?
+Should it survive refresh?
+Should it be persisted?
+Should it be shareable by URL?
+```
+
+If these questions cannot be answered, reconsider the state design.
+
+---
+
+# 34. State Lifetime
+
+Choose state scope based on lifetime.
+
+```text
+Temporary
+    → Local Component State
+
+Feature Session
+    → Feature State
+
+Navigation
+    → URL State
+
+Application-wide
+    → Shared State
+
+Persistent
+    → Domain / Persistence Layer
+```
+
+Do not use a longer-lived state mechanism for a shorter-lived value without a reason.
+
+---
+
+# 35. Navigation and State
+
+Do not use React state to simulate navigation.
+
+Bad:
+
+```tsx
+const [screen, setScreen] = useState("builder");
+```
+
+when Builder, Preview, and Code are separate routes.
+
+Prefer React Router:
+
+```text
+/forms/:formId/builder
+/forms/:formId/preview
+/forms/:formId/code
+```
+
+See:
+
+```text
+.cursor/rules/routing.mdc
+```
+
+---
+
+# 36. State Reset on Navigation
+
+When navigating between resources, ensure feature state does not accidentally leak between resources.
+
+For example:
+
+```text
+Form A
+    ↓
+selectedFieldId = field-a
+    ↓
+Form B
+```
+
+must not accidentally continue using:
+
+```text
+selectedFieldId = field-a
+```
+
+when that field does not belong to Form B.
+
+State should be scoped to the appropriate resource.
+
+---
+
+# 37. Form Builder State Reset
+
+When changing:
+
+```text
+formId
+```
+
+Builder-specific state should be re-evaluated.
+
+Examples:
+
+```text
+Selected field
+Open properties panel
+Drag state
+Temporary edits
+```
+
+Do not assume Builder state from Form A remains valid for Form B.
+
+---
+
+# 38. State and i18n
+
+Locale state belongs to the i18n system.
+
+Do not store translated strings as application state merely because they are currently displayed.
+
+For example, do not store:
+
+```text
+buttonLabel = "保存"
+```
+
+as state.
+
+Store the semantic state:
+
+```text
+action = "save"
+```
+
+and translate it through the i18n system.
+
+Follow:
+
+```text
+.cursor/rules/i18n.mdc
+```
+
+---
+
+# 39. State and User Content
+
+User-created Form content must remain separate from UI state and translation state.
+
+For example:
+
+```text
+Form name
+Field label
+Placeholder
+Option label
+```
+
+are domain/user data.
+
+They are not:
+
+```text
+i18n state
+UI state
+navigation state
+```
+
+Do not accidentally overwrite user content when changing application state.
+
+---
+
+# 40. State and UI Components
+
+Presentational components should receive the state they need rather than becoming owners of unrelated domain state.
+
+Prefer:
+
+```text
+Feature
+    ↓
+Presentational Component
+```
+
+over allowing every component to independently access and mutate the same global state.
+
+---
+
+# 41. Custom Hooks
+
+Use custom hooks to encapsulate reusable stateful behavior.
+
+Examples:
+
+```text
+useForm
+useFormBuilder
+useFormSearch
+useFormFilters
+useFormSelection
+```
+
+only when the abstraction is genuinely reusable or improves separation of concerns.
+
+Do not create a hook for every `useState`.
+
+---
+
+# 42. Hook Responsibilities
+
+A custom hook should have a clear responsibility.
+
+Good:
+
+```text
+useFormSearch
+```
+
+manages Form search behavior.
+
+Bad:
+
+```text
+useAppEverything
+```
+
+manages:
+
+```text
+Forms
+Builder
+Theme
+Language
+Dialogs
+Navigation
+Notifications
+```
+
+Avoid catch-all hooks.
+
+---
+
+# 43. State Utilities
+
+Reusable state logic should be centralized when appropriate.
+
+Examples:
+
+```text
+Form selection
+Search parsing
+Filter parsing
+Sort parsing
+Builder selection
+```
+
+Do not duplicate complex state transitions across components.
+
+---
+
+# 44. Reducers
+
+Use `useReducer` when state transitions are complex enough that a reducer improves clarity.
+
+Good candidates may include:
+
+```text
+Complex Builder state
+Multiple related state transitions
+Undoable local state
+Complex form editing workflows
+```
+
+Do not use `useReducer` for trivial state.
+
+For example:
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+```
+
+does not need a reducer.
+
+---
+
+# 45. Reducer Purity
+
+Reducers must be pure.
+
+Do not perform:
+
+```text
+Network requests
+localStorage writes
+Navigation
+DOM manipulation
+Side effects
+```
+
+inside reducers.
+
+Reducers calculate next state.
+
+Side effects belong outside reducers.
+
+---
+
+# 46. Immutable Updates
+
+Do not mutate React state directly.
+
+Bad:
+
+```ts
+form.fields.push(newField);
+```
+
+Prefer immutable updates according to the project's established state architecture.
+
+For example:
+
+```ts
+setForm(prev => ({
+  ...prev,
+  fields: [...prev.fields, newField],
+}));
+```
+
+The exact implementation may differ depending on the state model.
+
+---
+
+# 47. Form Schema Updates
+
+Form Schema updates should be predictable and localized.
+
+Avoid modifying unrelated parts of the Form when changing one field.
+
+For example:
+
+```text
+Update field
+    ↓
+Only affected field changes
+```
+
+Do not reconstruct unrelated application state unnecessarily.
+
+---
+
+# 48. State Normalization
+
+Do not normalize state prematurely.
+
+For small Form data structures, a simple nested representation may be easier to understand.
+
+Introduce normalized state only when:
+
+* The data relationships justify it.
+* Performance requires it.
+* Updates become difficult without it.
+
+Do not introduce normalization merely because it is a common pattern.
+
+---
+
+# 49. Arrays and Field Ordering
+
+Form fields are ordered data.
+
+The ordering of:
+
+```text
+form.fields
+```
+
+must remain explicit.
+
+Do not derive field order from:
+
+```text
+Object.keys()
+```
+
+or unrelated metadata.
+
+When reordering fields, update the canonical Form Schema.
+
+---
+
+# 50. Stable Keys
+
+React list rendering must use stable domain identifiers.
+
+Prefer:
+
+```tsx
+{form.fields.map(field => (
+  <Field key={field.id} />
+))}
+```
+
+Avoid:
+
+```tsx
+{form.fields.map((field, index) => (
+  <Field key={index} />
+))}
+```
+
+when fields can be reordered or deleted.
+
+---
+
+# 51. Drag and Drop State
+
+Drag state is temporary UI state.
+
+Examples:
+
+```text
+Dragging field
+Drop target
+Drag position
+Hovered zone
+```
+
+Do not persist drag state.
+
+Do not add drag state to the Form Schema.
+
+---
+
+# 52. Undo / Redo
+
+Do not implement Undo/Redo infrastructure unless explicitly required.
+
+If introduced later, define the state model before implementation.
+
+Avoid storing an unbounded history of complete Form Schema snapshots without considering memory usage.
+
+---
+
+# 53. Autosave State
+
+Do not introduce autosave state unless autosave is an explicit product requirement.
+
+If autosave is introduced, distinguish:
+
+```text
+Editing
+Saving
+Saved
+Save failed
+```
+
+clearly.
+
+Do not use a single boolean such as:
+
+```text
+isSaving
+```
+
+to represent the entire persistence lifecycle.
+
+---
+
+# 54. Dirty State
+
+Dirty state represents whether the current editable state differs from the persisted state.
+
+Do not manually toggle:
+
+```text
+isDirty = true
+```
+
+for every possible change if the state can be derived reliably.
+
+Prefer comparing or tracking the appropriate version/change boundary according to the architecture.
+
+---
+
+# 55. Save State
+
+The UI should distinguish:
+
+```text
+Saved
+Saving
+Unsaved changes
+Save failed
+```
+
+when these states are relevant.
+
+Do not display "Saved" simply because the user changed local state.
+
+"Saved" should represent successful persistence.
+
+---
+
+# 56. State and Errors
+
+Errors should not be stored as arbitrary strings when a structured representation is more appropriate.
+
+Prefer:
+
+```ts
+{
+  code: "FORM_NOT_FOUND"
+}
+```
+
+over:
+
+```ts
+{
+  message: "フォームが見つかりません"
+}
+```
+
+when the error is a domain/application error.
+
+The UI can translate error codes through i18n.
+
+---
+
+# 57. State and Notifications
+
+Toast state should be managed by the project's notification mechanism.
+
+Do not store every Toast inside unrelated feature state.
+
+For example, avoid:
+
+```text
+FormsState
+  └── toastMessage
+```
+
+when the Toast is application-wide UI feedback.
+
+---
+
+# 58. State and Modals
+
+Modal visibility is generally local UI state.
+
+For example:
+
+```tsx
+const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+```
+
+Do not put every modal into global state.
+
+Use route-based modal state only when the modal should be navigable or bookmarkable.
+
+Follow:
+
+```text
+.cursor/rules/routing.mdc
+```
+
+when deciding.
+
+---
+
+# 59. State and Command Palette
+
+Command Palette open state is generally UI state.
+
+The available commands should derive from the current application context.
+
+Do not duplicate navigation state inside the Command Palette.
+
+The Command Palette should trigger existing actions/routes rather than implementing a second navigation system.
+
+---
+
+# 60. State and Responsive UI
+
+Responsive behavior should normally be derived from CSS and layout rather than React state.
+
+Avoid:
+
+```tsx
+const [isMobile, setIsMobile] = useState(...);
+```
+
+merely to change CSS layout.
+
+Prefer responsive CSS.
+
+Use JavaScript viewport state only when behavior genuinely requires JavaScript.
+
+---
+
+# 61. State and Accessibility
+
+Accessibility state should be handled through appropriate semantic HTML and component behavior.
+
+Do not manually reproduce browser behavior with global state.
+
+Prefer:
+
+```text
+button
+dialog
+details
+nav
+form
+```
+
+and established accessible components.
+
+---
+
+# 62. State and Performance
+
+Do not optimize state management prematurely.
+
+First ensure:
+
+* Correct state ownership
+* Correct component boundaries
+* Minimal duplicated state
+* Appropriate rendering boundaries
+
+Only then optimize when performance evidence justifies it.
+
+---
+
+# 63. Avoid Unnecessary Global Re-renders
+
+Do not place frequently changing state into a global Context if doing so causes unrelated components to re-render.
+
+Examples:
+
+```text
+Drag position
+Selected field
+Text input
+Animation state
+```
+
+should generally remain local or feature-scoped.
+
+---
+
+# 64. Memoization
+
+Do not use:
+
+```text
+useMemo
+useCallback
+React.memo
+```
+
+automatically.
+
+Use memoization when:
+
+* A calculation is genuinely expensive.
+* A component re-render is measurably problematic.
+* Stable references are required for a specific optimization.
+
+Do not add memoization everywhere simply because it appears more performant.
+
+---
+
+# 65. Derived Selectors
+
+When shared state becomes complex, derive small pieces of state rather than exposing the entire state tree to every component.
+
+Prefer:
+
+```text
+selectedField
+fieldCount
+isDirty
+```
+
+over passing a huge mutable state object everywhere.
+
+The exact implementation depends on the chosen state architecture.
+
+---
+
+# 66. State Dependencies
+
+Avoid circular state dependencies.
+
+Bad:
+
+```text
+A updates B
+B updates C
+C updates A
+```
+
+Prefer a clear source of truth:
+
+```text
+Canonical State
+    ↓
+Derived State
+```
+
+---
+
+# 67. Effects and State Synchronization
+
+Do not use `useEffect` to synchronize state that can be derived directly.
+
+Avoid:
+
+```tsx
+useEffect(() => {
+  setFieldCount(form.fields.length);
+}, [form.fields]);
+```
+
+Prefer:
+
+```ts
+const fieldCount = form.fields.length;
+```
+
+Use effects for actual side effects, not ordinary derivation.
+
+---
+
+# 68. Effects and Persistence
+
+If persistence requires an effect, keep the effect boundary explicit.
+
+Do not create chains of effects such as:
+
+```text
+State A
+ ↓
+Effect
+ ↓
+State B
+ ↓
+Effect
+ ↓
+State C
+```
+
+unless there is a strong architectural reason.
+
+Prefer direct event-driven updates or derived state where possible.
+
+---
+
+# 69. State and Data Fetching
+
+Do not reinvent data-fetching state with many local booleans when the project's data-access architecture provides an established pattern.
+
+Follow:
+
+```text
+docs/04_architecture.md
+```
+
+for the canonical data-fetching approach.
+
+Do not introduce a second data-fetching library without an architectural decision.
+
+---
+
+# 70. State and Cloudflare
+
+The application runs on Cloudflare.
+
+Do not assume Node.js-specific state or persistence APIs are available in Worker-executed code.
+
+Keep browser-only state mechanisms inside browser boundaries.
+
+Do not access:
+
+```text
+window
+document
+localStorage
+sessionStorage
+```
+
+from code that may execute in a Worker environment without appropriate guards.
+
+---
+
+# 71. State Testing
+
+Test state behavior through user-visible behavior whenever practical.
+
+Prefer:
+
+```text
+User action
+    ↓
+State changes
+    ↓
+UI updates
+```
+
+over testing internal implementation details such as:
+
+```text
+setState was called exactly once
+```
+
+---
+
+# 72. Testing Form State
+
+Test representative Form Builder behaviors:
+
+```text
+Select field
+Add field
+Delete field
+Reorder field
+Edit field
+Save
+Unsaved changes
+```
+
+when those behaviors exist.
+
+Verify that the resulting UI and persisted Form Schema are correct.
+
+---
+
+# 73. Testing URL State
+
+Test that URL state behaves correctly.
+
+Examples:
+
+```text
+Search
+Filter
+Sort
+Form ID
+Builder / Preview / Code
+```
+
+Verify:
+
+```text
+URL
+    ↔
+Application State
+```
+
+remains consistent.
+
+Follow:
+
+```text
+.cursor/rules/routing.mdc
+```
+
+for routing tests.
+
+---
+
+# 74. Testing Persistence State
+
+When a state change represents persistence:
+
+```text
+Create
+Update
+Delete
+Duplicate
+Save
+```
+
+test the resulting persisted behavior where appropriate.
+
+Do not only test the immediate React UI state.
+
+---
+
+# 75. State Change Workflow
+
+Before introducing new state:
+
+```text
+1. Identify what the state represents.
+        ↓
+2. Determine its lifetime.
+        ↓
+3. Determine who needs to read it.
+        ↓
+4. Determine who needs to modify it.
+        ↓
+5. Decide whether it belongs in:
+   Local State
+   Feature State
+   URL State
+   Shared State
+   Domain State
+   Persistence
+        ↓
+6. Check existing state patterns.
+        ↓
+7. Implement the smallest appropriate solution.
+        ↓
+8. Add tests.
+```
+
+Do not begin by selecting a state-management library.
+
+---
+
+# 76. State Refactoring Workflow
+
+When refactoring existing state:
+
+1. Identify the current source of truth.
+2. Identify duplicated state.
+3. Identify derived state.
+4. Identify state that belongs in the URL.
+5. Identify state that belongs in persistence.
+6. Identify state that can remain local.
+7. Remove unnecessary synchronization.
+8. Update components.
+9. Update tests.
+10. Verify navigation and persistence behavior.
+
+Do not refactor state merely for stylistic reasons if the existing implementation is clear and correct.
+
+---
+
+# 77. State Management Checklist
+
+Before completing a state-related change:
+
+* [ ] State ownership is clear.
+* [ ] State has the smallest appropriate scope.
+* [ ] Local state is used where appropriate.
+* [ ] Props are used where appropriate.
+* [ ] Context is used only when justified.
+* [ ] Global state is avoided unless necessary.
+* [ ] Persisted domain state is separated from UI state.
+* [ ] Form Schema remains the canonical Form state.
+* [ ] Builder UI state is separate from Form Schema.
+* [ ] Derived state is not unnecessarily stored.
+* [ ] URL state follows React Router rules.
+* [ ] Query parameters are used intentionally.
+* [ ] Route parameters are not duplicated unnecessarily.
+* [ ] User-created content is separate from i18n state.
+* [ ] Translation strings are not stored as state.
+* [ ] Temporary UI state is not persisted unnecessarily.
+* [ ] State synchronization is minimized.
+* [ ] Effects are not used for simple derivation.
+* [ ] Immutable updates are used.
+* [ ] Stable IDs are used for dynamic lists.
+* [ ] Loading, success, empty, and error states are distinguishable.
+* [ ] Unsaved changes are handled appropriately.
+* [ ] Tests cover important state behavior.
+* [ ] Existing architecture and documentation are followed.
+
+---
+
+# 78. Final State Management Principles
+
+Always prefer:
+
+```text
+Smallest Appropriate Scope
+    over
+Global State
+
+Single Source of Truth
+    over
+Duplicated State
+
+Derived State
+    over
+Synchronization State
+
+URL State
+    over
+Local State for Shareable Navigation
+
+Domain State
+    over
+UI State for Persistent Data
+
+Local State
+    over
+Global State for Temporary UI
+
+Props
+    over
+Global Store when the relationship is simple
+
+Focused Context
+    over
+One Giant Context
+
+Explicit State Ownership
+    over
+Implicit Shared State
+
+Stable IDs
+    over
+Array Indexes
+
+Pure Derivation
+    over
+Effect-based Synchronization
+
+Simple State
+    over
+Premature State Libraries
+```
+
+State management should make Formly easier to understand, not harder.
+
+Every state value must have a clear owner, lifecycle, source of truth, and reason for existing.
+
+The Form Builder should remain responsive and predictable even as forms become more complex.

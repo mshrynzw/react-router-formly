@@ -1,0 +1,813 @@
+---
+description: Git and commit rules for the Formly project. Apply when creating commits, preparing changes for commit, reviewing staged changes, creating branches, reviewing diffs, or generating commit messages.
+alwaysApply: true
+---
+
+# Git Rules
+
+Git history should remain clean, understandable, and useful for future development.
+
+Follow the project-wide rules defined in:
+
+`AGENTS.md`
+
+The repository should clearly communicate the development history and intent of the project.
+
+---
+
+# 1. Core Principles
+
+- Keep commits focused and logically cohesive.
+- Do not mix unrelated changes in a single commit.
+- Use Conventional Commits.
+- Write commit messages that clearly describe the purpose of the change.
+- Do not commit unfinished work unless explicitly requested.
+- Do not commit secrets or sensitive information.
+- Do not rewrite shared Git history unless explicitly requested.
+- Do not force push unless explicitly requested.
+- Do not modify unrelated files simply to make a commit cleaner.
+- Never overwrite or discard existing user changes without explicit permission.
+
+---
+
+# 2. Conventional Commits
+
+Use the following commit types:
+
+```text
+feat:
+fix:
+refactor:
+test:
+docs:
+style:
+perf:
+build:
+ci:
+chore:
+````
+
+Prefer the most specific type.
+
+Examples:
+
+```text
+feat: add form builder
+fix: prevent invalid form field configuration
+refactor: extract form storage repository
+test: add form schema validation tests
+docs: update routing architecture
+style: refine builder panel spacing
+perf: optimize form preview rendering
+build: update React Router dependency
+ci: add Playwright workflow
+chore: update development tooling
+```
+
+---
+
+# 3. Commit Message Format
+
+Use:
+
+```text
+<type>: <short description>
+```
+
+Example:
+
+```text
+feat: add form builder field palette
+```
+
+Keep the subject concise.
+
+Prefer imperative, action-oriented descriptions.
+
+Good:
+
+```text
+feat: add form creation flow
+fix: prevent duplicate form fields
+refactor: extract form code generator
+test: add form storage tests
+docs: update form builder architecture
+```
+
+Avoid:
+
+```text
+feat: added form creation
+fix: some bug
+update: changes
+work: formly
+final
+```
+
+Do not use vague commit messages.
+
+---
+
+# 4. Scope
+
+A commit should represent one logical change.
+
+Good:
+
+```text
+feat: add form creation flow
+```
+
+followed by:
+
+```text
+test: add form creation tests
+```
+
+when intentionally separated.
+
+It is also acceptable to include tests in the same cohesive implementation:
+
+```text
+feat: add form creation flow and tests
+```
+
+Avoid combining unrelated changes:
+
+```text
+feat: add builder, fix settings, change colors, update routing
+```
+
+---
+
+# 5. Commit Size
+
+Prefer small, reviewable commits.
+
+A commit should ideally be understandable without inspecting unrelated changes.
+
+Do not split commits artificially when the changes must work together.
+
+The goal is:
+
+```text
+Small
++
+Cohesive
++
+Working
+=
+Good Commit
+```
+
+---
+
+# 6. Before Committing
+
+Before creating a commit:
+
+1. Review changed files.
+2. Check the diff.
+3. Remove accidental changes.
+4. Check for secrets.
+5. Run relevant tests.
+6. Run TypeScript type checking.
+7. Run lint.
+8. Verify documentation is synchronized.
+9. Confirm the commit contains only the intended changes.
+
+Recommended commands:
+
+```bash
+git status
+git diff
+```
+
+Review staged changes with:
+
+```bash
+git diff --staged
+```
+
+Then run the project's validation commands defined in `package.json`.
+
+---
+
+# 7. Never Commit Secrets
+
+Never commit:
+
+```text
+.env
+.env.local
+.env.production
+.env.*.local
+```
+
+or:
+
+```text
+API keys
+Access tokens
+Passwords
+Private keys
+Service credentials
+Authentication secrets
+Cloudflare credentials
+```
+
+Never hardcode secrets into:
+
+* React components.
+* Configuration files.
+* Cloudflare Worker code.
+* Tests.
+* Documentation.
+* Example code.
+
+If a secret is accidentally staged, remove it before committing.
+
+Do not assume `.gitignore` alone is sufficient.
+
+---
+
+# 8. Environment Files
+
+Environment configuration should use example files when appropriate.
+
+For example:
+
+```text
+.env.example
+```
+
+may document required environment variables.
+
+Example:
+
+```text
+VITE_PUBLIC_EXAMPLE=
+```
+
+Example files must never contain real credentials.
+
+Never commit actual secret values.
+
+---
+
+# 9. Generated Files
+
+Do not commit unnecessary generated files.
+
+Do not commit:
+
+```text
+node_modules/
+dist/
+build/
+coverage/
+temporary files
+debug output
+```
+
+unless the project explicitly requires them.
+
+Follow `.gitignore`.
+
+Generated files should only be committed when they are intentionally part of the project.
+
+---
+
+# 10. UI Reference Files
+
+The project may contain design prototypes and UI reference materials.
+
+Reference files may be committed when they are intentionally part of the project.
+
+Do not commit:
+
+* Temporary Claude output that is no longer used.
+* Temporary screenshots.
+* Debug exports.
+* Unnecessary generated assets.
+
+The canonical UI implementation should remain in the React application.
+
+UI reference files should not be mistaken for production implementation.
+
+---
+
+# 11. Documentation Changes
+
+When implementation changes documented behavior, include the appropriate documentation update.
+
+Examples:
+
+```text
+feat: add form builder
+docs: update form builder design
+```
+
+If documentation is part of the same cohesive implementation, it may be included in the feature commit.
+
+Do not intentionally leave documentation outdated.
+
+---
+
+# 12. Architecture Changes
+
+Architecture changes require additional care.
+
+If a change affects:
+
+* React Router architecture
+* Route structure
+* Component architecture
+* State management
+* Form schema
+* Code generation architecture
+* Persistence
+* Cloudflare infrastructure
+* Deployment
+* Project folder structure
+* Major dependencies
+
+review and update the relevant documentation.
+
+At minimum, review:
+
+```text
+docs/04_architecture.md
+docs/development-log.md
+```
+
+Also review the relevant documentation under:
+
+```text
+docs/
+```
+
+Do not commit a significant architectural change while leaving the canonical architecture documentation outdated.
+
+---
+
+# 13. Routing Changes
+
+When changing React Router routes, review:
+
+```text
+docs/04_architecture.md
+docs/screen-list.md
+```
+
+and the relevant screen design documentation.
+
+Examples of routing changes:
+
+```text
+/forms
+/forms/new
+/forms/:formId
+/forms/:formId/builder
+/forms/:formId/preview
+/forms/:formId/code
+/settings
+```
+
+If a route is added, removed, renamed, or structurally changed, update the relevant documentation.
+
+---
+
+# 14. Form Schema Changes
+
+Form schema changes require additional care because the schema is the source of truth for:
+
+```text
+Builder
+Preview
+Code Generator
+Persistence
+```
+
+When changing the form schema:
+
+1. Review the existing schema.
+2. Review the relevant architecture documentation.
+3. Update the relevant types.
+4. Update persistence handling.
+5. Update Builder behavior.
+6. Update Preview behavior.
+7. Update code generation when necessary.
+8. Update tests.
+9. Update documentation.
+
+Do not change the schema in one feature while leaving other consumers incompatible.
+
+---
+
+# 15. UI Changes
+
+For UI changes, review:
+
+```text
+docs/07_component_design.md
+docs/08_ui-guideline.md
+```
+
+and the relevant screen design documentation.
+
+Also review the UI reference prototype when applicable.
+
+Do not introduce arbitrary design values when existing design tokens or components should be used.
+
+Prefer existing:
+
+* Design tokens.
+* Components.
+* Layouts.
+* Spacing rules.
+* Typography.
+* Colors.
+* Interaction patterns.
+
+---
+
+# 16. Tests
+
+New functionality should include appropriate tests before committing.
+
+Tests belong under:
+
+```text
+tests/
+├── unit/
+├── integration/
+└── e2e/
+```
+
+Use:
+
+* Unit tests for pure functions and domain logic.
+* Integration tests for feature and component behavior.
+* E2E tests for important user journeys.
+
+Do not commit intentionally failing tests unless explicitly requested.
+
+Do not modify tests solely to make them pass without investigating the underlying problem.
+
+---
+
+# 17. Staging
+
+Do not blindly stage every file.
+
+Avoid:
+
+```bash
+git add .
+```
+
+when unrelated changes may exist.
+
+Review the working tree first:
+
+```bash
+git status
+```
+
+Then stage only the intended files when appropriate.
+
+Before committing:
+
+```bash
+git diff --staged
+```
+
+must contain only the intended changes.
+
+---
+
+# 18. Existing User Changes
+
+Never overwrite or discard user changes without explicit permission.
+
+If unrelated local changes already exist:
+
+* Leave them untouched.
+* Do not reset them.
+* Do not checkout them away.
+* Do not include them in the commit unless requested.
+
+If the user's changes conflict with the requested task, explain the conflict.
+
+Never use Git commands to discard work merely to make the working tree clean.
+
+---
+
+# 19. Branches
+
+Use feature-oriented branches when working with multiple changes.
+
+Examples:
+
+```text
+feature/form-builder
+feature/form-preview
+feature/code-generator
+feature/form-templates
+feature/i18n
+feature/settings
+fix/form-persistence
+fix/mobile-builder
+refactor/form-storage
+```
+
+Avoid vague branch names such as:
+
+```text
+test
+work
+update
+new
+tmp
+aaa
+```
+
+Keep branch names short and descriptive.
+
+---
+
+# 20. Pull Requests
+
+When creating a Pull Request, include:
+
+* Summary
+* Main changes
+* Tests performed
+* Documentation changes
+* Known limitations
+* Breaking changes, if any
+
+Keep Pull Requests focused.
+
+Do not combine unrelated features into one Pull Request.
+
+---
+
+# 21. Breaking Changes
+
+Clearly identify breaking changes.
+
+Examples:
+
+```text
+BREAKING CHANGE: change form schema structure
+```
+
+or use an appropriate Conventional Commit scope when the project adopts scoped commits.
+
+Do not hide breaking changes inside generic commits.
+
+Form schema changes should be treated as potentially breaking changes because they may affect:
+
+* Existing saved forms.
+* Builder.
+* Preview.
+* Code generation.
+* localStorage data.
+
+---
+
+# 22. Rewriting History
+
+Do not use destructive Git commands without explicit permission.
+
+Avoid:
+
+```bash
+git reset --hard
+git clean -fd
+git push --force
+git push --force-with-lease
+```
+
+unless explicitly requested and the consequences are understood.
+
+Never discard user work to solve a Git problem.
+
+---
+
+# 23. Merge and Rebase
+
+Prefer the repository's established workflow.
+
+Do not automatically rebase or merge branches unless requested.
+
+When resolving conflicts:
+
+1. Understand both changes.
+2. Preserve intended behavior.
+3. Run tests.
+4. Run type checking.
+5. Run lint.
+6. Review the resulting diff.
+
+Never resolve conflicts by blindly choosing one side.
+
+---
+
+# 24. Commit History
+
+Commit history should communicate development intent.
+
+A reviewer should be able to understand:
+
+```text
+What changed?
+Why did it change?
+Which feature or problem does it belong to?
+```
+
+from the commit history.
+
+Avoid meaningless commits such as:
+
+```text
+update
+fix
+changes
+work
+test
+aaa
+final
+final2
+```
+
+---
+
+# 25. Automated Commit Generation
+
+When asked to generate a commit message:
+
+1. Inspect the actual diff.
+2. Identify the primary purpose of the changes.
+3. Choose the appropriate Conventional Commit type.
+4. Generate a concise message.
+5. Do not claim changes that are not present.
+
+Never generate a commit message based only on the user's description when the actual diff is available.
+
+---
+
+# 26. Commit Message Examples
+
+## Feature
+
+```text
+feat: add form builder field palette
+```
+
+## Bug Fix
+
+```text
+fix: prevent duplicate form field IDs
+```
+
+## Refactoring
+
+```text
+refactor: extract form storage repository
+```
+
+## Tests
+
+```text
+test: add form schema validation tests
+```
+
+## Documentation
+
+```text
+docs: update React Router architecture
+```
+
+## Performance
+
+```text
+perf: reduce unnecessary builder renders
+```
+
+## Styling
+
+```text
+style: refine form builder spacing
+```
+
+## Build
+
+```text
+build: update React Router dependency
+```
+
+## CI
+
+```text
+ci: add Playwright workflow
+```
+
+## Maintenance
+
+```text
+chore: update development tooling
+```
+
+---
+
+# 27. Commit Permission
+
+Do not create a Git commit unless the user explicitly asks you to commit.
+
+Do not push to a remote repository unless the user explicitly asks you to push.
+
+Do not force push.
+
+Generating a commit message and creating a commit are separate actions.
+
+If the user asks:
+
+> "What should the commit message be?"
+
+only generate the commit message.
+
+Do not create the commit.
+
+If the user asks:
+
+> "Commit these changes."
+
+review the changes first, then create the commit.
+
+If the user asks:
+
+> "Commit and push."
+
+review the changes, create the commit, and push only to the intended remote and branch.
+
+---
+
+# 28. Final Commit Checklist
+
+Before committing:
+
+* [ ] The commit contains one logical change.
+* [ ] No unrelated files are included.
+* [ ] No secrets are included.
+* [ ] No unnecessary generated artifacts are included.
+* [ ] Relevant tests pass.
+* [ ] Type checking passes.
+* [ ] Lint passes.
+* [ ] Formatting is correct.
+* [ ] Documentation is synchronized.
+* [ ] React Router documentation is synchronized when routes change.
+* [ ] Form schema documentation is synchronized when the schema changes.
+* [ ] UI documentation is synchronized when the design system changes.
+* [ ] The commit message follows Conventional Commits.
+* [ ] The commit message accurately describes the actual changes.
+* [ ] User changes were not overwritten or discarded.
+* [ ] The staged diff contains only the intended changes.
+
+---
+
+# 29. Final Git Principles
+
+Always prefer:
+
+```text
+Focused commits
+        over
+Large mixed commits
+
+Clear history
+        over
+Meaningless history
+
+Reviewed diffs
+        over
+Blind staging
+
+Safe Git operations
+        over
+Destructive shortcuts
+
+Accurate messages
+        over
+Vague messages
+
+Working commits
+        over
+Broken commits
+
+Explicit permission
+        over
+Assumed permission
+```

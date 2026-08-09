@@ -1,0 +1,611 @@
+---
+description: Architecture rules for the Formly project. Apply when creating or modifying application architecture, routes, features, components, layouts, services, repositories, state management, persistence, or infrastructure.
+alwaysApply: true
+---
+
+# Architecture Rules
+
+You are working on a production-oriented Form Builder application called Formly.
+
+The canonical architecture is defined in:
+
+`docs/04_architecture.md`
+
+Always read and follow that document when making architectural decisions.
+
+If the implementation and documentation conflict, do not silently choose one.
+Identify the conflict and update the appropriate documentation before proceeding.
+
+---
+
+# 1. Core Architecture Principles
+
+- Follow Feature First Architecture.
+- Keep responsibilities clearly separated.
+- Prefer simple and maintainable solutions.
+- Avoid overengineering.
+- Avoid unnecessary abstractions.
+- Avoid circular dependencies.
+- Prefer composition over inheritance.
+- Keep business logic independent from presentation whenever practical.
+- Keep components focused on a single responsibility.
+- Reuse existing patterns before introducing new ones.
+
+The architecture should prioritize:
+
+1. Correctness
+2. Maintainability
+3. Type safety
+4. Testability
+5. Performance
+6. Simplicity
+
+---
+
+# 2. React Router
+
+React Router v8 is the canonical routing solution for this project.
+
+Always use React Router for application navigation.
+
+Do not implement application navigation using:
+
+- `window.location`
+- `window.history`
+- manual URL parsing
+- custom routing logic
+- application state used as a replacement for routes
+
+Use:
+
+- `createBrowserRouter`
+- `RouterProvider`
+- `Route`
+- `Link`
+- `NavLink`
+- `Outlet`
+- `useParams`
+- `useNavigate`
+- `useLocation`
+
+when appropriate.
+
+---
+
+# 3. Route Architecture
+
+The application uses route-based architecture.
+
+The canonical route structure is:
+
+```text
+/
+├── /forms
+├── /forms/new
+├── /forms/:formId
+│   ├── /builder
+│   ├── /preview
+│   └── /code
+├── /templates
+└── /settings
+````
+
+Keep route definitions centralized and easy to understand.
+
+Route components should primarily be responsible for:
+
+* Composing layouts.
+* Connecting route parameters to features.
+* Rendering feature components.
+* Handling route-specific states.
+* Connecting route-level data to the UI.
+
+Route components must not contain large amounts of business logic.
+
+---
+
+# 4. Nested Routes
+
+Formly uses nested routes for form-related screens.
+
+Prefer:
+
+```text
+/forms/:formId
+/forms/:formId/builder
+/forms/:formId/preview
+/forms/:formId/code
+```
+
+Use a shared parent layout for these routes.
+
+Use `Outlet` to render nested route content.
+
+For example:
+
+```text
+FormLayout
+└── Outlet
+    ├── Builder
+    ├── Preview
+    └── Code
+```
+
+Do not duplicate the same form layout implementation across Builder, Preview, and Code.
+
+---
+
+# 5. Dynamic Routes
+
+Use dynamic route parameters for resources.
+
+Example:
+
+```text
+/forms/:formId/builder
+```
+
+The `formId` must be obtained through React Router.
+
+Prefer:
+
+```ts
+const { formId } = useParams();
+```
+
+Do not manually extract IDs from `window.location`.
+
+Route parameters should identify resources, not temporary UI state.
+
+---
+
+# 6. Feature First Architecture
+
+Organize application code primarily by feature and responsibility.
+
+Prefer a structure similar to:
+
+```text
+src/
+├── app/
+│   └── router.tsx
+│
+├── routes/
+│
+├── layouts/
+│
+├── features/
+│   ├── forms/
+│   ├── builder/
+│   ├── preview/
+│   ├── code/
+│   ├── templates/
+│   └── settings/
+│
+├── components/
+│   ├── ui/
+│   └── shared/
+│
+├── hooks/
+│
+├── services/
+│
+├── repositories/
+│
+├── lib/
+│
+└── types/
+```
+
+Feature-specific code should remain inside its feature whenever practical.
+
+For example:
+
+```text
+features/
+└── builder/
+    ├── components/
+    ├── hooks/
+    ├── services/
+    ├── types/
+    └── utils/
+```
+
+Do not place unrelated feature logic into global directories.
+
+---
+
+# 7. Routes vs Features
+
+Routes are responsible for composition.
+
+Features are responsible for application functionality.
+
+Prefer:
+
+```text
+Route
+  ↓
+Layout
+  ↓
+Feature
+  ↓
+Feature Components
+  ↓
+Hooks / Services / Repositories
+```
+
+Avoid:
+
+```text
+Route
+  ↓
+Large component
+  ↓
+Business logic
+  ↓
+Persistence
+  ↓
+UI
+```
+
+A route component should not become a monolithic application component.
+
+---
+
+# 8. Layouts
+
+Use layouts for shared UI structures.
+
+Examples:
+
+```text
+AppLayout
+FormLayout
+SettingsLayout
+```
+
+Shared navigation, headers, sidebars, and route-level shells should be implemented in layouts rather than duplicated across pages.
+
+Use React Router's nested routes and `Outlet` where appropriate.
+
+---
+
+# 9. Components
+
+Components should have clear responsibilities.
+
+Prefer small, composable components.
+
+Avoid components that simultaneously:
+
+* Render a large UI tree.
+* Manage persistence.
+* Perform complex business logic.
+* Transform domain data.
+* Manage unrelated application state.
+* Perform navigation for unrelated features.
+
+Before creating a new component:
+
+1. Search for an existing reusable component.
+2. Check `components/ui`.
+3. Check the relevant feature directory.
+4. Reuse or extend an existing component when appropriate.
+
+Do not create abstractions solely to reduce the number of lines in a file.
+
+---
+
+# 10. Business Logic
+
+Keep business logic outside presentational components whenever practical.
+
+Prefer:
+
+```text
+Component
+    ↓
+Hook / Service
+    ↓
+Domain Logic
+```
+
+Business rules should not be duplicated across components.
+
+Prefer pure functions for deterministic transformations.
+
+Examples include:
+
+* Form validation.
+* Field manipulation.
+* Form schema transformation.
+* HTML generation.
+* CSS generation.
+* JavaScript generation.
+* Form statistics.
+
+---
+
+# 11. State Management
+
+Separate state by responsibility.
+
+Use local React state for temporary UI state.
+
+Examples:
+
+* Modal visibility.
+* Dropdown state.
+* Selected tab.
+* Temporary input state.
+* Hover state.
+
+Use feature-level state for feature-specific state.
+
+Use shared state only when multiple unrelated components genuinely require the same state.
+
+Do not create a global state store merely because the application has multiple components.
+
+Do not store all application state in a single global store.
+
+---
+
+# 12. Persistence
+
+Formly currently uses browser-side persistence.
+
+The primary persistence mechanism is `localStorage`.
+
+Do not access `localStorage` directly from many unrelated components.
+
+Centralize persistence logic.
+
+Prefer:
+
+```text
+Component
+    ↓
+Hook / Service
+    ↓
+Repository / Storage
+    ↓
+localStorage
+```
+
+Persist domain data rather than temporary UI state.
+
+Persisted data must be serializable.
+
+Do not persist:
+
+* DOM elements.
+* React components.
+* functions.
+* temporary animation state.
+* transient modal state.
+
+---
+
+# 13. Form Domain Architecture
+
+Forms are the primary domain of this application.
+
+The canonical data flow is:
+
+```text
+Form Schema
+    ↓
+Builder
+    ↓
+Form State
+    ↓
+Preview
+    ↓
+Code Generator
+    ↓
+HTML / CSS / JavaScript
+```
+
+The form schema is the source of truth.
+
+Builder, Preview, and Code generation must derive their output from the same form schema.
+
+Do not maintain separate independent representations of the same form.
+
+Do not hardcode Builder-specific form data into Preview.
+
+Do not hardcode Preview-specific form data into Code generation.
+
+---
+
+# 14. Form Builder
+
+The Form Builder is a feature, not a separate application.
+
+Prefer:
+
+```text
+features/
+└── builder/
+    ├── components/
+    ├── hooks/
+    ├── services/
+    ├── types/
+    └── utils/
+```
+
+Builder UI state must be separated from persisted form data.
+
+Examples of UI-only state:
+
+* Selected field.
+* Drag state.
+* Active panel.
+* Preview mode.
+* Property panel visibility.
+
+These should not automatically become part of the persisted form schema.
+
+---
+
+# 15. Code Generation
+
+Generated HTML, CSS, and JavaScript must be derived from the form schema.
+
+Prefer dedicated services or pure functions for generation.
+
+Example:
+
+```text
+Form Schema
+    ↓
+HTML Generator
+    ↓
+HTML
+
+Form Schema
+    ↓
+CSS Generator
+    ↓
+CSS
+
+Form Schema
+    ↓
+JavaScript Generator
+    ↓
+JavaScript
+```
+
+Do not generate code directly inside presentational components.
+
+Do not duplicate code-generation logic between Preview and Code screens.
+
+---
+
+# 16. TypeScript
+
+Use TypeScript strict mode.
+
+* Never use `any`.
+* Avoid unsafe type assertions.
+* Keep domain types explicit.
+* Prefer discriminated unions for field types.
+* Do not duplicate equivalent domain types.
+* Keep types close to the feature that owns them unless they are genuinely shared.
+
+Form field definitions must be type-safe.
+
+---
+
+# 17. Error Handling
+
+Provide route-level error handling where appropriate.
+
+Expected application errors should produce user-friendly error states.
+
+Do not silently swallow errors.
+
+Do not expose internal implementation details to users.
+
+Keep error handling separate from presentation when practical.
+
+---
+
+# 18. Cloudflare
+
+Cloudflare Workers is the deployment target.
+
+Do not assume Node.js-only APIs are available at runtime.
+
+Avoid unnecessary dependencies on Node.js-specific modules.
+
+Keep Cloudflare-specific implementation details isolated from UI components.
+
+Do not hardcode environment variables or secrets.
+
+Use Wrangler for Cloudflare-specific development and deployment tasks.
+
+Browser-specific APIs such as `localStorage` must remain in browser-side code.
+
+---
+
+# 19. Documentation
+
+The `docs/` directory is part of the project's architecture.
+
+Before making significant architectural changes:
+
+1. Read the relevant documentation.
+2. Determine whether the existing architecture already supports the change.
+3. Prefer existing patterns.
+4. Update the relevant documentation if the architecture changes.
+
+At minimum, review:
+
+```text
+docs/01_requirements.md
+docs/02_basic_design.md
+docs/03_detail-design/
+docs/04_architecture.md
+docs/screen-list.md
+```
+
+Do not silently introduce architectural patterns that contradict the documentation.
+
+---
+
+# 20. Before Creating New Architecture
+
+Before introducing a new:
+
+* Library
+* State management solution
+* Abstraction layer
+* Service
+* Repository
+* Global component
+* Routing pattern
+* Data model
+
+first check whether an existing solution already exists in the project.
+
+Prefer extending an existing pattern over creating a competing pattern.
+
+If a new architectural pattern is necessary, explain the reason and update the relevant documentation.
+
+---
+
+# 21. Avoid Overengineering
+
+Do not introduce architecture merely because it is technically possible.
+
+Avoid:
+
+* Unnecessary global state.
+* Unnecessary services.
+* Unnecessary repositories.
+* Excessive abstraction.
+* Duplicate component systems.
+* Premature optimization.
+* Framework-specific patterns that are not required.
+
+The simplest architecture that satisfies the requirements is preferred.
+
+---
+
+# 22. Architecture Priority
+
+When architectural decisions conflict, prioritize:
+
+1. Canonical project documentation.
+2. Correctness.
+3. Maintainability.
+4. Type safety.
+5. Testability.
+6. Performance.
+7. Simplicity.
+
+When uncertain, inspect the existing code and documentation before creating a new pattern.
+
+Do not guess when the repository already contains an established pattern.

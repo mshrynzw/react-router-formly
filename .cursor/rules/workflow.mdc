@@ -1,0 +1,2212 @@
+---
+description: Development workflow rules for the Formly project. Apply when planning, implementing, modifying, debugging, testing, reviewing, documenting, committing, or deploying features and fixes.
+alwaysApply: true
+---
+
+# Workflow Rules
+
+You are working on Formly, a production-oriented Form Builder application.
+
+Follow a consistent development workflow.
+
+Do not immediately start writing code when a task is ambiguous or when the required architecture has not been established.
+
+Prefer:
+
+```text
+Understand
+    ↓
+Plan
+    ↓
+Document
+    ↓
+Implement
+    ↓
+Test
+    ↓
+Review
+    ↓
+Document Changes
+    ↓
+Commit
+````
+
+over:
+
+```text
+Request
+    ↓
+Immediately Write Code
+```
+
+---
+
+# 1. Source of Truth
+
+Before making implementation decisions, consult the appropriate project documentation.
+
+Important documents include:
+
+```text
+AGENTS.md
+
+docs/01_product.md
+docs/02_roadmap.md
+docs/03_screen-list.md
+docs/04_architecture.md
+docs/05_database.md
+docs/06_api.md
+docs/07_development-log.md
+docs/08_ui-guideline.md
+docs/09_component-design.md
+```
+
+Use the actual filenames currently present in the repository.
+
+Do not invent documentation filenames.
+
+If the documentation structure changes, update references in the rules accordingly.
+
+---
+
+# 2. Cursor Rules
+
+Before implementing a feature, follow the relevant rules under:
+
+```text
+.cursor/rules/
+```
+
+Important rules include:
+
+```text
+architecture.mdc
+coding.mdc
+cloudflare.mdc
+forms.mdc
+git.mdc
+i18n.mdc
+performance.mdc
+routing.mdc
+security.mdc
+state-management.mdc
+testing.mdc
+ui.mdc
+```
+
+Do not treat these rules as optional suggestions.
+
+They define the project's development conventions.
+
+---
+
+# 3. Understand Before Implementing
+
+Before writing code:
+
+1. Understand the user's requested behavior.
+2. Identify the affected feature.
+3. Identify affected routes.
+4. Identify affected components.
+5. Identify affected state.
+6. Identify affected API/data access.
+7. Identify security implications.
+8. Identify testing requirements.
+9. Determine whether documentation must be updated.
+
+Do not start implementation before understanding the scope.
+
+---
+
+# 4. Check Existing Code First
+
+Before creating a new file or component:
+
+1. Search for existing implementations.
+2. Search for similar components.
+3. Search for existing utilities.
+4. Search for existing services.
+5. Search for existing validation schemas.
+6. Search for existing hooks.
+7. Search for existing types.
+
+Do not create duplicate functionality when an appropriate implementation already exists.
+
+---
+
+# 5. Reuse Existing Patterns
+
+Prefer existing project patterns.
+
+For example:
+
+```text
+Existing Form Component
+        ↓
+Reuse Pattern
+        ↓
+New Form Component
+```
+
+rather than:
+
+```text
+Existing Form Component
+        ↓
+Completely New Architecture
+```
+
+Consistency is more important than personal preference.
+
+---
+
+# 6. Avoid Unnecessary Refactoring
+
+Do not refactor unrelated code while implementing a feature.
+
+If a feature requires a small refactor:
+
+1. Keep the refactor focused.
+2. Explain why it is necessary.
+3. Test the affected behavior.
+
+Do not turn:
+
+```text
+Small Feature
+```
+
+into:
+
+```text
+Small Feature
++
+Large Refactoring
++
+Architecture Rewrite
+```
+
+without explicit justification.
+
+---
+
+# 7. Feature Planning
+
+For non-trivial features, define:
+
+```text
+Goal
+Requirements
+Affected Routes
+Affected Components
+State Changes
+Data Changes
+API Changes
+Security Considerations
+Testing Strategy
+Documentation Changes
+```
+
+Keep the plan proportional to the complexity of the task.
+
+Do not create excessive planning documents for trivial changes.
+
+---
+
+# 8. Documentation Before Implementation
+
+When a new feature changes product behavior or architecture:
+
+```text
+Update Documentation
+        ↓
+Implement Feature
+```
+
+rather than:
+
+```text
+Implement Feature
+        ↓
+Maybe Update Documentation Later
+```
+
+This follows the project's `AGENTS.md` requirement:
+
+```text
+Before implementing new features, update docs first.
+```
+
+---
+
+# 9. When Documentation Must Be Updated
+
+Update documentation when changing:
+
+* Product behavior
+* Screen structure
+* Route structure
+* Architecture
+* Database schema
+* API behavior
+* UI design system
+* Component architecture
+* Security architecture
+* Cloudflare infrastructure
+* Development workflow
+
+Do not update documentation for every trivial implementation detail.
+
+---
+
+# 10. Product Documentation
+
+If the feature changes what Formly does from a user's perspective, review:
+
+```text
+docs/01_product.md
+```
+
+Examples:
+
+```text
+New feature
+New Form capability
+New sharing behavior
+New export behavior
+New Builder capability
+```
+
+---
+
+# 11. Roadmap Documentation
+
+If the feature represents a planned product milestone, review:
+
+```text
+docs/02_roadmap.md
+```
+
+Do not add every small bug fix to the roadmap.
+
+---
+
+# 12. Screen Documentation
+
+If a feature introduces or substantially changes a screen, review:
+
+```text
+docs/03_screen-list.md
+```
+
+Ensure route and screen documentation remain consistent.
+
+---
+
+# 13. Architecture Documentation
+
+If implementation changes:
+
+```text
+Routing
+State management
+Component architecture
+Data access
+Authentication
+Authorization
+Infrastructure
+Cloudflare integration
+```
+
+review:
+
+```text
+docs/04_architecture.md
+```
+
+Architecture changes must not remain undocumented.
+
+---
+
+# 14. Database Documentation
+
+If the database schema or persistence behavior changes:
+
+```text
+docs/05_database.md
+```
+
+must be reviewed and updated.
+
+Include relevant:
+
+```text
+Tables
+Relationships
+Indexes
+Constraints
+Migrations
+Ownership
+```
+
+where appropriate.
+
+---
+
+# 15. API Documentation
+
+If API behavior changes:
+
+```text
+docs/06_api.md
+```
+
+must be reviewed and updated.
+
+Document relevant:
+
+```text
+Endpoint
+Method
+Request
+Response
+Validation
+Authentication
+Authorization
+Errors
+```
+
+Do not allow API behavior and documentation to drift apart.
+
+---
+
+# 16. Development Log
+
+Significant development decisions should be recorded in:
+
+```text
+docs/07_development-log.md
+```
+
+Use the development log for decisions such as:
+
+```text
+Architecture changes
+Technology decisions
+Important trade-offs
+Security decisions
+Performance decisions
+Major bug fixes
+Infrastructure changes
+```
+
+Do not record every tiny implementation detail.
+
+---
+
+# 17. UI Documentation
+
+When changing UI behavior, review:
+
+```text
+docs/08_ui-guideline.md
+docs/09_component-design.md
+```
+
+Follow the established:
+
+```text
+Colors
+Typography
+Spacing
+Radius
+Components
+Responsive behavior
+Accessibility
+States
+```
+
+Do not introduce a new visual language for a single screen.
+
+---
+
+# 18. Requirement Breakdown
+
+Before implementation, convert the request into concrete requirements.
+
+Example:
+
+```text
+User can create a Form.
+
+Requirements:
+
+- Form has a name.
+- Name is required.
+- Name has a maximum length.
+- Form is persisted.
+- User can access their own Form.
+- Unauthorized access is rejected.
+- UI shows validation errors.
+- Tests cover success and failure.
+```
+
+Do not leave important requirements implicit.
+
+---
+
+# 19. Define Acceptance Criteria
+
+For non-trivial features, define observable acceptance criteria.
+
+Example:
+
+```text
+Given an authenticated user
+When they create a valid Form
+Then the Form is persisted
+And the user is redirected to the Form Builder.
+```
+
+Include failure cases where appropriate.
+
+Acceptance criteria should be testable.
+
+---
+
+# 20. Implementation Order
+
+Prefer implementing in logical layers.
+
+Typical order:
+
+```text
+1. Documentation
+2. Domain / Types
+3. Validation
+4. Data Access
+5. Service / Application Logic
+6. Route / API
+7. State
+8. UI
+9. Tests
+10. Documentation Review
+```
+
+Do not force this exact order when the architecture requires a different sequence.
+
+---
+
+# 21. Domain First
+
+Business rules should not depend directly on UI components.
+
+For example:
+
+```text
+Form validation
+Form schema manipulation
+Form generation
+Form business rules
+```
+
+should remain reusable independently of the UI where practical.
+
+---
+
+# 22. Validation Before Persistence
+
+Never persist unvalidated external input.
+
+Prefer:
+
+```text
+Request
+ ↓
+Validation
+ ↓
+Authorization
+ ↓
+Business Logic
+ ↓
+Persistence
+```
+
+Follow:
+
+```text
+.cursor/rules/security.mdc
+```
+
+for security requirements.
+
+---
+
+# 23. API Implementation
+
+When implementing an API:
+
+1. Define request requirements.
+2. Define validation.
+3. Define authorization.
+4. Define business behavior.
+5. Define response shape.
+6. Define error behavior.
+7. Write tests.
+8. Update API documentation.
+
+Do not implement the endpoint first and document it afterward.
+
+---
+
+# 24. UI Implementation
+
+When implementing UI:
+
+1. Check `docs/08_ui-guideline.md`.
+2. Check `docs/09_component-design.md`.
+3. Reuse existing components.
+4. Define loading state.
+5. Define empty state.
+6. Define error state.
+7. Define success state where appropriate.
+8. Consider responsive behavior.
+9. Consider accessibility.
+10. Add tests.
+
+---
+
+# 25. Form Builder Workflow
+
+For Builder features:
+
+```text
+User Interaction
+        ↓
+Local State / Form State
+        ↓
+Validation
+        ↓
+Canonical Form Schema
+        ↓
+Persistence
+        ↓
+Preview / Generated Code
+```
+
+Do not create separate competing representations of the Form Schema without a clear reason.
+
+Follow:
+
+```text
+.cursor/rules/forms.mdc
+.cursor/rules/state-management.mdc
+```
+
+---
+
+# 26. Form Schema Changes
+
+When changing the Form Schema:
+
+1. Update the schema definition.
+2. Update validation.
+3. Update affected UI.
+4. Update generator behavior.
+5. Update Preview behavior.
+6. Update persistence if necessary.
+7. Add tests.
+8. Update database/API documentation if applicable.
+
+Do not update only the Builder UI.
+
+---
+
+# 27. Generated Code Changes
+
+When changing HTML/CSS/JavaScript generation:
+
+1. Identify the input schema.
+2. Define expected output.
+3. Define escaping rules.
+4. Check security implications.
+5. Update generator.
+6. Update Preview if necessary.
+7. Add output tests.
+8. Test malicious input.
+
+Follow:
+
+```text
+.cursor/rules/security.mdc
+```
+
+and:
+
+```text
+.cursor/rules/performance.mdc
+```
+
+---
+
+# 28. Preview Changes
+
+When modifying Preview:
+
+1. Check the security boundary.
+2. Check isolation.
+3. Check generated content.
+4. Check update frequency.
+5. Check responsive behavior.
+6. Test valid content.
+7. Test malicious content.
+
+Do not optimize Preview by weakening isolation.
+
+---
+
+# 29. Routing Changes
+
+When adding or modifying routes:
+
+1. Review `docs/03_screen-list.md`.
+2. Review `docs/04_architecture.md`.
+3. Follow `.cursor/rules/routing.mdc`.
+4. Define loading behavior.
+5. Define error behavior.
+6. Define authorization if applicable.
+7. Add route tests where appropriate.
+8. Update documentation.
+
+Do not create parallel routing mechanisms.
+
+---
+
+# 30. State Changes
+
+Before introducing state:
+
+Ask:
+
+```text
+Is this server state?
+
+Is this URL state?
+
+Is this form state?
+
+Is this local UI state?
+
+Is this derived state?
+
+Does this state need to be persisted?
+```
+
+Choose the smallest appropriate scope.
+
+Follow:
+
+```text
+.cursor/rules/state-management.mdc
+```
+
+---
+
+# 31. Avoid Global State
+
+Do not introduce global state merely for convenience.
+
+Prefer:
+
+```text
+Local State
+    ↓
+Feature State
+    ↓
+Application State
+```
+
+only when the broader scope is actually required.
+
+---
+
+# 32. API and UI Synchronization
+
+Do not duplicate server state unnecessarily in client state.
+
+Prefer a clear source of truth.
+
+Avoid:
+
+```text
+Server Form
+Client Form
+Preview Form
+Generator Form
+```
+
+when all represent the same data.
+
+---
+
+# 33. Testing Workflow
+
+Every feature must have tests.
+
+Follow:
+
+```text
+.cursor/rules/testing.mdc
+```
+
+Tests should be written alongside implementation rather than postponed indefinitely.
+
+---
+
+# 34. Test Pyramid
+
+Use an appropriate balance of:
+
+```text
+Unit Tests
+Integration Tests
+E2E Tests
+```
+
+Prefer unit tests for pure business logic.
+
+Prefer integration tests for:
+
+```text
+API
+Data access
+Feature boundaries
+```
+
+Prefer E2E tests for:
+
+```text
+Critical user workflows
+```
+
+Do not use E2E tests for every small utility function.
+
+---
+
+# 35. Test Before Declaring Completion
+
+A feature is not complete merely because the UI works manually.
+
+Before completion:
+
+```text
+Implementation
+    ↓
+Tests
+    ↓
+Lint
+    ↓
+Type Check
+    ↓
+Build
+    ↓
+Review
+```
+
+must be considered.
+
+---
+
+# 36. Test Failure First
+
+When fixing a bug:
+
+1. Reproduce the bug.
+2. Add a regression test when practical.
+3. Confirm the test captures the failure.
+4. Implement the fix.
+5. Confirm the test passes.
+6. Run related tests.
+
+Do not fix a recurring bug without protecting against regression when a test is practical.
+
+---
+
+# 37. Type Checking
+
+Before completing a task, run the project's type checking command.
+
+Do not suppress TypeScript errors merely to make the build pass.
+
+Never use:
+
+```ts
+any
+```
+
+to bypass a type problem.
+
+Follow:
+
+```text
+.cursor/rules/coding.mdc
+```
+
+---
+
+# 38. Linting
+
+Run the project's configured linter.
+
+Fix legitimate lint errors.
+
+Do not disable lint rules merely to avoid fixing code.
+
+If a rule genuinely conflicts with the architecture, document and justify the exception.
+
+---
+
+# 39. Formatting
+
+Use the project's configured formatter.
+
+Do not manually introduce formatting inconsistencies.
+
+Avoid unrelated formatting changes in feature commits.
+
+---
+
+# 40. Build Verification
+
+Before declaring a significant feature complete:
+
+```text
+Type Check
+    ↓
+Lint
+    ↓
+Tests
+    ↓
+Production Build
+```
+
+should pass.
+
+If the build fails:
+
+1. Determine whether the failure is related to the change.
+2. Fix the issue when appropriate.
+3. Do not hide the failure.
+
+---
+
+# 41. Cloudflare Verification
+
+For Cloudflare-related changes:
+
+```text
+Local Development
+    ↓
+Tests
+    ↓
+Production Build
+    ↓
+Cloudflare Deployment
+    ↓
+Deployment Verification
+```
+
+Follow:
+
+```text
+.cursor/rules/cloudflare.mdc
+```
+
+Do not assume a local Node.js environment represents the production Worker runtime.
+
+---
+
+# 42. Security Review
+
+Before completing a feature, consider:
+
+```text
+Authentication
+Authorization
+Input Validation
+XSS
+CSRF
+CORS
+Secrets
+Data Exposure
+Generated Code
+Preview Isolation
+Resource Ownership
+```
+
+Follow:
+
+```text
+.cursor/rules/security.mdc
+```
+
+Do not treat security as a final optional step.
+
+---
+
+# 43. Performance Review
+
+For performance-sensitive features, review:
+
+```text
+Initial Load
+Bundle Size
+Network Requests
+Database Queries
+Re-renders
+Form Schema Processing
+Code Generation
+Preview Updates
+Mobile Performance
+```
+
+Follow:
+
+```text
+.cursor/rules/performance.mdc
+```
+
+Do not perform premature optimization.
+
+---
+
+# 44. Accessibility Review
+
+For UI changes, verify:
+
+```text
+Keyboard Navigation
+Focus Management
+Labels
+Accessible Names
+Contrast
+Loading State
+Error State
+Responsive Behavior
+Reduced Motion
+```
+
+Follow:
+
+```text
+.cursor/rules/ui.mdc
+```
+
+---
+
+# 45. i18n Review
+
+Formly supports:
+
+```text
+Japanese
+English
+Chinese
+Korean
+```
+
+When changing user-facing text:
+
+1. Check the i18n architecture.
+2. Add translation keys where appropriate.
+3. Avoid hardcoding user-facing strings.
+4. Check longer translated strings.
+5. Check layout behavior.
+
+Follow:
+
+```text
+.cursor/rules/i18n.mdc
+```
+
+---
+
+# 46. Error Handling
+
+Every feature should consider:
+
+```text
+Loading
+Success
+Empty
+Error
+Unauthorized
+Not Found
+```
+
+where applicable.
+
+Do not implement only the successful path.
+
+---
+
+# 47. User-Facing Errors
+
+User-facing errors should be:
+
+* Understandable
+* Actionable where possible
+* Localized
+* Free of internal implementation details
+
+Do not expose:
+
+```text
+Stack traces
+SQL
+Cloudflare internals
+File paths
+Secrets
+Internal architecture
+```
+
+---
+
+# 48. Debugging Workflow
+
+When debugging:
+
+1. Reproduce the issue.
+2. Identify the smallest reproducible case.
+3. Inspect logs and errors.
+4. Check recent changes.
+5. Trace the data flow.
+6. Identify the root cause.
+7. Implement the smallest appropriate fix.
+8. Add a regression test.
+9. Run related tests.
+10. Verify the original behavior.
+
+Do not make random changes until the error disappears.
+
+---
+
+# 49. Root Cause Over Symptoms
+
+Prefer fixing the underlying problem.
+
+Bad:
+
+```text
+Hide error
+ ↓
+Ignore exception
+```
+
+Prefer:
+
+```text
+Identify root cause
+ ↓
+Fix underlying behavior
+ ↓
+Add regression test
+```
+
+Do not silence errors merely to produce a clean UI.
+
+---
+
+# 50. Debug Logging
+
+Temporary debugging logs may be used during development.
+
+Before completing the task:
+
+* Remove unnecessary logs.
+* Remove sensitive data.
+* Keep meaningful production diagnostics where appropriate.
+
+Never commit:
+
+```text
+console.log(userPassword)
+console.log(authToken)
+console.log(secret)
+```
+
+---
+
+# 51. Incremental Implementation
+
+For complex features, implement incrementally.
+
+Prefer:
+
+```text
+Step 1
+Core behavior
+
+Step 2
+Validation
+
+Step 3
+Persistence
+
+Step 4
+UI states
+
+Step 5
+Tests
+
+Step 6
+Polish
+```
+
+over implementing the entire feature in one large change.
+
+---
+
+# 52. Small Changes
+
+Keep changes focused.
+
+A good change should have a clear purpose.
+
+Avoid combining:
+
+```text
+Feature
++
+Unrelated Refactor
++
+Dependency Upgrade
++
+Formatting Entire Repository
+```
+
+unless the task explicitly requires it.
+
+---
+
+# 53. Dependency Changes
+
+When adding or updating dependencies:
+
+1. Confirm the dependency is necessary.
+2. Check whether an existing dependency solves the problem.
+3. Check compatibility.
+4. Check bundle impact.
+5. Check security implications.
+6. Install the dependency.
+7. Run tests.
+8. Run build.
+9. Review the lockfile changes.
+
+Do not upgrade unrelated dependencies during feature work without a reason.
+
+---
+
+# 54. Database Changes
+
+When changing persistence:
+
+```text
+Documentation
+    ↓
+Schema
+    ↓
+Migration
+    ↓
+Repository / Data Access
+    ↓
+Service
+    ↓
+API
+    ↓
+UI
+    ↓
+Tests
+```
+
+Follow:
+
+```text
+.cursor/rules/cloudflare.mdc
+.cursor/rules/security.mdc
+docs/05_database.md
+```
+
+---
+
+# 55. Migration Safety
+
+Before applying a database migration:
+
+* Understand existing data.
+* Consider backwards compatibility.
+* Consider rollback.
+* Test locally.
+* Verify affected queries.
+* Update database documentation.
+
+Do not make destructive migrations casually.
+
+---
+
+# 56. Git Workflow
+
+Follow:
+
+```text
+.cursor/rules/git.mdc
+```
+
+Use Conventional Commits.
+
+Examples:
+
+```text
+feat:
+fix:
+refactor:
+test:
+docs:
+```
+
+Keep commits focused and understandable.
+
+---
+
+# 57. Commit Scope
+
+Prefer:
+
+```text
+One Logical Change
+        ↓
+One Focused Commit
+```
+
+when practical.
+
+Avoid giant commits containing unrelated work.
+
+---
+
+# 58. Before Commit
+
+Before committing:
+
+```text
+Review Diff
+    ↓
+Remove Debug Code
+    ↓
+Check Secrets
+    ↓
+Run Tests
+    ↓
+Run Lint
+    ↓
+Run Type Check
+    ↓
+Run Build
+    ↓
+Commit
+```
+
+Do not commit known failing code unless the repository workflow explicitly requires it.
+
+---
+
+# 59. Review the Diff
+
+Always inspect the final diff before committing.
+
+Look for:
+
+* Accidental files
+* Debug code
+* Secrets
+* Unrelated changes
+* Generated files
+* Incorrect imports
+* Temporary code
+* Documentation drift
+
+Do not assume every changed file belongs to the task.
+
+---
+
+# 60. Pull Request / Review Readiness
+
+Before declaring work complete, ensure the change can be explained clearly.
+
+Be able to answer:
+
+```text
+What changed?
+
+Why was it changed?
+
+What files were affected?
+
+What tests were added?
+
+What risks exist?
+
+What documentation changed?
+
+How was the change verified?
+```
+
+---
+
+# 61. Deployment Workflow
+
+When deployment is required:
+
+```text
+Implementation
+    ↓
+Tests
+    ↓
+Lint
+    ↓
+Type Check
+    ↓
+Build
+    ↓
+Review
+    ↓
+Deploy
+    ↓
+Smoke Test
+```
+
+Follow:
+
+```text
+.cursor/rules/cloudflare.mdc
+```
+
+for Cloudflare-specific deployment rules.
+
+---
+
+# 62. Post-Deployment Verification
+
+After deployment, verify the critical user path.
+
+For example:
+
+```text
+Open application
+    ↓
+Navigate
+    ↓
+Create / open Form
+    ↓
+Edit Form
+    ↓
+Preview
+    ↓
+Generate code
+```
+
+when those features are affected.
+
+Do not assume a successful deployment command means the feature works correctly in production.
+
+---
+
+# 63. Rollback Thinking
+
+For significant changes, consider:
+
+```text
+What happens if deployment fails?
+
+What happens if the migration fails?
+
+Can the previous version still run?
+
+Can the change be reverted safely?
+
+Does the new code depend on a new database schema?
+```
+
+Plan rollback when the change has meaningful operational risk.
+
+---
+
+# 64. Documentation Review Before Completion
+
+Before completing a feature, ask:
+
+```text
+Did product behavior change?
+
+Did a route change?
+
+Did architecture change?
+
+Did the database change?
+
+Did the API change?
+
+Did UI behavior change?
+
+Did security behavior change?
+
+Did performance behavior change?
+
+Did deployment behavior change?
+```
+
+Update the relevant documentation when the answer is yes.
+
+---
+
+# 65. Definition of Done
+
+A feature is complete only when:
+
+```text
+Requirements implemented
+        ↓
+Documentation updated
+        ↓
+Validation implemented
+        ↓
+Authorization reviewed
+        ↓
+UI states implemented
+        ↓
+Tests added
+        ↓
+Lint passes
+        ↓
+Type check passes
+        ↓
+Build passes
+        ↓
+Diff reviewed
+        ↓
+Deployment verified when required
+```
+
+Do not declare a feature complete merely because it appears to work locally.
+
+---
+
+# 66. Bug Fix Definition of Done
+
+A bug fix is complete when:
+
+```text
+Bug reproduced
+        ↓
+Root cause identified
+        ↓
+Fix implemented
+        ↓
+Regression test added
+        ↓
+Related tests pass
+        ↓
+Build passes
+        ↓
+Original behavior verified
+```
+
+when the test is practical.
+
+---
+
+# 67. Refactoring Definition of Done
+
+A refactor is complete when:
+
+```text
+Behavior remains correct
+        ↓
+Tests remain green
+        ↓
+Types remain correct
+        ↓
+No unnecessary API changes
+        ↓
+No unrelated changes
+```
+
+Do not use refactoring as an excuse to silently change product behavior.
+
+---
+
+# 68. When Requirements Are Ambiguous
+
+If a requirement is ambiguous:
+
+1. Identify the ambiguity.
+2. Check existing documentation.
+3. Check existing code patterns.
+4. Determine whether a reasonable interpretation is clearly supported.
+5. If the decision materially affects architecture or product behavior, ask for clarification.
+
+Do not invent major product requirements.
+
+---
+
+# 69. When Documentation and Code Conflict
+
+When documentation and code disagree:
+
+1. Identify the conflict.
+2. Determine which reflects the intended current architecture.
+3. Do not silently assume.
+4. Update the appropriate source of truth.
+5. Document the decision when significant.
+
+Do not allow contradictions to remain unnoticed.
+
+---
+
+# 70. When Rules Conflict
+
+When multiple rules appear to conflict:
+
+Prioritize:
+
+```text
+Security
+    ↓
+Architecture
+    ↓
+Project Requirements
+    ↓
+Feature Requirements
+    ↓
+Performance
+    ↓
+Code Style
+```
+
+However, do not use this hierarchy to ignore explicit user requirements.
+
+If a conflict cannot be resolved safely, stop and clarify.
+
+---
+
+# 71. Do Not Overengineer
+
+Formly is intended to be a maintainable portfolio project.
+
+Avoid:
+
+```text
+Unnecessary abstractions
+Unnecessary services
+Unnecessary state libraries
+Unnecessary Cloudflare services
+Unnecessary dependencies
+Unnecessary caching
+Unnecessary infrastructure
+```
+
+Prefer the simplest architecture that satisfies the requirement.
+
+---
+
+# 72. Three Questions Before Adding Abstraction
+
+Before creating a new abstraction, ask:
+
+```text
+1. Is this behavior reused?
+
+2. Does the abstraction make the code easier to understand?
+
+3. Does it protect an important architectural boundary?
+```
+
+If the answer is no to all three, prefer simpler code.
+
+---
+
+# 73. Three Questions Before Adding a Dependency
+
+Ask:
+
+```text
+1. Can the existing codebase solve this?
+
+2. Can the browser or platform solve this?
+
+3. Is the dependency worth its maintenance and bundle cost?
+```
+
+If not, do not add it.
+
+---
+
+# 74. Three Questions Before Adding State
+
+Ask:
+
+```text
+1. Can this be derived?
+
+2. Can this remain local?
+
+3. Does this need persistence?
+```
+
+Choose the smallest appropriate state scope.
+
+---
+
+# 75. Three Questions Before Adding an API
+
+Ask:
+
+```text
+1. Does the client actually need a server operation?
+
+2. Can an existing endpoint handle the behavior?
+
+3. Does the operation require persistence, authorization, or server-only capabilities?
+```
+
+Do not create APIs for operations that can remain local.
+
+---
+
+# 76. Three Questions Before Adding Cloudflare Infrastructure
+
+Ask:
+
+```text
+1. Is there a real product requirement?
+
+2. Does the existing architecture already solve the problem?
+
+3. Does the Cloudflare service materially improve the solution?
+```
+
+Do not add infrastructure merely to demonstrate technical capability.
+
+---
+
+# 77. Workflow for a New Feature
+
+Use the following workflow:
+
+```text
+User Requirement
+       ↓
+Understand Requirement
+       ↓
+Check Existing Docs
+       ↓
+Check Existing Code
+       ↓
+Define Acceptance Criteria
+       ↓
+Update Relevant Docs
+       ↓
+Plan Implementation
+       ↓
+Implement Core Logic
+       ↓
+Implement Validation
+       ↓
+Implement Data Access
+       ↓
+Implement Route/API
+       ↓
+Implement UI
+       ↓
+Implement Loading/Error/Empty States
+       ↓
+Add Tests
+       ↓
+Run Lint
+       ↓
+Run Type Check
+       ↓
+Run Build
+       ↓
+Review Security
+       ↓
+Review Performance
+       ↓
+Review Accessibility
+       ↓
+Review i18n
+       ↓
+Review Git Diff
+       ↓
+Update Development Log if Significant
+       ↓
+Commit
+       ↓
+Deploy if Required
+       ↓
+Verify
+```
+
+Do not blindly execute every step for a trivial change.
+
+Use judgment based on scope.
+
+---
+
+# 78. Workflow for a Bug Fix
+
+Use:
+
+```text
+Bug Report
+    ↓
+Reproduce
+    ↓
+Identify Root Cause
+    ↓
+Check Existing Rules
+    ↓
+Add Regression Test
+    ↓
+Fix
+    ↓
+Run Related Tests
+    ↓
+Run Full Test Suite When Appropriate
+    ↓
+Lint
+    ↓
+Type Check
+    ↓
+Build
+    ↓
+Review Diff
+    ↓
+Commit
+```
+
+---
+
+# 79. Workflow for a UI Change
+
+Use:
+
+```text
+UI Requirement
+    ↓
+Check UI Guideline
+    ↓
+Check Component Design
+    ↓
+Find Existing Component
+    ↓
+Implement
+    ↓
+Responsive Check
+    ↓
+Accessibility Check
+    ↓
+Loading / Empty / Error States
+    ↓
+i18n Check
+    ↓
+Tests
+    ↓
+Build
+```
+
+---
+
+# 80. Workflow for an API Change
+
+Use:
+
+```text
+API Requirement
+    ↓
+Check API Documentation
+    ↓
+Check Architecture
+    ↓
+Define Request
+    ↓
+Define Validation
+    ↓
+Define Authorization
+    ↓
+Implement
+    ↓
+Test
+    ↓
+Update API Documentation
+    ↓
+Build
+```
+
+---
+
+# 81. Workflow for a Database Change
+
+Use:
+
+```text
+Requirement
+    ↓
+Check Database Documentation
+    ↓
+Design Schema Change
+    ↓
+Review Security
+    ↓
+Create Migration
+    ↓
+Update Data Access
+    ↓
+Update API / Service
+    ↓
+Add Tests
+    ↓
+Run Migration Locally
+    ↓
+Run Test Suite
+    ↓
+Update Documentation
+```
+
+---
+
+# 82. Workflow for a Routing Change
+
+Use:
+
+```text
+Route Requirement
+    ↓
+Check Screen List
+    ↓
+Check Routing Rules
+    ↓
+Define URL
+    ↓
+Define Route Data
+    ↓
+Define Loading State
+    ↓
+Define Error State
+    ↓
+Define Authorization
+    ↓
+Implement
+    ↓
+Test
+    ↓
+Update Documentation
+```
+
+---
+
+# 83. Workflow for Form Builder Changes
+
+Use:
+
+```text
+Builder Requirement
+    ↓
+Check Forms Rule
+    ↓
+Check State Management
+    ↓
+Check UI Guidelines
+    ↓
+Update Form Schema if necessary
+    ↓
+Implement Local Interaction
+    ↓
+Implement Persistence
+    ↓
+Update Preview / Generator
+    ↓
+Test
+    ↓
+Performance Review
+    ↓
+Security Review
+```
+
+---
+
+# 84. Workflow for Generated Code Changes
+
+Use:
+
+```text
+Generator Requirement
+    ↓
+Define Input
+    ↓
+Define Expected Output
+    ↓
+Review Escaping
+    ↓
+Review Security
+    ↓
+Implement
+    ↓
+Unit Tests
+    ↓
+Malicious Input Tests
+    ↓
+Preview Verification
+    ↓
+Performance Review
+```
+
+---
+
+# 85. Workflow for Cloudflare Changes
+
+Use:
+
+```text
+Infrastructure Requirement
+    ↓
+Check Cloudflare Rules
+    ↓
+Check Architecture
+    ↓
+Inspect Existing Configuration
+    ↓
+Implement Minimal Change
+    ↓
+Test Locally
+    ↓
+Type Check
+    ↓
+Build
+    ↓
+Deploy
+    ↓
+Verify Production
+    ↓
+Update Documentation
+```
+
+---
+
+# 86. Workflow for Dependency Updates
+
+Use:
+
+```text
+Dependency Need
+    ↓
+Check Existing Dependencies
+    ↓
+Check Compatibility
+    ↓
+Check Security
+    ↓
+Install / Update
+    ↓
+Run Tests
+    ↓
+Run Lint
+    ↓
+Type Check
+    ↓
+Build
+    ↓
+Review Lockfile
+```
+
+---
+
+# 87. Workflow for Performance Improvements
+
+Use:
+
+```text
+Performance Problem
+    ↓
+Reproduce
+    ↓
+Measure
+    ↓
+Identify Bottleneck
+    ↓
+Implement Smallest Fix
+    ↓
+Measure Again
+    ↓
+Run Tests
+    ↓
+Check Security
+    ↓
+Check Accessibility
+    ↓
+Document Significant Changes
+```
+
+Follow:
+
+```text
+.cursor/rules/performance.mdc
+```
+
+---
+
+# 88. Workflow for Security Changes
+
+Use:
+
+```text
+Security Requirement
+    ↓
+Identify Trust Boundary
+    ↓
+Identify Untrusted Input
+    ↓
+Define Authentication
+    ↓
+Define Authorization
+    ↓
+Define Validation
+    ↓
+Implement
+    ↓
+Add Security Tests
+    ↓
+Review Error Handling
+    ↓
+Review Logging
+    ↓
+Review Generated Content
+    ↓
+Document
+```
+
+Follow:
+
+```text
+.cursor/rules/security.mdc
+```
+
+---
+
+# 89. Final Review Questions
+
+Before completing any meaningful change, ask:
+
+```text
+Does this satisfy the requirement?
+
+Does it follow the architecture?
+
+Does it follow the existing project patterns?
+
+Did I reuse existing code where appropriate?
+
+Did I introduce unnecessary complexity?
+
+Did I validate external input?
+
+Did I consider authorization?
+
+Did I add tests?
+
+Did I update documentation?
+
+Did I consider responsive behavior?
+
+Did I consider accessibility?
+
+Did I consider i18n?
+
+Did I consider performance?
+
+Did I consider Cloudflare runtime behavior?
+
+Did I inspect the final diff?
+
+Does the build pass?
+```
+
+---
+
+# 90. Final Workflow Principles
+
+Always prefer:
+
+```text
+Understand
+    over
+Assume
+
+Existing Patterns
+    over
+New Patterns
+
+Documented Decisions
+    over
+Implicit Decisions
+
+Small Changes
+    over
+Large Unrelated Changes
+
+Validated Input
+    over
+Trusted Input
+
+Tests
+    over
+Manual Assumptions
+
+Root Cause
+    over
+Symptoms
+
+Simple Architecture
+    over
+Overengineering
+
+Focused Commits
+    over
+Large Mixed Commits
+
+Measured Performance
+    over
+Premature Optimization
+
+Server-side Security
+    over
+Client-side Assumptions
+
+Accessible UI
+    over
+Visual-only Implementation
+
+Reproducible Deployment
+    over
+Manual Deployment
+
+Verified Completion
+    over
+"It Works on My Machine"
+```
+
+The goal of the workflow is not to slow development down.
+
+The goal is to make Formly development predictable, testable, maintainable, secure, and easy to reason about.
+
+Use the smallest workflow appropriate for the task, but never skip requirements that affect correctness, security, architecture, or production reliability.

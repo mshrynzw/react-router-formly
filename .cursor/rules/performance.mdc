@@ -1,0 +1,2587 @@
+---
+description: Performance rules for the Formly project. Apply when creating or modifying routes, components, data fetching, form builder interactions, form schema processing, code generation, previews, animations, bundles, caching, Cloudflare Workers, or performance-sensitive features.
+alwaysApply: true
+---
+
+# Performance Rules
+
+Performance is a first-class requirement of this project.
+
+Formly is a portfolio-oriented Form Builder application and must provide a fast, reliable, and responsive first impression.
+
+The application should feel fast before it feels feature-rich.
+
+Users should not experience:
+
+- Unnecessarily slow initial rendering
+- Blank screens
+- Long blocking operations
+- Laggy Form Builder interactions
+- Excessive network requests
+- Unnecessary re-renders
+- Slow Preview updates
+- Excessively large JavaScript bundles
+
+Do not optimize blindly.
+
+Prefer measurable improvements over assumptions.
+
+Follow the project-wide rules defined in:
+
+`AGENTS.md`
+
+The architectural performance strategy is defined in:
+
+`docs/04_architecture.md`
+
+The UI performance rules are defined in:
+
+`docs/08_ui-guideline.md`
+
+Also follow:
+
+`.cursor/rules/architecture.mdc`
+
+`.cursor/rules/cloudflare.mdc`
+
+`.cursor/rules/forms.mdc`
+
+`.cursor/rules/routing.mdc`
+
+`.cursor/rules/state-management.mdc`
+
+---
+
+# 1. Core Performance Principles
+
+Always prioritize:
+
+- Fast initial rendering
+- Minimal client-side JavaScript
+- Efficient route loading
+- Minimal network requests
+- Efficient Form Schema processing
+- Responsive Builder interactions
+- Stable layouts
+- Small component boundaries
+- Efficient code generation
+- Efficient Preview rendering
+- Appropriate caching
+- Responsive mobile behavior
+
+Do not optimize blindly.
+
+Prefer measurable improvements over assumptions.
+
+---
+
+# 2. Performance Priority
+
+When making performance decisions, prioritize:
+
+```text
+User-visible performance
+        ↓
+Initial page rendering
+        ↓
+Navigation
+        ↓
+Form Builder interaction
+        ↓
+Network requests
+        ↓
+Form Schema processing
+        ↓
+Code generation
+        ↓
+Client JavaScript
+        ↓
+Rendering performance
+        ↓
+Animation performance
+````
+
+Do not optimize a low-impact micro-operation while a larger bottleneck remains unresolved.
+
+---
+
+# 3. Initial Load Is Critical
+
+The first page load is especially important.
+
+The application should provide useful UI as quickly as possible.
+
+Avoid unnecessary work during initial rendering.
+
+Do not:
+
+* Fetch unnecessary data
+* Load unnecessary JavaScript
+* Load large libraries without a reason
+* Execute expensive calculations
+* Load unrelated Form data
+* Generate code before it is required
+* Initialize Builder-specific functionality on unrelated pages
+* Wait for non-critical data before rendering the page
+
+---
+
+# 4. Public Pages
+
+Public pages should remain lightweight.
+
+Do not load authenticated application data until it is actually required.
+
+Avoid loading:
+
+* User Forms
+* Form Schemas
+* Builder state
+* Preview state
+* Generated code
+* User-specific configuration
+
+on public pages when it is not required.
+
+Prefer:
+
+```text
+Browser
+   ↓
+Cloudflare Edge
+   ↓
+Public UI
+```
+
+over unnecessary application initialization.
+
+---
+
+# 5. Route-Level Performance
+
+Each route should load only the code and data required for that route.
+
+Avoid making every route depend on a large application-wide module.
+
+Prefer:
+
+```text
+Route
+ ├── Required UI
+ ├── Required data
+ └── Required interactions
+```
+
+over:
+
+```text
+Application
+ ↓
+Everything
+ ↓
+Every Route
+```
+
+---
+
+# 6. React Router Boundaries
+
+React Router is responsible for application routing.
+
+Do not load unnecessary feature code simply because it exists elsewhere in the application.
+
+Use route-level separation where appropriate.
+
+Potentially independent areas include:
+
+```text
+Forms
+Builder
+Preview
+Code
+Settings
+Documentation
+```
+
+Do not force every route to initialize every feature.
+
+---
+
+# 7. Client JavaScript Budget
+
+Do not add client-side JavaScript without a reason.
+
+Before adding a dependency or interactive abstraction, ask:
+
+```text
+Does this require browser-side execution?
+
+Can this be implemented with CSS?
+
+Can the operation remain local to a small component?
+
+Can the browser provide the functionality?
+
+Is the dependency worth its bundle cost?
+
+Does the feature need to run on the initial page?
+```
+
+Prefer native browser APIs and CSS when they are sufficient.
+
+---
+
+# 8. Dependencies
+
+Do not install large libraries for trivial functionality.
+
+Before adding a dependency:
+
+1. Check whether the project already contains the required functionality.
+2. Check whether the browser provides the functionality.
+3. Check whether CSS can solve the problem.
+4. Evaluate package size.
+5. Evaluate transitive dependencies.
+6. Evaluate whether the package is required in the browser.
+7. Evaluate Cloudflare compatibility.
+
+Do not introduce a dependency solely for convenience.
+
+---
+
+# 9. Bundle Size
+
+Keep client bundles reasonably small.
+
+When adding a dependency, consider:
+
+```text
+Package Size
+Client Usage
+Tree Shaking
+Transitive Dependencies
+Runtime Compatibility
+```
+
+Do not ship server-only or Worker-only dependencies to the browser.
+
+Do not ship Builder-only dependencies to unrelated public pages unless necessary.
+
+---
+
+# 10. Code Splitting
+
+Use code splitting for genuinely large or rarely used functionality.
+
+Potential candidates include:
+
+```text
+Advanced code editor
+Large syntax highlighting libraries
+Advanced Builder tools
+Large charting libraries
+Advanced Preview functionality
+Rarely used import/export tools
+```
+
+Do not dynamically import tiny components merely to create more complexity.
+
+---
+
+# 11. Lazy Loading
+
+Lazy-load non-critical functionality when appropriate.
+
+Examples:
+
+```text
+Advanced code editor
+Syntax highlighting
+Large Preview tooling
+Advanced import/export
+Optional analytics
+```
+
+Do not lazy-load content required for the initial user experience.
+
+---
+
+# 12. Tree Shaking
+
+Prefer libraries and import patterns that allow unused code to be removed from production bundles.
+
+Avoid importing an entire large library when only one small utility is required.
+
+Prefer:
+
+```ts
+import { requiredUtility } from "library";
+```
+
+when the library supports effective tree shaking.
+
+Do not blindly optimize imports without verifying the library's actual build behavior.
+
+---
+
+# 13. Server / Worker Code
+
+Server-side and Cloudflare Worker code should remain outside the browser bundle where possible.
+
+Do not import:
+
+* Database clients
+* Cloudflare bindings
+* Server-only environment access
+* Private API clients
+* Server-only utilities
+
+into browser code.
+
+Follow:
+
+```text
+.cursor/rules/cloudflare.mdc
+```
+
+and:
+
+```text
+.cursor/rules/security.mdc
+```
+
+---
+
+# 14. Browser and Worker Boundaries
+
+Keep browser-only and Worker-only code clearly separated.
+
+Browser-specific APIs include:
+
+```text
+window
+document
+localStorage
+sessionStorage
+navigator
+```
+
+Worker-specific infrastructure may include:
+
+```text
+D1
+KV
+R2
+Queues
+Durable Objects
+```
+
+Do not move code across these boundaries without checking runtime compatibility.
+
+---
+
+# 15. Initial Form List Performance
+
+The Form List should load only the information required to display the list.
+
+Do not retrieve complete Form Schemas for every Form merely to display:
+
+```text
+Form name
+Updated date
+Field count
+Status
+```
+
+Prefer:
+
+```text
+Required Form Metadata
+        ↓
+Form List
+```
+
+over:
+
+```text
+All Form Schemas
+        ↓
+Browser
+        ↓
+Filter / Count / Display
+```
+
+---
+
+# 16. Form Schema Loading
+
+Load the full Form Schema when it is actually required.
+
+The Builder generally requires the complete Schema.
+
+The Form List generally does not.
+
+The Dashboard may require only summary information.
+
+Do not make every route load the full Form Schema.
+
+---
+
+# 17. Form Schema Size
+
+Form Schemas can become large.
+
+Avoid unnecessary duplication of Schema data.
+
+Do not maintain multiple independent copies such as:
+
+```text
+Form Schema
+Preview Schema
+Generator Schema
+Builder Schema
+```
+
+when they represent the same underlying data.
+
+Prefer:
+
+```text
+Canonical Form Schema
+        ↓
+Builder
+Preview
+Code Generator
+```
+
+Follow:
+
+```text
+.cursor/rules/state-management.mdc
+```
+
+for state ownership.
+
+---
+
+# 18. Form Schema Processing
+
+Do not repeatedly transform the entire Form Schema when only one field changes.
+
+Bad:
+
+```text
+User edits one field
+        ↓
+Rebuild entire application state
+        ↓
+Recalculate everything
+        ↓
+Re-render entire Builder
+```
+
+Prefer localized updates where practical.
+
+---
+
+# 19. Derived Form Data
+
+Do not store values that can be cheaply derived from the Form Schema.
+
+Examples:
+
+```text
+Field count
+Required field count
+Number of select fields
+Number of text fields
+```
+
+Prefer deriving these values when the calculation is inexpensive.
+
+Do not introduce synchronization state unnecessarily.
+
+---
+
+# 20. Expensive Derived Data
+
+If deriving a value becomes genuinely expensive:
+
+1. Measure the cost.
+2. Determine whether the calculation can be simplified.
+3. Determine whether it can be moved to a more appropriate boundary.
+4. Consider memoization only if justified.
+
+Do not use `useMemo` automatically.
+
+---
+
+# 21. Form Builder Performance
+
+The Form Builder is one of the most performance-sensitive areas of Formly.
+
+The Builder must remain responsive while:
+
+```text
+Adding fields
+Deleting fields
+Selecting fields
+Editing properties
+Reordering fields
+Dragging fields
+Changing options
+Changing validation
+Typing into inputs
+```
+
+Avoid unnecessary whole-page re-renders.
+
+---
+
+# 22. Builder Component Boundaries
+
+Prefer focused Builder components.
+
+Conceptually:
+
+```text
+Builder
+ ├── Toolbar
+ ├── Field Palette
+ ├── Canvas
+ │    └── Field
+ └── Properties Panel
+```
+
+Do not make every interaction re-render the entire Builder when only one section needs to update.
+
+---
+
+# 23. Selected Field
+
+The selected field should normally be represented by a stable field ID.
+
+Prefer:
+
+```ts
+const [selectedFieldId, setSelectedFieldId] =
+  useState<string | null>(null);
+```
+
+over storing a duplicated mutable field object.
+
+Use the canonical Form Schema to resolve the selected field.
+
+Follow:
+
+```text
+.cursor/rules/state-management.mdc
+```
+
+---
+
+# 24. Field Editing Performance
+
+Typing into a field property editor should remain responsive.
+
+Avoid expensive operations on every keystroke.
+
+For example, do not unnecessarily:
+
+```text
+Keystroke
+ ↓
+Generate complete HTML
+ ↓
+Generate complete CSS
+ ↓
+Generate complete JavaScript
+ ↓
+Re-render entire Preview
+```
+
+unless the product explicitly requires real-time regeneration.
+
+---
+
+# 25. Form Builder Input Handling
+
+Local UI input should generally remain local while the user is typing when appropriate.
+
+Persist or propagate changes according to the established state architecture.
+
+Do not trigger expensive network requests for every keystroke unless required.
+
+---
+
+# 26. Autosave
+
+Do not introduce autosave merely for convenience.
+
+If autosave is implemented:
+
+* Avoid saving on every keystroke.
+* Debounce changes where appropriate.
+* Avoid duplicate saves.
+* Cancel obsolete saves when appropriate.
+* Provide clear saving state.
+* Handle failures.
+* Avoid blocking the Builder.
+
+Prefer:
+
+```text
+User edits
+   ↓
+Short delay
+   ↓
+Save
+```
+
+over:
+
+```text
+Every keystroke
+   ↓
+Network request
+```
+
+---
+
+# 27. Network Requests
+
+Minimize unnecessary network requests.
+
+Before adding a request, ask:
+
+```text
+Is this data already available?
+
+Can this request be combined?
+
+Can this be handled locally?
+
+Can this request happen in parallel?
+
+Can this data be cached?
+
+Is the request actually necessary?
+```
+
+Do not create duplicate requests without a reason.
+
+---
+
+# 28. Avoid Request Waterfalls
+
+Avoid unnecessary sequential requests.
+
+Bad:
+
+```text
+Get User
+ ↓
+Get Form
+ ↓
+Get Form Schema
+ ↓
+Get Template
+ ↓
+Generate Preview
+```
+
+when independent operations can safely execute in parallel.
+
+Prefer parallel requests where appropriate.
+
+Do not parallelize operations that genuinely depend on previous results.
+
+---
+
+# 29. Data Fetching
+
+Fetch only the data required by the current route.
+
+Do not retrieve large datasets when only a small subset is required.
+
+Prefer:
+
+```text
+Required Data
+ ↓
+Worker / API
+ ↓
+UI
+```
+
+over:
+
+```text
+All Data
+ ↓
+Browser
+ ↓
+Client filters everything
+```
+
+---
+
+# 30. Duplicate Requests
+
+Avoid fetching the same data repeatedly.
+
+Before adding a new request:
+
+1. Check whether the data already exists in the current route.
+2. Check whether a parent component already retrieved it.
+3. Check whether an existing cache already contains it.
+4. Check whether the API request can be shared.
+5. Check whether the request is actually required.
+
+Do not create duplicate network requests without a reason.
+
+---
+
+# 31. Search Performance
+
+Search queries must be bounded.
+
+Limit:
+
+* Search string length
+* Result count
+* Query complexity
+* Request frequency
+
+Do not perform expensive server-backed searches for every keystroke.
+
+---
+
+# 32. Search Debouncing
+
+Interactive server-backed search should generally use debouncing.
+
+Prefer:
+
+```text
+User types
+   ↓
+Short delay
+   ↓
+Search request
+```
+
+over:
+
+```text
+Every keystroke
+   ↓
+Search request
+```
+
+Do not introduce unnecessary delays for local filtering.
+
+---
+
+# 33. Pagination
+
+Use pagination for potentially large datasets.
+
+Potential candidates include:
+
+```text
+Forms
+Templates
+Search results
+Public Forms
+Submission records
+Activity
+```
+
+if these features exist.
+
+Do not load thousands of records into the browser simply because the database can return them.
+
+---
+
+# 34. Pagination Limits
+
+Never allow unbounded client-controlled page sizes.
+
+For example:
+
+```text
+?pageSize=999999999
+```
+
+must not result in an enormous query.
+
+Use a reasonable server-defined maximum.
+
+---
+
+# 35. Database Performance
+
+If Formly uses a database such as Cloudflare D1, database queries are a critical performance boundary.
+
+Prefer:
+
+```text
+Application
+    ↓
+Service
+    ↓
+Repository / Data Access
+    ↓
+Database
+```
+
+Do not execute database queries directly from UI components.
+
+Follow:
+
+```text
+docs/05_database.md
+```
+
+and:
+
+```text
+.cursor/rules/cloudflare.mdc
+```
+
+---
+
+# 36. Select Only Required Columns
+
+Do not retrieve entire database records when only a few fields are required.
+
+Prefer selecting required fields.
+
+Avoid unnecessary retrieval of:
+
+* Large text fields
+* Form Schemas
+* Internal metadata
+* Sensitive fields
+* Unused relationships
+
+This reduces database work and response size.
+
+---
+
+# 37. N+1 Queries
+
+Avoid N+1 query patterns.
+
+Bad:
+
+```text
+Get 100 Forms
+ ↓
+Query Schema for Form 1
+Query Schema for Form 2
+Query Schema for Form 3
+...
+```
+
+Prefer appropriate:
+
+* Joins
+* Batching
+* Aggregation
+* Carefully designed queries
+
+Do not blindly optimize queries without understanding the data requirements.
+
+---
+
+# 38. Database Indexes
+
+Frequently queried fields should be evaluated for indexing.
+
+Potential candidates may include:
+
+```text
+userId
+formId
+createdAt
+updatedAt
+status
+```
+
+depending on the actual schema and query patterns.
+
+Do not add indexes indiscriminately.
+
+Before adding an index:
+
+1. Identify the query that needs it.
+2. Confirm the query pattern.
+3. Consider write overhead.
+4. Update `docs/05_database.md`.
+
+---
+
+# 39. Code Generation Performance
+
+Code generation can become expensive as Form Schemas grow.
+
+Prefer:
+
+```text
+Form Schema
+    ↓
+Single Generation Pass
+    ↓
+Generated Output
+```
+
+over repeatedly traversing the entire Schema unnecessarily.
+
+Avoid generating:
+
+```text
+HTML
+CSS
+JavaScript
+```
+
+multiple times for the same unchanged Schema.
+
+---
+
+# 40. Code Generation on Demand
+
+Do not generate code if the user does not need it.
+
+For example:
+
+```text
+Form List
+```
+
+should not generate HTML/CSS/JavaScript for every Form.
+
+Generate code when the user:
+
+* Opens the Code view.
+* Requests an export.
+* Changes the Schema and the generated output must be updated.
+* Performs another action explicitly requiring generation.
+
+---
+
+# 41. Code Generation Caching
+
+If generation becomes expensive, consider caching derived output.
+
+Before introducing caching:
+
+* Measure generation cost.
+* Define invalidation rules.
+* Ensure generated output corresponds to the current Form Schema.
+* Avoid caching private data in shared caches.
+
+Do not introduce caching prematurely.
+
+---
+
+# 42. Preview Performance
+
+Preview must remain responsive.
+
+Avoid regenerating the entire Preview for unrelated UI changes.
+
+For example:
+
+```text
+Open properties sidebar
+```
+
+should not necessarily regenerate the complete Preview.
+
+Only regenerate Preview when the underlying content actually changes.
+
+---
+
+# 43. Preview Isolation
+
+Preview may use an iframe or another isolation mechanism.
+
+Performance optimizations must not weaken the security boundary.
+
+Follow:
+
+```text
+.cursor/rules/security.mdc
+```
+
+Do not optimize Preview by injecting arbitrary generated content into the main application DOM merely to avoid an iframe boundary.
+
+---
+
+# 44. Preview Updates
+
+Avoid excessive Preview updates during rapid editing.
+
+Potential strategies include:
+
+```text
+Local update
+Debouncing
+Batching
+Targeted updates
+```
+
+Use the simplest approach that maintains responsive editing.
+
+Do not introduce artificial delays that make the Builder feel slow.
+
+---
+
+# 45. Code Editor Performance
+
+If Formly provides a code editor:
+
+* Load it only when needed.
+* Avoid loading it on unrelated routes.
+* Avoid reinitializing it unnecessarily.
+* Keep editor state localized.
+* Avoid regenerating the entire editor document for unrelated UI changes.
+
+Large editor libraries should be considered carefully from a bundle-size perspective.
+
+---
+
+# 46. Large Form Performance
+
+A Form may eventually contain many fields.
+
+Do not assume that a Form will always contain only a few fields.
+
+Consider performance for:
+
+```text
+50 fields
+100 fields
+500 fields
+```
+
+where practical.
+
+Do not introduce virtualization automatically.
+
+Measure first.
+
+---
+
+# 47. Virtualization
+
+Virtualization may be appropriate for genuinely large lists.
+
+Potential candidates:
+
+```text
+Very large Form Builder field lists
+Large template lists
+Large submission lists
+```
+
+Use virtualization only when dataset size and interaction patterns justify it.
+
+Do not add virtualization to small lists.
+
+---
+
+# 48. Drag and Drop
+
+Drag and drop must remain responsive.
+
+Avoid:
+
+* Database requests on every pointer movement
+* Re-rendering the entire Builder on every pointer movement
+* Expensive calculations during drag events
+* Regenerating complete code during drag events
+
+Prefer:
+
+```text
+Drag
+ ↓
+Local UI Update
+ ↓
+Drop
+ ↓
+Persist Change
+ ↓
+Regenerate if necessary
+```
+
+when product requirements allow it.
+
+---
+
+# 49. Field Reordering
+
+Reordering fields should update local Builder state first.
+
+Do not send a network request for every intermediate drag position.
+
+Persist the final order when the drag operation completes.
+
+---
+
+# 50. React Rendering
+
+Avoid unnecessary React re-renders.
+
+Consider:
+
+* Component boundaries
+* State ownership
+* Derived state
+* Stable props
+* Context boundaries
+* Memoization where justified
+
+Do not add `useMemo`, `useCallback`, or `memo` everywhere.
+
+Optimize only when there is a meaningful rendering problem.
+
+---
+
+# 51. Memoization
+
+Do not use memoization automatically.
+
+Before adding:
+
+```text
+useMemo
+useCallback
+memo
+```
+
+determine whether:
+
+1. There is an actual performance problem.
+2. The calculation is expensive.
+3. The component renders unnecessarily.
+4. The optimization improves measurable behavior.
+
+Prefer simpler code unless memoization provides meaningful value.
+
+---
+
+# 52. Context Performance
+
+Be careful with frequently changing values in React Context.
+
+Do not put high-frequency Builder state into a large application-wide Context if it causes unrelated components to re-render.
+
+Examples of high-frequency state include:
+
+```text
+Text editing
+Drag position
+Pointer position
+Temporary selection
+Animation state
+```
+
+Prefer smaller state boundaries.
+
+---
+
+# 53. Form Field Rendering
+
+A change to one field should not unnecessarily cause all fields to perform expensive work.
+
+Prefer focused component boundaries.
+
+Conceptually:
+
+```text
+Form Builder
+ ├── Field A
+ ├── Field B
+ ├── Field C
+ └── Field D
+```
+
+A change to Field B should not require expensive recalculation of unrelated fields unless necessary.
+
+---
+
+# 54. Stable React Keys
+
+Use stable field IDs as React keys.
+
+Prefer:
+
+```tsx
+{form.fields.map((field) => (
+  <Field key={field.id} field={field} />
+))}
+```
+
+Avoid array indexes when fields can be:
+
+* Reordered
+* Deleted
+* Inserted
+* Moved
+
+Stable keys help preserve predictable rendering behavior.
+
+---
+
+# 55. State Duplication
+
+Duplicated state can cause unnecessary rendering and synchronization work.
+
+Avoid:
+
+```text
+Form Schema
+Preview Schema
+Generator Schema
+Builder Schema
+```
+
+when they contain duplicate representations of the same data.
+
+Prefer a canonical Form Schema.
+
+Follow:
+
+```text
+.cursor/rules/state-management.mdc
+```
+
+---
+
+# 56. Derived State
+
+Do not store state that can be calculated cheaply.
+
+Avoid:
+
+```ts
+const [fieldCount, setFieldCount] = useState(0);
+```
+
+when:
+
+```ts
+const fieldCount = form.fields.length;
+```
+
+is sufficient.
+
+Avoid synchronization effects that exist only to maintain derived values.
+
+---
+
+# 57. Effects
+
+Do not use `useEffect` to synchronize values that can be derived directly.
+
+Avoid:
+
+```tsx
+useEffect(() => {
+  setFieldCount(form.fields.length);
+}, [form.fields]);
+```
+
+Prefer:
+
+```ts
+const fieldCount = form.fields.length;
+```
+
+Use effects for actual side effects.
+
+---
+
+# 58. Animation Performance
+
+Animations must remain smooth.
+
+Prefer animating:
+
+```text
+transform
+opacity
+```
+
+when possible.
+
+Avoid expensive layout-triggering animation of:
+
+```text
+width
+height
+top
+left
+margin
+padding
+```
+
+when transform-based animation can achieve the same effect.
+
+---
+
+# 59. CSS Before JavaScript Animation
+
+Prefer CSS transitions for simple effects such as:
+
+* Opacity
+* Transform
+* Color
+* Border
+* Shadow
+
+Use JavaScript animation libraries only for interactions that genuinely benefit from:
+
+* Timelines
+* Staggered animation
+* Scroll-driven animation
+* Complex sequences
+* Coordinated transitions
+
+Do not add an animation library for a simple fade.
+
+---
+
+# 60. Reduced Motion
+
+Respect:
+
+```css
+prefers-reduced-motion
+```
+
+Users who request reduced motion should receive reduced or disabled non-essential animation.
+
+Do not make functionality depend on animation.
+
+---
+
+# 61. Page Transitions
+
+Page transitions must never make the application feel slower.
+
+Avoid:
+
+```text
+Click
+ ↓
+Long animation
+ ↓
+Navigation
+```
+
+Prefer:
+
+```text
+Click
+ ↓
+Navigation
+ ↓
+Subtle transition
+```
+
+Animations must not unnecessarily delay interaction.
+
+---
+
+# 62. React Router Navigation
+
+Navigation should feel immediate.
+
+Avoid performing expensive unrelated operations before route navigation.
+
+Do not block navigation with unnecessary client-side calculations or animations.
+
+Follow:
+
+```text
+.cursor/rules/routing.mdc
+```
+
+for routing behavior.
+
+---
+
+# 63. Route Prefetching
+
+Use route or data prefetching only when it provides a meaningful UX benefit.
+
+Do not prefetch large amounts of Form data for every possible route.
+
+Potential candidates include:
+
+```text
+Frequently visited routes
+Likely next route
+Form Builder after opening a Form
+```
+
+Avoid aggressive prefetching on mobile or constrained networks when unnecessary.
+
+---
+
+# 64. Loading UI
+
+Loading states should preserve layout.
+
+Use:
+
+* Skeleton
+* Placeholder
+* Spinner
+* Progress indicator
+
+according to:
+
+```text
+docs/08_ui-guideline.md
+```
+
+Avoid blank screens.
+
+---
+
+# 65. Skeleton Performance
+
+Skeletons should be lightweight.
+
+Do not implement complex JavaScript-driven skeleton animations.
+
+Prefer CSS-based animation where possible.
+
+Respect reduced motion.
+
+---
+
+# 66. Layout Stability
+
+Avoid unnecessary Cumulative Layout Shift.
+
+Reserve appropriate space for:
+
+* Images
+* Form previews
+* Code editors
+* Builder panels
+* Navigation
+* Async content
+
+Do not allow content to jump dramatically when data loads.
+
+---
+
+# 67. Responsive Performance
+
+The application must remain responsive on:
+
+```text
+Desktop
+Tablet
+Mobile
+```
+
+Do not assume desktop hardware or network speed.
+
+Consider:
+
+* Smaller CPU budgets
+* Slower networks
+* Touch interaction
+* Reduced screen size
+* Mobile browser memory
+
+---
+
+# 68. Mobile Builder
+
+The Form Builder can be especially expensive on mobile.
+
+Avoid unnecessary simultaneous rendering of:
+
+```text
+Field Palette
+Canvas
+Properties Panel
+Preview
+Code Editor
+```
+
+Use the responsive design defined in the UI guidelines.
+
+Do not render hidden heavy components when they are not required.
+
+---
+
+# 69. Images
+
+Use appropriately sized images.
+
+Avoid unnecessarily large images.
+
+Prefer modern formats where supported.
+
+Do not load images that are not visible or required.
+
+For avatars and thumbnails, use appropriately sized assets rather than full-resolution originals.
+
+---
+
+# 70. Icons
+
+Prefer the project's existing icon system.
+
+Do not introduce a large icon library unnecessarily.
+
+Import icons in a way that allows unused icons to be excluded from the bundle where supported.
+
+---
+
+# 71. Fonts
+
+Avoid loading unnecessary font families and weights.
+
+Use the project's configured typography.
+
+Do not add multiple external font requests without a clear design requirement.
+
+Font loading should not unnecessarily delay the first meaningful render.
+
+---
+
+# 72. Cloudflare Edge
+
+Formly is deployed to Cloudflare.
+
+Prefer architecture that allows:
+
+```text
+Static content
+Cacheable content
+Public content
+```
+
+to be served efficiently from the edge.
+
+Do not introduce unnecessary origin requests.
+
+Do not assume every request needs to reach a database.
+
+Follow:
+
+```text
+.cursor/rules/cloudflare.mdc
+```
+
+---
+
+# 73. Cloudflare Worker Performance
+
+Keep Worker request processing lightweight.
+
+Avoid unnecessary:
+
+* Large dependencies
+* Expensive initialization
+* Repeated parsing
+* Large serialization
+* Expensive computation
+* Repeated database access
+
+Do not perform expensive work during Worker initialization unless necessary.
+
+---
+
+# 74. Worker Memory
+
+Do not treat Worker memory as persistent application state.
+
+Do not store user-specific data in module-level variables.
+
+Bad:
+
+```ts
+let currentForm;
+```
+
+Worker instances may be reused across requests.
+
+Request-specific state must remain request-scoped.
+
+---
+
+# 75. Database Access from Cloudflare
+
+If Cloudflare D1 or another database is used:
+
+* Minimize database access.
+* Retrieve only required data.
+* Avoid unnecessary repeated queries.
+* Use appropriate indexes.
+* Bound result sizes.
+* Avoid N+1 queries.
+* Avoid unnecessary database access for public static UI.
+
+Do not use a database for data that can safely be rendered or cached without it.
+
+---
+
+# 76. Caching
+
+Caching should be intentional.
+
+Potential cache candidates include:
+
+* Public content
+* Stable configuration
+* Public Form output
+* Non-sensitive derived data
+* Expensive read operations
+
+Before caching, consider:
+
+```text
+Freshness
+Authorization
+User identity
+Form visibility
+Invalidation
+Cache size
+```
+
+---
+
+# 77. User-Specific Cache Safety
+
+Never allow user-specific data to leak through shared caches.
+
+Bad:
+
+```text
+Cache Key:
+form-preview
+```
+
+when the response differs between users.
+
+The cache strategy must respect the appropriate security boundary.
+
+When uncertain, prefer no shared cache for sensitive data.
+
+Follow:
+
+```text
+.cursor/rules/security.mdc
+```
+
+---
+
+# 78. Cache Invalidation
+
+When adding caching, define how data becomes stale.
+
+Example:
+
+```text
+Form Updated
+ ↓
+Invalidate Form-derived Cache
+```
+
+Do not introduce caching without considering invalidation.
+
+---
+
+# 79. Public Form Cache
+
+If Formly later supports public Forms, public generated output may be a candidate for caching.
+
+However, verify:
+
+```text
+Form visibility
+Publication state
+Updated Schema
+Cache invalidation
+Sensitive data
+```
+
+before using shared caching.
+
+A Form being publicly accessible does not automatically mean every related resource is public.
+
+---
+
+# 80. Form Preview Cache
+
+Do not cache private Preview content in a shared public cache.
+
+If Preview output is cached:
+
+* Define ownership.
+* Define visibility.
+* Define cache keys.
+* Define invalidation.
+* Define expiration.
+
+---
+
+# 81. Code Generation Cache
+
+Generated HTML/CSS/JavaScript may be derived from Form Schema.
+
+If caching generated code:
+
+```text
+Form Schema
+ ↓
+Schema Version / Hash
+ ↓
+Generated Output
+```
+
+should have a clear relationship.
+
+Do not serve stale generated code after the Form Schema changes.
+
+---
+
+# 82. Network Payload Size
+
+Keep API responses small.
+
+Do not return:
+
+```text
+Full Form Schema
+```
+
+when the UI only needs:
+
+```text
+Form name
+Updated date
+Field count
+```
+
+Avoid unnecessary metadata.
+
+---
+
+# 83. Serialization
+
+Avoid serializing large objects repeatedly.
+
+Examples:
+
+```text
+Large Form Schema
+Large generated HTML
+Large generated CSS
+Large generated JavaScript
+```
+
+should not be repeatedly serialized and transferred when unnecessary.
+
+---
+
+# 84. Generated Code Size
+
+Generated code can become large.
+
+Avoid:
+
+* Repeating identical strings
+* Repeating CSS unnecessarily
+* Generating unused JavaScript
+* Including unnecessary dependencies
+* Including unnecessary comments or metadata
+
+Generate only what the selected output requires.
+
+---
+
+# 85. Preview vs Code Output
+
+Do not make Preview load the entire Code output if it does not need it.
+
+Similarly, do not make Code view initialize the entire Preview environment unless required.
+
+Prefer:
+
+```text
+Builder
+ ↓
+Required Form Schema
+```
+
+then independently:
+
+```text
+Preview
+ ↓
+Generated Preview Output
+```
+
+and:
+
+```text
+Code
+ ↓
+Generated Code
+```
+
+---
+
+# 86. Form Export
+
+If Form export is supported:
+
+* Avoid generating exports repeatedly.
+* Generate only when requested.
+* Stream or download large output appropriately.
+* Avoid keeping unnecessarily large generated strings in multiple state variables.
+
+---
+
+# 87. Large Text State
+
+Large generated strings such as:
+
+```text
+HTML
+CSS
+JavaScript
+```
+
+should not be duplicated across many React states.
+
+Prefer a clear source of truth.
+
+Avoid:
+
+```text
+htmlState
+previewHtmlState
+exportHtmlState
+codeHtmlState
+```
+
+when these contain the same output.
+
+---
+
+# 88. Analytics
+
+If Formly later includes analytics:
+
+Do not calculate expensive analytics on every render.
+
+Prefer:
+
+```text
+Server aggregation
+ ↓
+Small response
+ ↓
+Client visualization
+```
+
+over:
+
+```text
+Large raw dataset
+ ↓
+Browser downloads everything
+ ↓
+Browser performs all aggregation
+```
+
+when server-side aggregation is appropriate.
+
+---
+
+# 89. Error Handling and Performance
+
+Errors should fail quickly and clearly.
+
+Do not retry indefinitely.
+
+Use reasonable retry strategies for transient failures.
+
+Do not create retry loops that multiply:
+
+```text
+Database traffic
+API traffic
+Code generation
+Preview generation
+```
+
+---
+
+# 90. Form Save Performance
+
+Saving a Form should not unnecessarily block the entire UI.
+
+Prefer local pending UI:
+
+```text
+Save Button
+ ↓
+Saving...
+```
+
+over:
+
+```text
+Entire Application
+ ↓
+Loading...
+```
+
+unless the operation genuinely affects the entire application.
+
+---
+
+# 91. Optimistic UI
+
+Optimistic updates may be used for interactions where the expected result is highly reliable.
+
+Potential candidates include:
+
+```text
+Simple Form rename
+Simple local toggle
+Builder ordering
+UI-only changes
+```
+
+Do not use optimistic updates when rollback behavior is complex or failure is likely.
+
+Always handle failure and rollback correctly.
+
+---
+
+# 92. Form Deletion
+
+Deletion is generally not a good candidate for blind optimistic UI unless rollback behavior is clearly defined.
+
+Prefer:
+
+```text
+Confirm
+ ↓
+Delete
+ ↓
+Success
+```
+
+and update the UI after the operation succeeds, unless the architecture intentionally supports optimistic deletion.
+
+---
+
+# 93. Builder Undo / Redo
+
+Do not introduce an expensive full Form Schema snapshot on every keystroke merely to support future Undo/Redo.
+
+If Undo/Redo is introduced:
+
+1. Define the history model.
+2. Define snapshot boundaries.
+3. Avoid unbounded memory usage.
+4. Measure large-form behavior.
+5. Test performance.
+
+---
+
+# 94. Code Editor Updates
+
+If a code editor is used, do not recreate the editor instance whenever the generated code changes.
+
+Prefer updating the editor content through the editor's intended API.
+
+Avoid:
+
+```text
+Form change
+ ↓
+Destroy editor
+ ↓
+Create editor
+ ↓
+Initialize editor
+```
+
+for every change.
+
+---
+
+# 95. Syntax Highlighting
+
+Syntax highlighting can be expensive.
+
+Do not load a large syntax highlighting library on every route.
+
+Load it only where required.
+
+Avoid highlighting content repeatedly when the source has not changed.
+
+---
+
+# 96. Clipboard Operations
+
+Clipboard operations should remain lightweight.
+
+Do not introduce a large dependency merely for:
+
+```text
+Copy generated code
+```
+
+Use the browser Clipboard API when appropriate.
+
+---
+
+# 97. Local Filtering
+
+Local filtering is often preferable for small already-loaded datasets.
+
+Do not add a network request merely to filter a small list that is already available.
+
+Conversely, do not load thousands of records into the browser simply to avoid a server-side query.
+
+Choose based on dataset size and actual requirements.
+
+---
+
+# 98. Large Lists
+
+Large lists should not render thousands of DOM nodes unnecessarily.
+
+Potential solutions include:
+
+* Pagination
+* Virtualization
+* Incremental loading
+* Search
+* Filtering
+
+Use virtualization only when the dataset and interaction pattern justify it.
+
+---
+
+# 99. Template Lists
+
+If Formly provides templates:
+
+Avoid loading complete Template Schemas for every template card.
+
+Prefer:
+
+```text
+Template Metadata
+ ↓
+Template List
+```
+
+and load the complete template only when selected.
+
+---
+
+# 100. Preview Resource Loading
+
+If Preview loads external resources:
+
+* Avoid loading unnecessary resources.
+* Avoid duplicate resource loading.
+* Consider caching where safe.
+* Preserve security isolation.
+* Do not load external resources in the main application unnecessarily.
+
+Follow:
+
+```text
+.cursor/rules/security.mdc
+```
+
+for untrusted external resources.
+
+---
+
+# 101. Performance Monitoring
+
+Do not rely only on subjective impressions.
+
+When performance becomes a concern, investigate:
+
+* Browser Performance
+* Network waterfall
+* Server timing
+* Worker timing
+* Database query timing
+* Bundle size
+* Rendering behavior
+* Web Vitals
+* Form Builder interaction latency
+
+Measure before performing large optimizations when practical.
+
+---
+
+# 102. Performance Regression
+
+When fixing a significant performance problem:
+
+1. Identify the bottleneck.
+2. Measure current behavior when possible.
+3. Implement the fix.
+4. Measure again.
+5. Add a regression test or performance guard when practical.
+6. Document significant performance improvements.
+
+Do not claim performance improvements without evidence when measurement is available.
+
+---
+
+# 103. Performance Documentation
+
+If a performance decision changes the architecture, update:
+
+```text
+docs/04_architecture.md
+```
+
+If it changes database behavior, update:
+
+```text
+docs/05_database.md
+```
+
+If it changes API behavior, update:
+
+```text
+docs/06_api.md
+```
+
+If it changes UI behavior, update:
+
+```text
+docs/08_ui-guideline.md
+```
+
+Record significant performance decisions in:
+
+```text
+docs/development-log.md
+```
+
+---
+
+# 104. Performance Testing
+
+Performance-sensitive features should be tested appropriately.
+
+Consider:
+
+* Form Builder interaction
+* Large Form Schemas
+* Large field counts
+* Code generation
+* Preview rendering
+* Database query behavior
+* API response size
+* Large lists
+* Mobile behavior
+* Slow network behavior
+
+Do not create expensive performance tests for every small feature.
+
+---
+
+# 105. Builder Performance Testing
+
+When Builder behavior changes, test representative operations:
+
+```text
+Add field
+Delete field
+Select field
+Edit field
+Reorder field
+Duplicate field
+Change validation
+Change options
+```
+
+For performance-sensitive changes, verify that unrelated components do not unnecessarily re-render where practical.
+
+---
+
+# 106. Large Form Testing
+
+Performance-sensitive Builder features should be tested with realistic larger Forms where practical.
+
+Consider representative schemas with:
+
+```text
+50 fields
+100 fields
+500 fields
+```
+
+when the implementation could reasonably encounter those sizes.
+
+Do not assume a five-field demo Form represents real-world performance.
+
+---
+
+# 107. Mobile Performance Testing
+
+When practical, test:
+
+```text
+Mobile viewport
+Touch interaction
+Slower CPU
+Slower network
+```
+
+The Builder should remain usable without unnecessary lag.
+
+Do not optimize only for high-end desktop hardware.
+
+---
+
+# 108. Performance and Accessibility
+
+Performance optimizations must not break accessibility.
+
+Do not remove:
+
+* Labels
+* Focus states
+* Semantic HTML
+* Keyboard navigation
+* Accessible names
+* Loading announcements
+
+merely to reduce code.
+
+Follow:
+
+```text
+.cursor/rules/ui.mdc
+```
+
+---
+
+# 109. Performance and Security
+
+Performance optimizations must not weaken security.
+
+Do not:
+
+* Disable validation to improve speed.
+* Remove authorization checks.
+* Execute generated code directly in the main application.
+* Expose private data through caching.
+* Skip Preview isolation.
+
+Follow:
+
+```text
+.cursor/rules/security.mdc
+```
+
+---
+
+# 110. Performance and State Management
+
+Follow:
+
+```text
+.cursor/rules/state-management.mdc
+```
+
+Avoid duplicated state because duplicated state often creates:
+
+* Synchronization work
+* Additional renders
+* Additional effects
+* Additional memory usage
+* Additional network requests
+
+Prefer a clear source of truth.
+
+---
+
+# 111. Performance and Forms
+
+Follow:
+
+```text
+.cursor/rules/forms.mdc
+```
+
+Form Schema should remain predictable and efficient.
+
+Do not introduce performance optimizations that make the Form Schema difficult to understand or maintain.
+
+---
+
+# 112. Performance and Cloudflare
+
+Follow:
+
+```text
+.cursor/rules/cloudflare.mdc
+```
+
+Cloudflare should improve delivery and runtime performance without introducing unnecessary infrastructure complexity.
+
+Prefer:
+
+```text
+Simple architecture
++
+Efficient Worker execution
++
+Appropriate caching
++
+Small payloads
+```
+
+over excessive infrastructure.
+
+---
+
+# 113. Avoid Premature Optimization
+
+Do not optimize code merely because it could theoretically be faster.
+
+Avoid:
+
+```text
+Premature memoization
+Premature virtualization
+Premature caching
+Premature code splitting
+Premature database indexing
+Premature state normalization
+```
+
+First understand the actual bottleneck.
+
+---
+
+# 114. Performance Change Workflow
+
+Before implementing a performance-sensitive change:
+
+```text
+1. Identify the user-visible problem.
+        ↓
+2. Identify the likely bottleneck.
+        ↓
+3. Measure when practical.
+        ↓
+4. Check existing architecture.
+        ↓
+5. Implement the smallest appropriate improvement.
+        ↓
+6. Run tests.
+        ↓
+7. Measure again when practical.
+        ↓
+8. Check mobile behavior.
+        ↓
+9. Check accessibility.
+        ↓
+10. Check security implications.
+        ↓
+11. Update documentation when architecture changes.
+```
+
+---
+
+# 115. Performance Checklist
+
+Before completing a performance-sensitive feature:
+
+* [ ] Initial rendering does not perform unnecessary work.
+* [ ] Only required route data is loaded.
+* [ ] Client JavaScript is minimized.
+* [ ] Large dependencies were avoided where possible.
+* [ ] Client boundaries are kept small.
+* [ ] Worker-only code remains server-side.
+* [ ] Browser-only code remains client-side.
+* [ ] Form Schema is not unnecessarily duplicated.
+* [ ] Derived state is not unnecessarily stored.
+* [ ] Builder interactions remain responsive.
+* [ ] Field editing does not trigger unnecessary expensive work.
+* [ ] Drag and drop does not perform database requests on every movement.
+* [ ] Reordering persists at the appropriate boundary.
+* [ ] Code generation is not performed unnecessarily.
+* [ ] Preview is not regenerated unnecessarily.
+* [ ] Large generated output is not unnecessarily duplicated.
+* [ ] Search is appropriately bounded.
+* [ ] Search requests are debounced where appropriate.
+* [ ] Large datasets are paginated or otherwise bounded.
+* [ ] N+1 queries are avoided.
+* [ ] Database queries retrieve only required data.
+* [ ] Independent requests are parallelized where appropriate.
+* [ ] Duplicate requests are avoided.
+* [ ] Caching is intentional.
+* [ ] User-specific data cannot leak through shared caches.
+* [ ] Cache invalidation is defined.
+* [ ] Loading states are provided.
+* [ ] Layout shifts are minimized.
+* [ ] Animations remain performant.
+* [ ] Reduced motion is respected.
+* [ ] Mobile performance was considered.
+* [ ] Accessibility was preserved.
+* [ ] Security boundaries were preserved.
+* [ ] Performance-sensitive behavior was measured when practical.
+* [ ] Relevant documentation has been updated.
+
+---
+
+# 116. Forbidden Performance Practices
+
+Never:
+
+* Fetch all Forms when only a subset is required.
+* Load complete Form Schemas for every Form List item unnecessarily.
+* Perform database queries directly from UI components.
+* Add unnecessary network requests.
+* Create N+1 database queries.
+* Allow unlimited pagination.
+* Send unnecessarily large API responses.
+* Recalculate the entire Form Schema for every small UI interaction without reason.
+* Regenerate HTML/CSS/JavaScript unnecessarily.
+* Re-render the entire Builder for every field interaction without reason.
+* Perform database requests on every drag movement.
+* Recreate a code editor unnecessarily.
+* Load large editor libraries on unrelated routes.
+* Add `useMemo` or `useCallback` indiscriminately.
+* Add virtualization to small lists.
+* Add caching without defining invalidation.
+* Use shared caching for private data without proper isolation.
+* Expose Worker-only code to the browser.
+* Retry failed requests indefinitely.
+* Hide slow operations behind indefinite loading states.
+* Block navigation with unnecessary animation.
+* Optimize without understanding the bottleneck.
+* Sacrifice security or accessibility for performance.
+
+---
+
+# 117. Performance Priority for Formly
+
+The following priorities are especially important for Formly:
+
+```text
+1. Fast initial page rendering
+2. Minimal client-side JavaScript
+3. Fast route navigation
+4. Responsive Form Builder interaction
+5. Efficient Form Schema processing
+6. Efficient code generation
+7. Fast and isolated Preview
+8. Efficient network requests
+9. Efficient database access
+10. Mobile responsiveness
+```
+
+The application should feel fast before it feels feature-rich.
+
+---
+
+# 118. Final Performance Principles
+
+Always prefer:
+
+```text
+Fast initial render
+    over
+Unnecessary initialization
+
+Required data
+    over
+All available data
+
+Small client bundles
+    over
+Large dependency graphs
+
+Local interaction
+    over
+Unnecessary network requests
+
+Parallel requests
+    over
+Unnecessary waterfalls
+
+Canonical Form Schema
+    over
+Duplicated representations
+
+Localized Builder updates
+    over
+Whole-page re-renders
+
+Generate on demand
+    over
+Generate unnecessarily
+
+Efficient Preview updates
+    over
+Full regeneration for every UI change
+
+Measured optimization
+    over
+Guesswork
+
+Simple solution
+    over
+Premature optimization
+
+Responsive UI
+    over
+Heavy animation
+
+Efficient queries
+    over
+Large data transfers
+
+Progressive loading
+    over
+Blocking the entire page
+
+Secure isolation
+    over
+Unsafe shortcuts
+
+Accessible UI
+    over
+Performance hacks
+```
+
+The goal is to make Formly feel fast, reliable, and responsive while preserving maintainability, security, accessibility, and architectural simplicity.
+
+Performance is part of the product experience, not a final optimization step.

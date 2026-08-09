@@ -1,0 +1,2055 @@
+---
+description: Internationalization and localization rules for the Formly project. Apply when creating or modifying user-facing text, translations, language switching, locale state, formatting, validation messages, navigation labels, forms, dialogs, notifications, or any multilingual UI.
+alwaysApply: true
+---
+
+# Internationalization Rules
+
+You are working on Formly, a portfolio-quality Form Builder application.
+
+Formly is a multilingual application.
+
+The primary language is Japanese, with support for:
+
+- Japanese
+- English
+- Chinese
+- Korean
+
+Internationalization must be considered from the beginning of feature development.
+
+Do not build Japanese-only UI and attempt to internationalize it later.
+
+---
+
+# 1. Supported Languages
+
+The supported languages are:
+
+```text
+ja
+en
+zh
+ko
+````
+
+Use these locale identifiers consistently throughout the application.
+
+Do not introduce alternative identifiers such as:
+
+```text
+jp
+cn
+kr
+japanese
+english
+chinese
+korean
+```
+
+when referring to locale codes.
+
+The canonical mapping is:
+
+```text
+ja → Japanese
+en → English
+zh → Chinese
+ko → Korean
+```
+
+---
+
+# 2. Default Language
+
+Japanese is the default language.
+
+When no language preference has been stored:
+
+```text
+ja
+```
+
+should be used.
+
+The application must remain fully usable in Japanese without requiring a language selection.
+
+---
+
+# 3. Translation First
+
+User-facing text must be translated through the application's i18n system.
+
+Do not hardcode user-facing Japanese strings directly inside React components.
+
+Bad:
+
+```tsx
+<h1>フォームを作成</h1>
+```
+
+Prefer:
+
+```tsx
+<h1>{t("forms.create.title")}</h1>
+```
+
+The same rule applies to:
+
+* Buttons
+* Navigation
+* Headings
+* Labels
+* Placeholders
+* Tooltips
+* Dialogs
+* Toasts
+* Empty states
+* Error messages
+* Validation messages
+* Loading messages
+* Accessibility labels
+* Confirmation messages
+* Form Builder controls
+* Settings
+* Code Generator UI
+
+---
+
+# 4. No Hardcoded User-Facing Strings
+
+Do not introduce hardcoded user-facing strings such as:
+
+```tsx
+<button>保存</button>
+```
+
+```tsx
+<span>フォームがありません</span>
+```
+
+```tsx
+<p>読み込み中...</p>
+```
+
+```tsx
+aria-label="削除"
+```
+
+when the text is intended to be translated.
+
+Use translation keys instead.
+
+Examples:
+
+```tsx
+<button>{t("common.actions.save")}</button>
+```
+
+```tsx
+<span>{t("forms.empty.title")}</span>
+```
+
+```tsx
+<p>{t("common.loading")}</p>
+```
+
+```tsx
+aria-label={t("common.actions.delete")}
+```
+
+---
+
+# 5. Translation Keys
+
+Translation keys must be organized by feature and semantic meaning.
+
+Prefer:
+
+```text
+common.actions.save
+common.actions.cancel
+common.actions.delete
+
+navigation.dashboard
+navigation.forms
+navigation.settings
+
+forms.title
+forms.empty.title
+forms.empty.description
+forms.actions.create
+
+builder.title
+builder.actions.addField
+builder.actions.preview
+
+preview.title
+
+code.title
+code.actions.copy
+
+settings.title
+settings.language
+```
+
+Avoid vague keys such as:
+
+```text
+text1
+label1
+button1
+message1
+string1
+saveText
+japaneseText
+```
+
+Translation keys should describe meaning, not the current language.
+
+---
+
+# 6. Keys Should Describe Meaning
+
+Good:
+
+```text
+forms.actions.create
+forms.actions.delete
+forms.actions.rename
+```
+
+Bad:
+
+```text
+forms.blueButton
+forms.topButton
+forms.japaneseCreateText
+```
+
+The translation key should remain valid even if:
+
+* The wording changes.
+* The UI moves.
+* The design changes.
+* The application gains another language.
+
+---
+
+# 7. Shared Translations
+
+Common UI terms should be centralized.
+
+Examples:
+
+```text
+common.actions.save
+common.actions.cancel
+common.actions.close
+common.actions.delete
+common.actions.edit
+common.actions.create
+common.actions.copy
+common.actions.search
+common.actions.back
+common.actions.next
+common.actions.previous
+
+common.status.loading
+common.status.saving
+common.status.saved
+common.status.error
+
+common.confirmation.delete
+common.errors.generic
+```
+
+Do not duplicate identical translations across unrelated feature files unless there is a meaningful semantic difference.
+
+---
+
+# 8. Feature-Specific Translations
+
+Feature-specific text should remain within the feature namespace.
+
+For example:
+
+```text
+forms.*
+builder.*
+preview.*
+code.*
+settings.*
+profile.*
+```
+
+Prefer:
+
+```text
+builder.actions.addField
+```
+
+over:
+
+```text
+common.addField
+```
+
+when the phrase is specific to the Form Builder.
+
+---
+
+# 9. Translation File Organization
+
+Keep translations organized by locale.
+
+A possible structure is:
+
+```text
+src/
+└── i18n/
+    ├── ja/
+    │   └── ...
+    ├── en/
+    │   └── ...
+    ├── zh/
+    │   └── ...
+    └── ko/
+        └── ...
+```
+
+The exact directory structure should follow the project's architecture and selected i18n implementation.
+
+Do not introduce a new translation architecture without reviewing the existing project structure.
+
+---
+
+# 10. Translation Source of Truth
+
+Translation keys should have a consistent source of truth.
+
+When adding a new key:
+
+1. Add the key to Japanese.
+2. Add the corresponding key to English.
+3. Add the corresponding key to Chinese.
+4. Add the corresponding key to Korean.
+5. Verify that all supported locales contain the key.
+6. Test the affected UI.
+
+Do not intentionally leave supported locales incomplete.
+
+---
+
+# 11. Missing Translations
+
+Missing translations must not silently produce broken UI.
+
+If a translation is missing:
+
+* Use the project's defined fallback behavior.
+* Prefer Japanese as the fallback language.
+* Log or otherwise expose missing translations during development when supported.
+* Do not display raw translation keys to normal users when avoidable.
+
+Avoid displaying:
+
+```text
+builder.actions.addField
+```
+
+to users.
+
+---
+
+# 12. Translation Fallback
+
+The fallback hierarchy should be:
+
+```text
+Current Locale
+      ↓
+Japanese
+      ↓
+Safe application fallback
+```
+
+The exact implementation depends on the project's i18n library.
+
+Do not invent a second fallback system inside individual components.
+
+---
+
+# 13. Language Switching
+
+Language switching must update the application consistently.
+
+When the user changes:
+
+```text
+Japanese
+English
+Chinese
+Korean
+```
+
+all visible translated UI should update appropriately.
+
+This includes:
+
+* Navigation
+* Page titles
+* Buttons
+* Dialogs
+* Tooltips
+* Toasts
+* Empty states
+* Error states
+* Form Builder
+* Settings
+* Accessibility labels
+
+Do not require a full page reload unless the selected i18n architecture specifically requires it.
+
+---
+
+# 14. Language Selector
+
+The language selector should display human-readable language names.
+
+Prefer:
+
+```text
+日本語
+English
+中文
+한국어
+```
+
+over:
+
+```text
+ja
+en
+zh
+ko
+```
+
+as the primary visible labels.
+
+Locale codes may be used internally.
+
+---
+
+# 15. Language Preference Persistence
+
+When the user selects a language, persist the preference when appropriate.
+
+The exact persistence mechanism should follow the application's architecture.
+
+Possible mechanisms include:
+
+```text
+localStorage
+```
+
+or another client-side persistence mechanism.
+
+Do not store language preference independently in multiple places.
+
+Avoid situations where:
+
+```text
+React State = en
+localStorage = ja
+URL = zh
+```
+
+without an intentional priority model.
+
+---
+
+# 16. Language Initialization
+
+On application startup:
+
+1. Determine the stored language preference if available.
+2. Validate that the locale is supported.
+3. Use Japanese when no valid preference exists.
+4. Initialize the i18n system.
+5. Render the application using the resolved locale.
+
+Do not assume stored values are valid.
+
+Treat persisted locale values as untrusted input.
+
+---
+
+# 17. URL and Language
+
+Do not introduce locale segments into URLs unless the routing architecture explicitly defines them.
+
+Do not independently implement:
+
+```text
+/ja/forms
+/en/forms
+/zh/forms
+/ko/forms
+```
+
+without an architectural decision.
+
+If locale-based routing is introduced later, update:
+
+```text
+docs/04_architecture.md
+docs/screen-list.md
+```
+
+and the routing rules before implementing it.
+
+---
+
+# 18. React Router and i18n
+
+Language state and route state are separate concerns.
+
+React Router is responsible for:
+
+```text
+URL
+Navigation
+Routes
+Route Parameters
+Query Parameters
+```
+
+The i18n system is responsible for:
+
+```text
+Locale
+Translations
+Localized Messages
+```
+
+Do not mix the two unnecessarily.
+
+Do not use pathname parsing to determine the language unless locale-based routing is explicitly part of the architecture.
+
+---
+
+# 19. Route Titles
+
+User-facing route titles should be translated.
+
+Do not hardcode:
+
+```tsx
+<h1>フォーム一覧</h1>
+```
+
+Prefer:
+
+```tsx
+<h1>{t("forms.title")}</h1>
+```
+
+The same applies to:
+
+* Breadcrumbs
+* Navigation
+* Tabs
+* Page headings
+* Browser-facing titles when applicable
+
+---
+
+# 20. Navigation Labels
+
+Navigation labels must use translation keys.
+
+Example:
+
+```text
+navigation.dashboard
+navigation.forms
+navigation.templates
+navigation.settings
+navigation.profile
+```
+
+Do not duplicate navigation labels in multiple components.
+
+Prefer a shared navigation configuration when appropriate.
+
+---
+
+# 21. Form Builder Translation
+
+The Form Builder contains a large amount of UI text.
+
+All Builder UI must support the four supported languages.
+
+Examples:
+
+```text
+Add field
+Delete field
+Duplicate field
+Move up
+Move down
+Field settings
+Label
+Placeholder
+Required
+Default value
+Options
+Validation
+Preview
+Save
+```
+
+These must not be hardcoded in the Builder components.
+
+---
+
+# 22. Field Type Names
+
+Form field types are user-facing content and should be translated.
+
+For example:
+
+```text
+text
+email
+textarea
+select
+checkbox
+radio
+number
+date
+```
+
+may have localized display names.
+
+Do not change the internal field type identifier when changing the display language.
+
+For example:
+
+```ts
+type: "text"
+```
+
+must remain:
+
+```ts
+type: "text"
+```
+
+regardless of locale.
+
+Only the displayed label changes.
+
+---
+
+# 23. Internal Values vs Display Values
+
+Never use translated text as internal identifiers.
+
+Bad:
+
+```ts
+field.type === "テキスト"
+```
+
+Good:
+
+```ts
+field.type === "text"
+```
+
+and:
+
+```tsx
+{t("fields.types.text")}
+```
+
+The same principle applies to:
+
+* Field types
+* Status values
+* IDs
+* Route segments
+* Storage keys
+* Sort values
+* Filter values
+
+Internal data must remain language-independent.
+
+---
+
+# 24. Form Schema and i18n
+
+The Form Schema should not depend on the current UI language unless multilingual form content is explicitly part of the schema design.
+
+For example:
+
+```ts
+{
+  type: "text",
+  label: "Name"
+}
+```
+
+must not automatically become:
+
+```ts
+{
+  type: "テキスト",
+  label: "名前"
+}
+```
+
+merely because the application language changed.
+
+Application UI translations and user-created form content are separate concerns.
+
+---
+
+# 25. User-Created Form Content
+
+User-created content should not automatically be translated by the application.
+
+Examples:
+
+* Form name
+* Field label
+* Placeholder
+* Help text
+* Option labels
+* Description
+
+These are user content.
+
+If the user creates:
+
+```text
+Customer Feedback
+```
+
+Formly should not automatically translate it to:
+
+```text
+顧客フィードバック
+```
+
+when the application language changes.
+
+Application UI and user content must remain separate.
+
+---
+
+# 26. Code Generation and i18n
+
+Generated HTML, CSS, and JavaScript must preserve user-created form content.
+
+Changing the Formly UI language must not unexpectedly translate:
+
+```text
+Generated form labels
+Generated placeholders
+Generated option labels
+```
+
+unless multilingual generated forms are explicitly implemented as a product feature.
+
+The Code Generator should consume the Form Schema, not the application's current UI locale.
+
+---
+
+# 27. Validation Messages
+
+Validation messages displayed by Formly must be localized.
+
+Bad:
+
+```text
+This field is required.
+```
+
+hardcoded inside validation logic.
+
+Prefer:
+
+```text
+validation.required
+```
+
+or an equivalent translation key.
+
+Validation logic should return language-independent error identifiers where practical.
+
+For example:
+
+```ts
+{
+  code: "required"
+}
+```
+
+and the UI translates:
+
+```text
+validation.required
+```
+
+---
+
+# 28. Error Messages
+
+Application errors shown to users must be localized.
+
+Avoid:
+
+```tsx
+<p>{error.message}</p>
+```
+
+when `error.message` is an internal or server-generated English message.
+
+Prefer mapping known error conditions to translation keys.
+
+Example:
+
+```ts
+{
+  code: "FORM_NOT_FOUND"
+}
+```
+
+then:
+
+```tsx
+t("errors.formNotFound")
+```
+
+Internal errors may still be logged for developers.
+
+---
+
+# 29. Toast Messages
+
+Toast messages must use translation keys.
+
+Examples:
+
+```text
+toast.formCreated
+toast.formSaved
+toast.formDeleted
+toast.fieldAdded
+toast.fieldDeleted
+toast.copied
+toast.saveFailed
+```
+
+Do not hardcode Japanese text inside Toast calls.
+
+---
+
+# 30. Dialogs and Confirmations
+
+Dialog titles, descriptions, buttons, and confirmation messages must be translated.
+
+Example:
+
+```text
+dialogs.deleteForm.title
+dialogs.deleteForm.description
+common.actions.delete
+common.actions.cancel
+```
+
+Do not construct dialog messages using hardcoded language-specific fragments.
+
+---
+
+# 31. Pluralization
+
+Do not assume English-style pluralization works for every language.
+
+Avoid manually constructing strings such as:
+
+```ts
+`${count} fields`
+```
+
+Use the i18n system's pluralization capabilities where supported.
+
+For example:
+
+```text
+forms.fieldCount
+```
+
+with locale-aware pluralization.
+
+Consider the grammatical rules of:
+
+```text
+Japanese
+English
+Chinese
+Korean
+```
+
+when defining pluralized messages.
+
+---
+
+# 32. Interpolation
+
+Use translation interpolation for dynamic values.
+
+Prefer:
+
+```text
+welcome.message = "Welcome back, {{name}}"
+```
+
+rather than:
+
+```tsx
+<p>{t("welcome.prefix")} {name}</p>
+```
+
+when the sentence structure differs between languages.
+
+This allows each language to define its own natural word order.
+
+---
+
+# 33. Do Not Concatenate Sentences
+
+Avoid constructing translated sentences from fragments.
+
+Bad:
+
+```tsx
+t("forms.created") + " " + form.name + " " + t("forms.success")
+```
+
+Different languages may require a different sentence structure.
+
+Prefer one translation key with interpolation:
+
+```text
+forms.createdMessage
+```
+
+with:
+
+```text
+{{name}}
+```
+
+as the dynamic value.
+
+---
+
+# 34. Date Formatting
+
+Dates must be localized when displayed to users.
+
+Do not hardcode a single date format such as:
+
+```text
+2026-08-10
+```
+
+for every locale.
+
+Use locale-aware formatting.
+
+Prefer:
+
+```text
+Intl.DateTimeFormat
+```
+
+or the project's established date formatting utility.
+
+Do not format dates manually with string concatenation.
+
+---
+
+# 35. Number Formatting
+
+Numbers should use locale-aware formatting when appropriate.
+
+Prefer:
+
+```text
+Intl.NumberFormat
+```
+
+for user-facing numbers.
+
+Do not manually insert commas or separators.
+
+For example, avoid:
+
+```ts
+String(value).replace(...)
+```
+
+for general locale formatting.
+
+---
+
+# 36. Relative Time
+
+If the application displays relative time such as:
+
+```text
+5 minutes ago
+Yesterday
+2 hours ago
+```
+
+use locale-aware formatting.
+
+Do not hardcode English or Japanese relative-time phrases.
+
+---
+
+# 37. Time Zones
+
+Do not assume that the user's locale determines the application's time zone.
+
+Locale:
+
+```text
+ja
+en
+zh
+ko
+```
+
+and timezone are separate concepts.
+
+Use the project's defined timezone strategy.
+
+Do not introduce locale-based timezone conversion without an explicit requirement.
+
+---
+
+# 38. Text Expansion
+
+Translated text may be longer or shorter than the Japanese source.
+
+Do not design UI components assuming a fixed text width.
+
+For example:
+
+```text
+日本語
+```
+
+may be significantly shorter than:
+
+```text
+English
+```
+
+and Chinese or Korean may have different visual widths.
+
+Buttons, navigation, dialogs, tabs, and Builder controls must accommodate translation differences.
+
+---
+
+# 39. Avoid Fixed Width Text Containers
+
+Avoid overly restrictive widths for translated UI text.
+
+Bad:
+
+```css
+width: 80px;
+```
+
+for a button whose label changes by locale.
+
+Prefer flexible sizing when appropriate.
+
+Do not use aggressive truncation for important labels.
+
+---
+
+# 40. Responsive i18n
+
+Test multilingual UI on:
+
+```text
+Desktop
+Tablet
+Mobile
+```
+
+for all supported languages.
+
+Pay particular attention to:
+
+* Navigation
+* Buttons
+* Dialogs
+* Settings
+* Builder toolbar
+* Field properties
+* Empty states
+* Toasts
+* Command Palette
+
+A layout that works in Japanese may overflow in English.
+
+---
+
+# 41. Accessibility and i18n
+
+Accessibility labels must also be localized.
+
+Examples:
+
+```tsx
+aria-label={t("common.actions.close")}
+```
+
+```tsx
+aria-label={t("common.actions.delete")}
+```
+
+Do not hardcode:
+
+```tsx
+aria-label="閉じる"
+```
+
+if the application supports multiple languages.
+
+Screen-reader users must receive the same language as the visible UI whenever practical.
+
+---
+
+# 42. Tooltips
+
+Tooltips must be translated.
+
+Do not use hardcoded language-specific tooltip text.
+
+Example:
+
+```tsx
+<Tooltip>
+  <TooltipContent>
+    {t("builder.actions.deleteField")}
+  </TooltipContent>
+</Tooltip>
+```
+
+---
+
+# 43. Command Palette
+
+Command Palette entries must be localized.
+
+Examples:
+
+```text
+Create Form
+Open Forms
+Open Settings
+Change Language
+Change Theme
+```
+
+must use translation keys.
+
+Search behavior should remain usable in each supported language where applicable.
+
+---
+
+# 44. Search
+
+Do not assume that search behavior is language-independent.
+
+For UI labels generated from translations, ensure that search results remain understandable in the active locale.
+
+User-created form names and content should be treated separately from translated application labels.
+
+Do not automatically translate user search queries.
+
+---
+
+# 45. Language Switcher During Editing
+
+Changing the application language while editing a form must not modify the Form Schema unexpectedly.
+
+For example:
+
+```text
+Current language: Japanese
+
+Form name:
+お問い合わせフォーム
+
+Field label:
+お名前
+```
+
+Changing the application language to English should change:
+
+```text
+Formly UI
+```
+
+but should not silently modify the user's:
+
+```text
+Form name
+Field label
+```
+
+unless multilingual user-created content is explicitly supported.
+
+---
+
+# 46. Translation Keys Must Be Stable
+
+Do not rename translation keys casually.
+
+Translation keys may be referenced by:
+
+* Components
+* Tests
+* Documentation
+* Other locales
+* Accessibility labels
+
+If a key is renamed:
+
+1. Update all supported locales.
+2. Update all references.
+3. Run tests.
+4. Verify missing translations.
+5. Remove the old key only when no longer needed.
+
+---
+
+# 47. Avoid Translation Duplication
+
+Before adding a new translation key:
+
+1. Search for an existing equivalent.
+2. Reuse it if the meaning is the same.
+3. Create a new key only when the semantic meaning differs.
+
+Avoid:
+
+```text
+common.save
+forms.save
+builder.save
+preview.save
+```
+
+when all four mean exactly the same action.
+
+Prefer:
+
+```text
+common.actions.save
+```
+
+unless the wording genuinely needs to differ by context.
+
+---
+
+# 48. Translation Context
+
+Sometimes the same English or Japanese word may require different translations depending on context.
+
+Do not force unrelated meanings into one key merely because the source language happens to use the same word.
+
+For example:
+
+```text
+common.actions.close
+```
+
+and:
+
+```text
+common.status.closed
+```
+
+may need separate keys because they represent different meanings.
+
+Translation keys should represent semantic context.
+
+---
+
+# 49. Translation Quality
+
+Do not rely on literal word-for-word translation when it produces unnatural UI.
+
+Translations should be:
+
+* Natural
+* Concise
+* Appropriate for UI
+* Consistent with the application's terminology
+
+Maintain consistent terminology across the product.
+
+For example, if "Form Builder" is translated using one term, do not use a different term on another screen without a clear reason.
+
+---
+
+# 50. Product Terminology
+
+Maintain consistent translations for core Formly concepts.
+
+Examples include:
+
+```text
+Form
+Form Builder
+Field
+Preview
+Code
+Template
+Settings
+Profile
+```
+
+Do not translate the same product concept differently between screens.
+
+If terminology changes intentionally, update all locales and relevant documentation.
+
+---
+
+# 51. Translation and Documentation
+
+User-facing documentation should follow the same terminology as the application.
+
+When a core product term changes:
+
+1. Update translation files.
+2. Update relevant UI.
+3. Update screen documentation.
+4. Update UI guidelines if necessary.
+5. Update tests where applicable.
+
+Do not allow documentation and UI terminology to drift apart.
+
+---
+
+# 52. i18n Testing
+
+Internationalization must be tested.
+
+At minimum, test:
+
+* Default Japanese locale.
+* English locale.
+* Chinese locale.
+* Korean locale.
+* Language switching.
+* Missing translation fallback.
+* Representative navigation labels.
+* Representative Builder labels.
+* Validation messages.
+* Error messages.
+* Accessibility labels.
+
+Do not test every translated sentence individually.
+
+Test the translation system and representative user-facing behavior.
+
+---
+
+# 53. Translation Completeness
+
+When adding a new user-facing string, verify all supported locales:
+
+```text
+ja
+en
+zh
+ko
+```
+
+contain the corresponding translation.
+
+Do not consider a feature complete if it only works correctly in Japanese.
+
+---
+
+# 54. i18n Regression Tests
+
+When fixing an internationalization bug, add a regression test when practical.
+
+Examples:
+
+```text
+English navigation overflow
+        ↓
+Fix
+        ↓
+Regression test
+```
+
+```text
+Korean dialog label clipped
+        ↓
+Fix
+        ↓
+Regression test
+```
+
+```text
+Missing Chinese translation
+        ↓
+Fix
+        ↓
+Translation completeness test
+```
+
+---
+
+# 55. Translation File Validation
+
+If the project provides a translation validation script, run it before completing i18n-related work.
+
+The validation should detect, where practical:
+
+* Missing keys
+* Extra keys
+* Duplicate keys
+* Invalid locale identifiers
+* Malformed translation files
+
+Do not manually assume translation files are synchronized.
+
+---
+
+# 56. i18n and Tests
+
+Tests should not depend unnecessarily on the Japanese default locale.
+
+When testing multilingual behavior:
+
+1. Explicitly select the locale.
+2. Render the relevant UI.
+3. Assert translated user-visible behavior.
+4. Reset the locale after the test.
+
+Avoid test suites whose behavior changes depending on a developer's local language setting.
+
+---
+
+# 57. Test Selectors
+
+Do not use translated visible text as the only selector when the test is intended to be language-independent.
+
+For example, this can be fragile:
+
+```ts
+screen.getByText("保存")
+```
+
+when the same component is tested in multiple locales.
+
+Prefer accessible roles and stable accessible names where appropriate.
+
+When testing a specific locale, translated text may be intentionally asserted.
+
+---
+
+# 58. Locale-Independent Domain Logic
+
+Business logic must not depend on the active locale.
+
+For example:
+
+```ts
+if (field.type === "text") {
+  ...
+}
+```
+
+is correct.
+
+Do not write:
+
+```ts
+if (field.type === t("fields.types.text")) {
+  ...
+}
+```
+
+The domain layer must operate on stable internal values.
+
+---
+
+# 59. Locale-Independent Routing
+
+Routes must remain language-independent unless localized routing is explicitly designed.
+
+For example:
+
+```text
+/forms
+/forms/abc123/builder
+```
+
+should not become:
+
+```text
+/formularios
+/formulaires
+```
+
+based on application language.
+
+Keep technical routes stable.
+
+---
+
+# 60. Locale-Independent Persistence
+
+Stored application data must not depend on translated UI text.
+
+For example:
+
+```ts
+{
+  type: "text"
+}
+```
+
+must remain:
+
+```ts
+{
+  type: "text"
+}
+```
+
+regardless of locale.
+
+Do not store:
+
+```ts
+{
+  type: "テキスト"
+}
+```
+
+as a replacement for the internal value.
+
+---
+
+# 61. Locale-Independent Code Generation
+
+Generated code must not change merely because the Formly interface language changed.
+
+For example:
+
+```text
+Formly UI = Japanese
+Generated HTML = same
+```
+
+and:
+
+```text
+Formly UI = English
+Generated HTML = same
+```
+
+when the underlying Form Schema is unchanged.
+
+The current application locale should not become an accidental input to the Code Generator.
+
+---
+
+# 62. Language Switching Performance
+
+Language switching should feel immediate.
+
+Avoid unnecessarily reloading the entire application.
+
+Load translation resources efficiently according to the project's i18n architecture.
+
+Do not introduce unnecessary network requests for already-loaded locales.
+
+---
+
+# 63. Initial Render
+
+Avoid displaying a flash of untranslated content where practical.
+
+For example, avoid:
+
+```text
+Loading
+↓
+日本語
+↓
+English
+```
+
+when the user has already selected English.
+
+Initialize the locale before rendering the main application whenever the architecture permits.
+
+---
+
+# 64. Server / Worker Boundaries
+
+The application runs in a Cloudflare environment.
+
+Do not assume Node-specific internationalization APIs are always available in Worker-executed code.
+
+Prefer Web-standard APIs and the project's supported i18n implementation.
+
+Keep browser-only locale persistence in browser-compatible code.
+
+Do not access:
+
+```ts
+window
+localStorage
+document
+```
+
+from code that may execute outside the browser without appropriate guards or architecture.
+
+---
+
+# 65. i18n and React Components
+
+React components should receive translated strings through the i18n system rather than embedding language-specific content.
+
+Prefer:
+
+```tsx
+function CreateFormButton() {
+  const { t } = useTranslation();
+
+  return (
+    <Button>
+      {t("forms.actions.create")}
+    </Button>
+  );
+}
+```
+
+Avoid:
+
+```tsx
+function CreateFormButton() {
+  return (
+    <Button>
+      フォームを作成
+    </Button>
+  );
+}
+```
+
+---
+
+# 66. i18n and Shared Components
+
+Shared components must not assume a specific language.
+
+For example:
+
+```text
+Button
+Dialog
+EmptyState
+ErrorState
+SearchInput
+Pagination
+CommandPalette
+```
+
+must receive translated content or use the shared i18n system.
+
+Do not create Japanese-only shared components.
+
+---
+
+# 67. i18n and UI Reference
+
+The visual prototype under:
+
+```text
+docs/ui-reference/
+```
+
+may contain Japanese text or placeholder content.
+
+When implementing the production UI:
+
+* Preserve the visual hierarchy.
+* Preserve the intended layout.
+* Replace prototype text with translation keys.
+* Ensure the layout accommodates all supported languages.
+
+Do not blindly copy Japanese strings from the prototype into production components.
+
+---
+
+# 68. i18n and UI Guideline
+
+Follow:
+
+```text
+docs/ui-guideline.md
+```
+
+for visual consistency.
+
+Internationalization must not be treated as a separate feature that can break the design system.
+
+When text changes length:
+
+* Adjust layout.
+* Avoid fixed widths.
+* Preserve hierarchy.
+* Maintain alignment.
+* Preserve responsive behavior.
+
+---
+
+# 69. i18n Implementation Workflow
+
+Before implementing a user-facing feature:
+
+```text
+1. Identify all user-facing text
+        ↓
+2. Determine semantic translation keys
+        ↓
+3. Add Japanese translations
+        ↓
+4. Add English translations
+        ↓
+5. Add Chinese translations
+        ↓
+6. Add Korean translations
+        ↓
+7. Implement UI using translation keys
+        ↓
+8. Check responsive layouts
+        ↓
+9. Check accessibility labels
+        ↓
+10. Test language switching
+        ↓
+11. Test representative locales
+```
+
+Do not postpone translation until after the UI is complete.
+
+---
+
+# 70. i18n Change Workflow
+
+When modifying an existing user-facing string:
+
+1. Search for all references to the translation key.
+2. Check all supported locales.
+3. Update the required translations.
+4. Verify UI layout in multiple languages.
+5. Run relevant tests.
+6. Check accessibility labels.
+7. Review responsive behavior.
+
+Do not change Japanese text without considering the other supported languages.
+
+---
+
+# 71. Adding a New Translation Key
+
+When adding a key:
+
+```text
+1. Choose a semantic namespace.
+2. Add Japanese translation.
+3. Add English translation.
+4. Add Chinese translation.
+5. Add Korean translation.
+6. Use the key from the UI.
+7. Run translation validation.
+8. Test the affected component.
+```
+
+Example:
+
+```text
+builder.actions.duplicateField
+```
+
+must exist for:
+
+```text
+ja
+en
+zh
+ko
+```
+
+---
+
+# 72. Removing a Translation Key
+
+Before removing a key:
+
+1. Search the entire repository.
+2. Confirm that it is no longer referenced.
+3. Remove it from all supported locales.
+4. Run tests.
+5. Run translation validation.
+
+Do not remove keys from only one locale.
+
+---
+
+# 73. Avoid Dynamic Translation Keys
+
+Avoid constructing translation keys dynamically when it makes translation completeness difficult to verify.
+
+Avoid:
+
+```ts
+t(`fields.${field.type}.label`)
+```
+
+unless the set of valid keys is controlled and validated.
+
+Prefer explicit mappings when they provide better type safety and discoverability.
+
+For example:
+
+```ts
+const fieldTypeLabels = {
+  text: "fields.types.text",
+  email: "fields.types.email",
+  select: "fields.types.select",
+};
+```
+
+---
+
+# 74. Translation Interpolation Safety
+
+Treat interpolated values as data.
+
+Do not inject raw HTML into translations unless the i18n system explicitly supports safe rich-text rendering.
+
+Avoid:
+
+```tsx
+dangerouslySetInnerHTML
+```
+
+for ordinary translated UI.
+
+Prefer plain text interpolation.
+
+---
+
+# 75. User Content Safety
+
+Never treat user-created form content as translation markup.
+
+User-provided:
+
+* Form names
+* Labels
+* Placeholders
+* Descriptions
+* Options
+
+must remain user data.
+
+Do not pass user-created content through translation functions unless there is a deliberate reason.
+
+---
+
+# 76. Language Names
+
+When displaying language choices, prefer native language names:
+
+```text
+日本語
+English
+中文
+한국어
+```
+
+Do not translate the language names into the currently selected language unless the product design explicitly calls for it.
+
+Native names make language selection easier to understand.
+
+---
+
+# 77. Locale Selector Accessibility
+
+The language selector must have:
+
+* Accessible name
+* Keyboard support
+* Visible focus state
+* Clear selected state
+
+The current language should be understandable without relying solely on color.
+
+---
+
+# 78. Locale Persistence Validation
+
+Persisted locale values must be validated.
+
+If localStorage contains:
+
+```text
+fr
+```
+
+and `fr` is unsupported:
+
+fall back to:
+
+```text
+ja
+```
+
+Do not allow unsupported locale values to break application initialization.
+
+---
+
+# 79. Documentation
+
+When i18n architecture changes, update the relevant documentation.
+
+Review:
+
+```text
+docs/04_architecture.md
+docs/screen-list.md
+docs/ui-guideline.md
+```
+
+and other relevant documentation.
+
+If the project introduces:
+
+* New locales
+* New translation architecture
+* Locale-based routing
+* Server-side localization
+* New formatting rules
+
+document the change.
+
+---
+
+# 80. i18n Checklist
+
+Before completing an i18n-related feature:
+
+* [ ] Japanese is supported.
+* [ ] English is supported.
+* [ ] Chinese is supported.
+* [ ] Korean is supported.
+* [ ] Japanese remains the default locale.
+* [ ] No unnecessary hardcoded user-facing strings exist.
+* [ ] Translation keys are semantic.
+* [ ] Shared translations are reused.
+* [ ] Feature-specific translations are properly namespaced.
+* [ ] All supported locales contain required keys.
+* [ ] Missing translation fallback works.
+* [ ] Language switching works.
+* [ ] Language preference persistence works where applicable.
+* [ ] Form Schema internal values remain language-independent.
+* [ ] User-created form content is not unintentionally translated.
+* [ ] Code generation is independent of application locale.
+* [ ] Validation messages are localized.
+* [ ] Error messages are localized.
+* [ ] Toast messages are localized.
+* [ ] Dialogs are localized.
+* [ ] Accessibility labels are localized.
+* [ ] Dates are locale-aware where appropriate.
+* [ ] Numbers are locale-aware where appropriate.
+* [ ] Text expansion has been considered.
+* [ ] Mobile layouts work in supported languages.
+* [ ] Translation tests pass.
+* [ ] Relevant documentation is updated.
+
+---
+
+# 81. Final i18n Principles
+
+Always prefer:
+
+```text
+Translation Keys
+    over
+Hardcoded Strings
+
+Semantic Keys
+    over
+Generic Keys
+
+Stable Internal Values
+    over
+Translated Internal Values
+
+Locale-aware Formatting
+    over
+Manual Formatting
+
+Shared Translations
+    over
+Duplicated Translations
+
+Natural Translations
+    over
+Literal Translations
+
+Responsive Text Layouts
+    over
+Fixed Text Widths
+
+Application Locale
+    separate from
+User-created Content
+
+Language-independent Domain Logic
+    over
+Locale-dependent Logic
+
+Complete Locales
+    over
+Japanese-only Features
+```
+
+Internationalization is part of the Formly architecture, not a final polishing step.
+
+Every new user-facing feature should be designed so that Japanese, English, Chinese, and Korean can coexist without compromising usability, accessibility, responsiveness, or visual quality.

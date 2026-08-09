@@ -1,0 +1,1857 @@
+---
+description: Form domain rules for the Formly project. Apply when creating, modifying, reviewing, or refactoring forms, form lists, form creation, form editing, form deletion, form duplication, form metadata, form persistence, form search, form filtering, form status, or form-related application state.
+alwaysApply: true
+---
+
+# Forms Rules
+
+You are working on Formly, a portfolio-quality Form Builder application.
+
+Forms are a core domain of the application.
+
+The Forms feature is responsible for managing user-created forms and their lifecycle.
+
+The Form Builder is responsible for editing the structure of an individual form.
+
+Keep these responsibilities separate.
+
+---
+
+# 1. Core Concepts
+
+Formly has two closely related but distinct concepts:
+
+```text
+Form
+    ↓
+Form Builder
+````
+
+A Form represents the saved form resource.
+
+The Form Builder represents the interface used to modify the form structure.
+
+The Forms feature is responsible for:
+
+* Creating forms
+* Listing forms
+* Opening forms
+* Renaming forms
+* Duplicating forms
+* Deleting forms
+* Searching forms
+* Filtering forms
+* Sorting forms
+* Displaying form metadata
+* Persisting form resources
+
+The Builder is responsible for:
+
+* Editing fields
+* Reordering fields
+* Configuring fields
+* Previewing the form
+* Generating output
+
+Do not mix these responsibilities unnecessarily.
+
+---
+
+# 2. Canonical Documentation
+
+Before modifying the Forms feature, read the relevant documentation under:
+
+```text
+docs/
+```
+
+At minimum, review:
+
+```text
+docs/01_requirements.md
+docs/02_basic-design.md
+docs/04_architecture.md
+docs/05_database.md
+docs/07_component_design.md
+docs/09_ui-guideline.md
+docs/screen-list.md
+```
+
+Also review the relevant screen-specific design document when one exists.
+
+The documentation is the source of truth for intended product behavior.
+
+If implementation intentionally changes the documented behavior:
+
+1. Update the documentation.
+2. Update tests.
+3. Implement the change.
+
+Do not silently diverge from the documentation.
+
+---
+
+# 3. Form Resource
+
+A Form is a domain resource.
+
+A form may contain information such as:
+
+```text
+id
+name
+description
+status
+fields
+createdAt
+updatedAt
+```
+
+The exact schema must follow:
+
+```text
+docs/05_database.md
+```
+
+and the application's actual domain model.
+
+Do not invent additional persistent fields without a clear requirement.
+
+---
+
+# 4. Form Identity
+
+Every persisted Form must have a stable unique identifier.
+
+Use the application's established ID strategy.
+
+Do not use:
+
+```text
+Form name
+Array index
+Display label
+Timestamp alone
+```
+
+as the permanent identity of a Form.
+
+A Form's identity must remain stable when:
+
+* The name changes.
+* The form is reordered in a list.
+* The form is duplicated.
+* The UI language changes.
+
+---
+
+# 5. Form Name
+
+A Form name is user-created content.
+
+It must not be treated as a translation key.
+
+For example:
+
+```text
+Customer Feedback
+お問い合わせフォーム
+Product Survey
+```
+
+are user data.
+
+Changing the Formly interface language must not automatically translate the Form name.
+
+See:
+
+```text
+.cursor/rules/i18n.mdc
+```
+
+for the distinction between application UI translations and user-created content.
+
+---
+
+# 6. Form Description
+
+If a Form has a description, it is also user-created content.
+
+Do not pass form descriptions through the application's translation system.
+
+Store and display the original user-provided value.
+
+---
+
+# 7. Form Schema
+
+The form structure must be represented using the project's canonical Form Schema.
+
+The Form Schema is the source of truth for:
+
+```text
+Builder
+Preview
+Code Generator
+```
+
+Conceptually:
+
+```text
+Form
+  │
+  └── Form Schema
+        ├── Fields
+        ├── Field configuration
+        ├── Validation
+        └── Options
+```
+
+Do not maintain separate independent representations of the same form structure for Builder, Preview, and Code.
+
+---
+
+# 8. Single Source of Truth
+
+The Form Schema must remain the single source of truth for form structure.
+
+Avoid:
+
+```text
+Builder State
+Preview State
+Code State
+```
+
+containing independent copies that can become inconsistent.
+
+Prefer:
+
+```text
+Form Schema
+    ├── Builder
+    ├── Preview
+    └── Code Generator
+```
+
+When a form changes, dependent views should derive their state from the canonical form data.
+
+---
+
+# 9. Form Creation
+
+Creating a Form should be an explicit domain operation.
+
+Conceptually:
+
+```text
+Create Form
+    ↓
+Create Form Resource
+    ↓
+Persist Form
+    ↓
+Open Form Builder
+```
+
+The exact navigation behavior must follow the routing documentation.
+
+Do not create a form merely because the user opened the creation dialog.
+
+A form should be created when the user confirms the action or when the defined product flow explicitly requires otherwise.
+
+---
+
+# 10. Create Form Defaults
+
+New forms should use the project's defined default values.
+
+Do not scatter defaults across multiple components.
+
+For example, avoid having:
+
+```text
+CreateFormDialog
+FormService
+Builder
+MockData
+```
+
+each define a different default form structure.
+
+Prefer a centralized default creation strategy.
+
+---
+
+# 11. Create Form Validation
+
+Validate form creation input before persistence.
+
+At minimum, validate:
+
+* Required fields
+* Form name
+* Supported values
+* Data shape
+
+Use the project's established validation strategy.
+
+Do not trust client-side input simply because it came from the application's own UI.
+
+---
+
+# 12. Form Naming
+
+Form names should be validated according to the product requirements.
+
+Avoid silently modifying user input unless normalization is explicitly required.
+
+For example, do not automatically:
+
+```text
+Trim
+Capitalize
+Translate
+Rewrite
+```
+
+user-created names without a documented reason.
+
+---
+
+# 13. Form List
+
+The Forms List should make it easy to:
+
+* Find forms.
+* Identify forms.
+* Open forms.
+* Create forms.
+* Manage forms.
+* Understand form status.
+
+The screen should remain useful when:
+
+```text
+0 forms
+1 form
+10 forms
+100+ forms
+```
+
+exist.
+
+Do not optimize the design only for the empty state.
+
+---
+
+# 14. Forms List as a Resource View
+
+The Forms List represents persisted resources.
+
+It should not be treated as a static dashboard.
+
+Prefer data-driven rendering.
+
+Avoid hardcoded production data such as:
+
+```tsx
+const forms = [
+  {
+    name: "お問い合わせフォーム",
+  },
+];
+```
+
+unless the data is explicitly mock data used by tests or development fixtures.
+
+---
+
+# 15. Empty State
+
+When no forms exist, display an intentional Empty State.
+
+The Empty State should communicate:
+
+1. There are currently no forms.
+2. What the user can do.
+3. How to create the first form.
+
+Example structure:
+
+```text
+No forms yet.
+
+Create your first form to get started.
+
+[ Create Form ]
+```
+
+All visible text must use the i18n system.
+
+---
+
+# 16. Loading State
+
+The Forms List must provide an appropriate loading state while forms are being loaded.
+
+Prefer Skeleton UI when the final layout is predictable.
+
+Do not show:
+
+```text
+Empty State
+```
+
+while data is still loading.
+
+The UI should distinguish:
+
+```text
+Loading
+    ≠
+Empty
+```
+
+---
+
+# 17. Error State
+
+If loading the Forms List fails, display an intentional Error State.
+
+The Error State should provide:
+
+* Clear explanation
+* Recovery action
+* Retry when appropriate
+
+Do not silently display an empty list when loading actually failed.
+
+Do not expose raw exceptions to users.
+
+---
+
+# 18. Search
+
+Forms should support search when defined by the product requirements.
+
+Search should operate on appropriate user-visible Form metadata.
+
+For example:
+
+```text
+Form name
+Description
+```
+
+depending on the documented requirements.
+
+Do not search arbitrary internal fields unless explicitly required.
+
+---
+
+# 19. Search State
+
+If Forms search is represented in the URL, use React Router search parameters.
+
+For example:
+
+```text
+/forms?search=contact
+```
+
+Follow:
+
+```text
+.cursor/rules/routing.mdc
+```
+
+for URL state rules.
+
+Do not maintain conflicting copies of search state.
+
+Avoid:
+
+```text
+URL search = "contact"
+React state search = "invoice"
+```
+
+without an intentional synchronization strategy.
+
+---
+
+# 20. Search Behavior
+
+Search should be predictable.
+
+Consider:
+
+* Empty search
+* Partial search
+* Case differences
+* Whitespace
+* No results
+* Clearing search
+
+The exact matching behavior must follow the product requirements.
+
+Do not add fuzzy-search infrastructure merely because it sounds sophisticated.
+
+---
+
+# 21. No Search Results
+
+An empty search result is different from having no forms.
+
+Example:
+
+```text
+Forms exist.
+
+Search:
+"invoice"
+
+Result:
+No matching forms.
+```
+
+Display an appropriate Empty State explaining that the current search returned no results.
+
+Provide a clear way to:
+
+```text
+Clear search
+```
+
+when appropriate.
+
+---
+
+# 22. Filtering
+
+If Forms filtering is implemented, filter state must be predictable and understandable.
+
+Possible filters include:
+
+```text
+Status
+Updated date
+Created date
+```
+
+only when defined by the product requirements.
+
+Do not introduce filters merely to make the UI appear feature-rich.
+
+---
+
+# 23. Sorting
+
+If Forms sorting is implemented, use explicit sort options.
+
+Examples:
+
+```text
+Recently updated
+Recently created
+Name
+```
+
+The available options should follow the product requirements.
+
+Do not create different sorting implementations for different screens.
+
+---
+
+# 24. Sort State
+
+If sort state is represented in the URL:
+
+```text
+/forms?sort=updated
+```
+
+use React Router search parameters.
+
+Do not use translated labels as internal sort values.
+
+Good:
+
+```text
+sort=updated
+```
+
+Bad:
+
+```text
+sort=最終更新
+```
+
+The internal value must remain language-independent.
+
+---
+
+# 25. Form Status
+
+If Forms have statuses, use stable internal values.
+
+For example:
+
+```ts
+status: "draft"
+status: "published"
+```
+
+Do not use translated UI labels as domain values.
+
+Bad:
+
+```ts
+status: "公開済み"
+```
+
+Good:
+
+```ts
+status: "published"
+```
+
+The UI translates the status label.
+
+---
+
+# 26. Status Display
+
+Status labels must use the i18n system.
+
+For example:
+
+```text
+status.draft
+status.published
+```
+
+The internal status value must never determine the application's language.
+
+---
+
+# 27. Form Actions
+
+Form-level actions may include:
+
+```text
+Open
+Rename
+Duplicate
+Delete
+```
+
+Only expose actions that are supported by the product requirements.
+
+Do not add destructive or complex actions simply because the UI has space for them.
+
+---
+
+# 28. Open Form
+
+Opening a Form should navigate to the canonical Form route.
+
+For example:
+
+```text
+/forms/:formId
+```
+
+or the documented Builder entry route.
+
+Follow:
+
+```text
+.cursor/rules/routing.mdc
+```
+
+for navigation behavior.
+
+Do not manually manipulate the browser URL.
+
+---
+
+# 29. Rename Form
+
+Renaming a form should update the existing Form resource.
+
+Do not create a new Form merely because its name changed.
+
+The Form ID and Form Schema must remain unchanged.
+
+Only the appropriate metadata should be updated.
+
+---
+
+# 30. Rename Validation
+
+Rename operations should validate:
+
+* Form existence
+* Name validity
+* Input constraints
+
+Do not allow invalid names to silently enter persistent state.
+
+---
+
+# 31. Duplicate Form
+
+Duplicating a Form must create a new Form resource.
+
+The duplicate must have:
+
+```text
+New Form ID
+```
+
+while preserving the appropriate source Form content.
+
+Conceptually:
+
+```text
+Original Form
+      ↓
+Duplicate
+      ↓
+New Form
+      ├── New ID
+      └── Copied Form Schema
+```
+
+Do not reuse the original Form ID.
+
+---
+
+# 32. Duplicate Metadata
+
+When duplicating a Form, determine intentionally which metadata is copied.
+
+For example:
+
+```text
+Form Schema
+Description
+```
+
+may be copied.
+
+While:
+
+```text
+ID
+Created timestamp
+Updated timestamp
+```
+
+must represent the new resource.
+
+Follow the documented product behavior.
+
+Do not blindly clone the entire persistence object.
+
+---
+
+# 33. Delete Form
+
+Deleting a Form is destructive.
+
+Provide an explicit confirmation step when required by the UI guidelines and product requirements.
+
+The confirmation should clearly communicate:
+
+* Which Form will be deleted.
+* That the action is destructive.
+* What the user must do to cancel or confirm.
+
+---
+
+# 34. Delete Safety
+
+Never delete a Form based solely on:
+
+```text
+Hover
+Focus
+Opening a menu
+Accidental click
+```
+
+unless the product intentionally defines such behavior.
+
+Prefer explicit user confirmation for destructive operations.
+
+---
+
+# 35. Delete Result
+
+After deletion:
+
+1. Remove the resource from the Forms List.
+2. Update relevant UI state.
+3. Provide appropriate feedback.
+4. Navigate away from the deleted resource if currently viewing it.
+5. Ensure browser history does not lead to a broken resource state without appropriate handling.
+
+---
+
+# 36. Deleted Form
+
+If a user navigates directly to a deleted Form:
+
+```text
+/forms/:formId
+```
+
+the application should display an appropriate Not Found or missing-resource state.
+
+Do not silently create a new Form.
+
+Do not silently redirect unless explicitly defined.
+
+---
+
+# 37. Form Persistence
+
+Persisted Form data must use the project's canonical data access architecture.
+
+Follow:
+
+```text
+docs/04_architecture.md
+docs/05_database.md
+```
+
+Do not access persistence directly from presentation components when the architecture defines a service or repository boundary.
+
+---
+
+# 38. Data Access
+
+Keep data access separate from UI components.
+
+Avoid:
+
+```tsx
+function FormsPage() {
+  // database/storage logic directly here
+}
+```
+
+when the architecture defines a data-access layer.
+
+Prefer:
+
+```text
+Route
+  ↓
+Feature
+  ↓
+Service / Repository
+  ↓
+Persistence
+```
+
+Follow the architecture documentation for the exact implementation.
+
+---
+
+# 39. Form Service
+
+If a Form service exists, use it as the domain-facing interface for Form operations.
+
+Typical operations may include:
+
+```text
+listForms
+getForm
+createForm
+updateForm
+deleteForm
+duplicateForm
+```
+
+The exact API should follow the actual project architecture.
+
+Do not create multiple competing Form services.
+
+---
+
+# 40. Repository Boundary
+
+If the architecture defines a repository layer, the Forms feature should not bypass it.
+
+Prefer:
+
+```text
+Form Feature
+    ↓
+Form Service
+    ↓
+Form Repository
+    ↓
+Persistence
+```
+
+rather than:
+
+```text
+Form Component
+    ↓
+Direct Storage / Database
+```
+
+---
+
+# 41. Form Schema Persistence
+
+When saving a Form, persist the canonical Form Schema.
+
+Do not persist:
+
+```text
+Rendered React Components
+DOM
+HTML output
+CSS output
+JavaScript output
+```
+
+as the primary representation of the Form.
+
+Generated output should be derived from the schema.
+
+---
+
+# 42. Generated Code
+
+Generated HTML, CSS, and JavaScript are derived output.
+
+Conceptually:
+
+```text
+Form Schema
+     ↓
+Generator
+     ↓
+HTML
+CSS
+JavaScript
+```
+
+Do not make generated code the source of truth for the Form.
+
+---
+
+# 43. Preview
+
+Preview should derive from the current Form Schema.
+
+Do not create a separate Preview-only Form model unless explicitly required.
+
+The following should remain consistent:
+
+```text
+Builder
+Preview
+Generated Code
+```
+
+because they derive from the same Form Schema.
+
+---
+
+# 44. Form Metadata vs Form Content
+
+Keep metadata separate from form structure.
+
+Metadata may include:
+
+```text
+name
+description
+status
+createdAt
+updatedAt
+```
+
+Content may include:
+
+```text
+fields
+field configuration
+validation
+options
+```
+
+Do not mix application metadata with field configuration unnecessarily.
+
+---
+
+# 45. Unsaved Changes
+
+The Form Builder may have changes that have not yet been persisted.
+
+The Forms feature must distinguish:
+
+```text
+Saved
+    vs
+Unsaved
+```
+
+Do not assume that the in-memory Builder state is automatically persisted.
+
+Follow the documented save behavior.
+
+---
+
+# 46. Save Behavior
+
+Saving a Form should:
+
+1. Validate the Form Schema.
+2. Persist the valid schema.
+3. Update relevant metadata.
+4. Update UI state.
+5. Provide appropriate user feedback.
+
+Avoid saving invalid Form Schema.
+
+---
+
+# 47. Autosave
+
+Do not introduce autosave unless explicitly required.
+
+Autosave introduces complexity around:
+
+* Race conditions
+* Partial updates
+* Undo behavior
+* Navigation
+* Failure recovery
+* User expectations
+
+If autosave is introduced later, document its behavior before implementation.
+
+---
+
+# 48. Concurrent Updates
+
+If persistence can be modified from multiple contexts, consider stale data and concurrent updates.
+
+Do not silently overwrite newer data without an intentional strategy.
+
+The exact conflict-resolution strategy must follow the architecture and product requirements.
+
+Do not invent collaborative editing functionality.
+
+---
+
+# 49. Form Data Validation
+
+Form data must be validated at appropriate boundaries.
+
+At minimum:
+
+```text
+UI input
+    ↓
+Domain validation
+    ↓
+Persistence
+```
+
+Do not assume client-side validation is sufficient.
+
+Do not trust persisted data to always match the current schema.
+
+---
+
+# 50. Invalid Form Schema
+
+If a stored Form contains an invalid or unsupported schema:
+
+* Do not crash the entire application.
+* Display an appropriate error state.
+* Provide recovery where possible.
+* Preserve the original data when appropriate.
+* Log useful diagnostic information for developers.
+
+Do not silently discard invalid user data.
+
+---
+
+# 51. Versioning
+
+Do not introduce Form Schema versioning unless required by the product architecture.
+
+If versioning becomes necessary, define:
+
+```text
+Schema version
+Migration strategy
+Backward compatibility
+Upgrade behavior
+```
+
+before implementation.
+
+Do not scatter migration logic throughout UI components.
+
+---
+
+# 52. Form Templates
+
+If templates are supported, distinguish:
+
+```text
+Template
+```
+
+from:
+
+```text
+User Form
+```
+
+A template may be used as the source for creating a new Form.
+
+Conceptually:
+
+```text
+Template
+    ↓
+Create Form
+    ↓
+New Form ID
+```
+
+Do not treat a template as the same persisted resource as the user's Form unless the architecture explicitly defines them that way.
+
+---
+
+# 53. Form Creation from Template
+
+When creating a Form from a Template:
+
+* Create a new Form resource.
+* Copy the appropriate schema.
+* Generate a new Form ID.
+* Apply appropriate default metadata.
+* Do not modify the original Template.
+
+---
+
+# 54. Forms and i18n
+
+All Forms feature UI must follow:
+
+```text
+.cursor/rules/i18n.mdc
+```
+
+Application UI must support:
+
+```text
+ja
+en
+zh
+ko
+```
+
+User-created Form content must remain language-independent.
+
+Do not translate:
+
+```text
+Form name
+Field label
+Placeholder
+Option label
+Description
+```
+
+automatically when the application language changes.
+
+---
+
+# 55. Forms and Routing
+
+All Form navigation must follow:
+
+```text
+.cursor/rules/routing.mdc
+```
+
+Use React Router for:
+
+```text
+Forms List
+Form
+Builder
+Preview
+Code
+```
+
+when those screens are defined as routes.
+
+Do not implement Forms navigation using:
+
+```text
+window.location
+window.history
+pathname parsing
+```
+
+as a replacement for React Router.
+
+---
+
+# 56. Forms and UI
+
+All Forms UI must follow:
+
+```text
+.cursor/rules/ui.mdc
+```
+
+Use the design system defined in:
+
+```text
+docs/ui-guideline.md
+```
+
+and the component rules defined in:
+
+```text
+docs/07_component_design.md
+```
+
+Do not introduce Forms-specific visual patterns that conflict with the rest of Formly.
+
+---
+
+# 57. Form Cards
+
+If Forms are displayed as cards:
+
+Each card should clearly communicate:
+
+* Form name
+* Relevant metadata
+* Status where applicable
+* Updated information where applicable
+* Primary action
+* Secondary actions
+
+Do not overload cards with every possible metadata field.
+
+Prioritize information users need to identify and open the Form.
+
+---
+
+# 58. Form List Responsiveness
+
+The Forms List must work on:
+
+```text
+Desktop
+Tablet
+Mobile
+```
+
+Do not assume a desktop grid can simply shrink.
+
+Consider:
+
+* Card layout
+* List layout
+* Action menus
+* Search
+* Filters
+* Sorting
+* Create button
+* Empty state
+
+on narrow screens.
+
+---
+
+# 59. Form List Performance
+
+The Forms List should remain responsive as the number of Forms increases.
+
+Avoid unnecessary work during rendering.
+
+Do not perform expensive filtering or sorting repeatedly when it can be avoided.
+
+Use appropriate memoization only when it provides measurable or meaningful value.
+
+Do not prematurely optimize a small dataset.
+
+---
+
+# 60. Form List Pagination
+
+Do not introduce pagination unless required by the product requirements or data scale.
+
+If pagination is introduced, define:
+
+* Page state
+* Page size
+* URL behavior
+* Loading behavior
+* Empty behavior
+* Navigation
+* Accessibility
+
+before implementation.
+
+---
+
+# 61. Infinite Scroll
+
+Do not introduce infinite scrolling merely to create a modern UI.
+
+If implemented later, define:
+
+* Loading boundaries
+* Keyboard accessibility
+* Screen-reader behavior
+* Recovery from loading failures
+* URL/deep-link behavior where appropriate
+
+before implementation.
+
+---
+
+# 62. Optimistic Updates
+
+Optimistic UI may be used for appropriate Form operations such as:
+
+```text
+Rename
+Delete
+Duplicate
+```
+
+only when failure recovery is well-defined.
+
+Do not implement optimistic persistence for complex Form Schema changes without considering:
+
+* Validation
+* Failure
+* Data loss
+* Race conditions
+* Rollback
+
+---
+
+# 63. Toast Feedback
+
+Use Toast notifications for short-lived Form operation feedback.
+
+Examples:
+
+```text
+Form created
+Form saved
+Form renamed
+Form duplicated
+Form deleted
+```
+
+All messages must use translation keys.
+
+Do not use Toasts as the only indication of serious errors.
+
+---
+
+# 64. Dialogs
+
+Use Dialogs for focused Form operations such as:
+
+```text
+Create Form
+Rename Form
+Delete Form
+```
+
+Dialogs must follow:
+
+```text
+.cursor/rules/ui.mdc
+```
+
+and provide:
+
+* Accessible title
+* Accessible description where appropriate
+* Keyboard support
+* Cancel action
+* Loading state
+* Error feedback
+
+---
+
+# 65. Form Actions and Permissions
+
+Do not add authorization or permission logic unless the product architecture requires it.
+
+If authentication or permissions are introduced later:
+
+* Define the domain rules first.
+* Enforce access at the appropriate boundary.
+* Do not rely only on hiding UI controls.
+
+Hiding a Delete button is not a security boundary.
+
+---
+
+# 66. Security
+
+Treat Form data as untrusted input.
+
+Do not assume:
+
+```text
+Form name
+Description
+Field label
+Placeholder
+Options
+Generated content
+```
+
+is safe simply because it originated from the application.
+
+Follow:
+
+```text
+.cursor/rules/security.mdc
+```
+
+for security requirements.
+
+---
+
+# 67. XSS and Generated Content
+
+User-created Form content may eventually be rendered in:
+
+```text
+Preview
+Generated HTML
+Generated JavaScript
+```
+
+Treat it carefully.
+
+Do not use:
+
+```tsx
+dangerouslySetInnerHTML
+```
+
+without a clear security model.
+
+Do not execute arbitrary user-created JavaScript simply to provide a preview.
+
+Generated code should be displayed as code unless execution is explicitly required and safely isolated.
+
+---
+
+# 68. Form Search and User Data
+
+Search input must be treated as untrusted input.
+
+Do not construct raw database queries or selectors from search strings.
+
+Use the project's established data-access and validation mechanisms.
+
+---
+
+# 69. Form Deletion and Persistence
+
+Deleting a Form must remove the appropriate persisted resource according to the project's data architecture.
+
+Do not merely remove it from React state and consider the operation complete.
+
+After refresh, the deleted Form must remain deleted.
+
+---
+
+# 70. Form Creation and Persistence
+
+Creating a Form must persist the resource according to the application's data architecture.
+
+Do not treat a newly created Form as complete if it only exists in local React state unless the product explicitly defines local-only Forms.
+
+---
+
+# 71. Local-First Behavior
+
+If Formly currently uses local browser persistence or mock data during development, keep the persistence boundary abstract.
+
+Do not couple the entire Forms UI to:
+
+```text
+localStorage
+```
+
+or another specific persistence mechanism.
+
+Prefer a domain/data-access abstraction so persistence can evolve later.
+
+---
+
+# 72. Mock Data
+
+Mock Forms are acceptable for:
+
+* UI development
+* Component development
+* Story-like demonstrations
+* Tests
+
+Do not allow mock data to become accidentally coupled to production behavior.
+
+Clearly distinguish:
+
+```text
+Mock Data
+```
+
+from:
+
+```text
+Production Data
+```
+
+---
+
+# 73. Form Fixtures
+
+Tests should use stable Form fixtures where appropriate.
+
+Avoid duplicating large Form objects throughout test files.
+
+Prefer reusable fixtures or factories when they improve readability.
+
+Do not make fixtures unnecessarily complex.
+
+---
+
+# 74. Testing Form Creation
+
+Test Form creation behavior including:
+
+* Valid creation
+* Invalid input
+* Persistence
+* Navigation after creation
+* Loading state
+* Error state
+* User feedback
+
+Test behavior rather than implementation details.
+
+---
+
+# 75. Testing Form List
+
+Test:
+
+* Forms render.
+* Empty state renders.
+* Loading state renders.
+* Error state renders.
+* Search works.
+* No-results state works.
+* Sorting works when implemented.
+* Filtering works when implemented.
+* Opening a Form works.
+* Form actions work.
+
+Do not test React internals.
+
+---
+
+# 76. Testing Form Deletion
+
+Test:
+
+* Confirmation appears.
+* Cancel does not delete.
+* Confirm deletes.
+* UI updates after deletion.
+* Error behavior is handled.
+* Deleted Forms are no longer accessible.
+
+Destructive operations should have regression tests.
+
+---
+
+# 77. Testing Form Duplication
+
+Test:
+
+* Duplicate action is available.
+* New Form receives a new ID.
+* Appropriate Form Schema is copied.
+* Original Form remains unchanged.
+* New Form is persisted.
+* Navigation/feedback follows the documented behavior.
+
+---
+
+# 78. Testing Search and Filters
+
+Test representative cases:
+
+```text
+No search
+Partial search
+No results
+Cleared search
+Filter applied
+Filter removed
+Sort changed
+```
+
+where those features exist.
+
+Do not test every possible string combination.
+
+---
+
+# 79. E2E Form Workflow
+
+The critical Form workflow should be covered by E2E tests where appropriate.
+
+A representative flow may be:
+
+```text
+Forms
+  ↓
+Create Form
+  ↓
+Form Builder
+  ↓
+Edit Form
+  ↓
+Save
+  ↓
+Preview
+```
+
+The exact workflow must follow the current product requirements.
+
+---
+
+# 80. Form and Browser Navigation
+
+Verify that important Form routes work with:
+
+```text
+Client navigation
+Direct URL access
+Browser refresh
+Back
+Forward
+```
+
+especially:
+
+```text
+/forms
+/forms/:formId
+/forms/:formId/builder
+/forms/:formId/preview
+/forms/:formId/code
+```
+
+when those routes exist.
+
+---
+
+# 81. Form Feature Workflow
+
+Before implementing a new Forms feature:
+
+```text
+1. Read requirements.
+        ↓
+2. Read architecture documentation.
+        ↓
+3. Read database/domain documentation.
+        ↓
+4. Read routing rules.
+        ↓
+5. Read i18n rules.
+        ↓
+6. Read UI rules.
+        ↓
+7. Inspect existing Form components.
+        ↓
+8. Inspect existing data-access code.
+        ↓
+9. Implement domain behavior.
+        ↓
+10. Implement UI.
+        ↓
+11. Add loading/empty/error states.
+        ↓
+12. Add i18n translations.
+        ↓
+13. Add tests.
+        ↓
+14. Update documentation.
+```
+
+Do not begin by creating a new component without understanding the existing Form architecture.
+
+---
+
+# 82. Form Feature Change Workflow
+
+When modifying an existing Form feature:
+
+1. Identify the affected Form behavior.
+2. Check the relevant documentation.
+3. Inspect existing implementation.
+4. Reuse existing components and services.
+5. Preserve the Form Schema contract.
+6. Preserve routing behavior.
+7. Preserve i18n behavior.
+8. Handle loading/error states.
+9. Add or update tests.
+10. Update documentation if behavior changed.
+
+Do not redesign unrelated Form functionality.
+
+---
+
+# 83. Avoid Overengineering
+
+Do not introduce:
+
+* Complex state management
+* Event sourcing
+* CQRS
+* Real-time collaboration
+* Undo/redo infrastructure
+* Autosave
+* Version history
+* Advanced search engines
+* Offline synchronization
+
+unless explicitly required.
+
+Formly should demonstrate strong engineering without unnecessary complexity.
+
+---
+
+# 84. Separation of Responsibilities
+
+Prefer:
+
+```text
+Forms Route
+    ↓
+Forms Feature
+    ↓
+Form Service
+    ↓
+Form Repository / Data Access
+    ↓
+Persistence
+```
+
+and:
+
+```text
+Form
+    ↓
+Form Schema
+    ↓
+Builder / Preview / Generator
+```
+
+Do not collapse all responsibilities into one component.
+
+---
+
+# 85. Final Form Principles
+
+Always prefer:
+
+```text
+Form Resource
+    over
+UI-only Object
+
+Form Schema
+    over
+Rendered DOM
+
+Stable IDs
+    over
+Array Indexes
+
+Domain Values
+    over
+Translated Labels
+
+Single Source of Truth
+    over
+Duplicated State
+
+Explicit Empty State
+    over
+Blank Screen
+
+Explicit Error State
+    over
+Silent Failure
+
+Validated Input
+    over
+Trusted Input
+
+Shared Data Access
+    over
+Direct Persistence Calls
+
+React Router
+    over
+Manual URL Handling
+
+User Content
+    separate from
+Application Translations
+
+Simple Architecture
+    over
+Premature Complexity
+```
+
+The Forms feature should provide a reliable foundation for the rest of Formly.
+
+The Form List manages Form resources.
+
+The Form Builder edits Form Schema.
+
+Preview renders Form Schema.
+
+The Code Generator generates output from Form Schema.
+
+Keep these boundaries clear.

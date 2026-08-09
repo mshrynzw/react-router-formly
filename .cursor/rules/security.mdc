@@ -1,0 +1,2521 @@
+---
+description: Security rules for the Formly project. Apply when creating or modifying authentication, authorization, form data, form schemas, generated code, previews, API endpoints, database access, user input, validation, sessions, cookies, environment variables, Cloudflare infrastructure, or any code that handles untrusted input.
+alwaysApply: true
+---
+
+# Security Rules
+
+Security is a mandatory requirement of this project.
+
+Formly handles user-created forms, form schemas, generated HTML/CSS/JavaScript, previews, and potentially private user data.
+
+Never sacrifice security for implementation speed or convenience.
+
+Always assume external input is untrusted.
+
+Follow the project-wide rules defined in:
+
+`AGENTS.md`
+
+The architectural security model is defined in:
+
+`docs/04_architecture.md`
+
+The database security model is defined in:
+
+`docs/05_database.md`
+
+The API security model is defined in:
+
+`docs/06_api.md`
+
+Also follow:
+
+`.cursor/rules/cloudflare.mdc`
+
+`.cursor/rules/forms.mdc`
+
+`.cursor/rules/i18n.mdc`
+
+`.cursor/rules/routing.mdc`
+
+`.cursor/rules/state-management.mdc`
+
+---
+
+# 1. Core Security Principles
+
+Always assume external input is untrusted.
+
+Never trust:
+
+- Client-side state
+- Client-provided user IDs
+- Client-provided form IDs
+- Client-provided field IDs
+- Client-provided permissions
+- Hidden form fields
+- URL parameters
+- Query parameters
+- Request bodies
+- Cookies
+- Headers
+- Generated form content
+- User-created HTML
+- User-created JavaScript
+- Client-side validation
+
+Validate and authorize data at the appropriate server-side boundary.
+
+---
+
+# 2. Authentication vs Authorization
+
+Authentication answers:
+
+```text
+Who is the user?
+````
+
+Authorization answers:
+
+```text
+What is the user allowed to access?
+```
+
+Never treat authentication as authorization.
+
+A logged-in user must not automatically have access to every Form resource.
+
+If authentication is introduced:
+
+```text
+Request
+  ↓
+Authentication
+  ↓
+Authorization
+  ↓
+Resource Access
+```
+
+must remain distinct.
+
+---
+
+# 3. Authentication
+
+Use the project's established authentication architecture.
+
+Do not implement a parallel authentication system.
+
+Do not create custom password handling when an established authentication provider already provides it.
+
+Never:
+
+* Store passwords in plaintext.
+* Store authentication secrets in source code.
+* Log passwords.
+* Return passwords through APIs.
+* Expose authentication secrets to Client Components.
+
+If authentication is not currently implemented, do not add authentication infrastructure merely to satisfy this rule.
+
+---
+
+# 4. Session Security
+
+Session information must be handled securely.
+
+Never trust client-side session state for authorization.
+
+Do not authorize a request solely because:
+
+```text
+isLoggedIn === true
+```
+
+The server or trusted runtime boundary must determine the authenticated user from the established authentication mechanism.
+
+If session state is exposed to the client, treat it as informational rather than authoritative.
+
+---
+
+# 5. Authorization
+
+Authorization must be enforced at the appropriate server-side boundary.
+
+For protected Form resources, verify that the authenticated user has permission to access the requested resource.
+
+Example:
+
+```text
+Authenticated User
+       ↓
+User / Account
+       ↓
+Form Ownership / Membership
+       ↓
+Form
+       ↓
+Form Schema
+```
+
+Do not assume that knowing a Form ID grants access.
+
+---
+
+# 6. Resource Ownership
+
+Never authorize access using only a resource ID.
+
+Bad:
+
+```ts
+const form = await getFormById(formId);
+return form;
+```
+
+when the Form may contain private user data.
+
+Prefer:
+
+```text
+Authenticated User
+       ↓
+Verify Ownership / Permission
+       ↓
+Retrieve Authorized Form
+```
+
+Authorization should be enforced as close to the server-side data-access boundary as practical.
+
+---
+
+# 7. IDOR Prevention
+
+Prevent Insecure Direct Object Reference vulnerabilities.
+
+The following must never be sufficient by themselves to access a private Form:
+
+```text
+/forms/123
+/forms/abc123
+/api/forms/123
+/api/forms/abc123
+```
+
+Always verify that the current user has permission to access the referenced resource.
+
+Test unauthorized resource access explicitly when authentication exists.
+
+---
+
+# 8. Form ID Handling
+
+Never assume a client-provided Form ID is valid or authorized.
+
+A route such as:
+
+```text
+/forms/:formId
+```
+
+must not automatically grant access to that Form.
+
+Validate:
+
+```text
+Form ID format
+Form existence
+User authorization
+```
+
+before returning protected Form data.
+
+---
+
+# 9. Field ID Handling
+
+Field IDs are also untrusted input when received from the client.
+
+Do not assume:
+
+```text
+fieldId
+```
+
+belongs to:
+
+```text
+formId
+```
+
+Always verify the relationship.
+
+Bad:
+
+```text
+formId = A
+fieldId = field-from-form-B
+```
+
+must never allow modification of a field belonging to another Form.
+
+---
+
+# 10. Form Schema Authorization
+
+Access to a Form Schema must follow the same authorization rules as the Form itself.
+
+Do not expose Form Schema data simply because the client knows:
+
+```text
+formId
+```
+
+The Form Schema may contain user-created content and potentially sensitive information.
+
+---
+
+# 11. API Security
+
+All protected API endpoints must verify authentication and authorization when authentication exists.
+
+Preferred flow:
+
+```text
+Request
+  ↓
+Authentication
+  ↓
+Input Validation
+  ↓
+Authorization
+  ↓
+Service
+  ↓
+Repository / Data Access
+  ↓
+Response
+```
+
+Do not perform protected business operations before authorization is established.
+
+---
+
+# 12. API Input Validation
+
+Validate all externally supplied API input.
+
+Validate:
+
+* Request body
+* URL parameters
+* Query parameters
+* Search parameters
+* Form data
+* Form Schema
+* Field configuration
+* Generated-code options
+
+Use the project's established Zod validation approach.
+
+Never assume that the client has already validated the data.
+
+---
+
+# 13. Validation Before Business Logic
+
+Preferred flow:
+
+```text
+Untrusted Input
+  ↓
+Zod Validation
+  ↓
+Authentication
+  ↓
+Authorization
+  ↓
+Business Logic
+  ↓
+Persistence
+```
+
+Do not pass unvalidated external input directly to:
+
+* Services
+* Repositories
+* Database queries
+* Code generators
+* External APIs
+
+---
+
+# 14. Zod Validation
+
+Use Zod for externally supplied structured data.
+
+Example:
+
+```ts
+const schema = z.object({
+  name: z.string().min(1).max(200),
+});
+```
+
+Prefer schema-derived types where appropriate.
+
+Do not duplicate validation rules unnecessarily.
+
+Client-side validation may improve UX but does not replace server-side validation.
+
+---
+
+# 15. Form Name Validation
+
+Form names are user input.
+
+Validate:
+
+* Type
+* Length
+* Required status
+* Allowed values where applicable
+
+Do not blindly trust:
+
+```text
+form.name
+```
+
+received from the client.
+
+Do not silently transform user input unless the product requirements explicitly require normalization.
+
+---
+
+# 16. Form Schema Validation
+
+The Form Schema is a critical security boundary.
+
+Validate:
+
+* Schema structure
+* Field types
+* Field IDs
+* Field configuration
+* Validation configuration
+* Options
+* Required values
+* Maximum sizes
+* Supported properties
+
+Do not assume that a Form Schema generated by the Form Builder is safe.
+
+A malicious user can bypass the UI and submit arbitrary JSON directly.
+
+---
+
+# 17. Unknown Form Schema Properties
+
+Do not blindly persist arbitrary properties from client-provided Form Schema objects.
+
+Bad:
+
+```ts
+await saveForm(request.body);
+```
+
+Prefer explicit schema validation.
+
+Only accepted fields should enter the domain model.
+
+---
+
+# 18. Mass Assignment
+
+Do not blindly pass client-provided objects into database updates.
+
+Bad:
+
+```ts
+await updateForm(request.body);
+```
+
+when the request may contain protected fields such as:
+
+```text
+id
+ownerId
+userId
+createdAt
+updatedAt
+permissions
+role
+```
+
+Explicitly select fields the user is allowed to modify.
+
+---
+
+# 19. Protected Form Fields
+
+Never allow ordinary users to modify security-sensitive fields unless explicitly authorized.
+
+Examples:
+
+```text
+id
+ownerId
+userId
+createdAt
+updatedAt
+permissions
+role
+```
+
+The server must determine protected values.
+
+---
+
+# 20. User-Created Form Content
+
+Treat all user-created Form content as untrusted.
+
+This includes:
+
+```text
+Form name
+Form description
+Field label
+Placeholder
+Help text
+Option labels
+Default values
+Validation messages
+Custom HTML
+Custom CSS
+Custom JavaScript
+```
+
+Never assume content is safe because it originated inside Formly.
+
+---
+
+# 21. XSS Prevention
+
+Treat user-generated content as untrusted.
+
+Avoid rendering arbitrary HTML from user input.
+
+Do not use:
+
+```tsx
+dangerouslySetInnerHTML
+```
+
+unless absolutely necessary.
+
+If HTML rendering is required:
+
+1. Sanitize the content.
+2. Define an explicit allowlist.
+3. Test malicious input.
+4. Document why HTML rendering is required.
+5. Review whether rendering can be isolated instead.
+
+---
+
+# 22. Generated HTML
+
+Formly generates HTML.
+
+Generated HTML must be treated as user-created output when it contains user-provided content.
+
+Do not assume generated HTML is safe merely because Formly generated it.
+
+Escape or sanitize user-provided values before inserting them into generated markup where appropriate.
+
+---
+
+# 23. HTML Attribute Injection
+
+Be especially careful when user-created values are inserted into HTML attributes.
+
+Examples:
+
+```html
+<input value="USER_VALUE">
+```
+
+```html
+<input placeholder="USER_VALUE">
+```
+
+```html
+<a href="USER_VALUE">
+```
+
+Do not concatenate untrusted values into HTML without appropriate escaping and validation.
+
+---
+
+# 24. JavaScript Injection
+
+Formly may generate JavaScript.
+
+Never insert untrusted user input into generated JavaScript source without appropriate escaping.
+
+Bad:
+
+```ts
+const code = `
+const label = "${userProvidedLabel}";
+`;
+```
+
+A malicious value may break the string and inject executable code.
+
+Use safe serialization mechanisms such as:
+
+```ts
+JSON.stringify(value)
+```
+
+where appropriate.
+
+---
+
+# 25. Generated JavaScript Execution
+
+Generated JavaScript must not automatically execute inside the main Formly application context.
+
+Do not execute arbitrary generated JavaScript directly in the Formly page.
+
+Avoid:
+
+```text
+eval()
+new Function()
+```
+
+for user-generated content.
+
+Generated code and code execution are separate concerns.
+
+---
+
+# 26. Preview Security
+
+The Form Preview is a major security boundary.
+
+If Preview renders generated HTML:
+
+* Treat it as untrusted content.
+* Isolate it from the parent application where appropriate.
+* Avoid direct DOM injection into the main application.
+* Do not allow generated JavaScript to access the Formly application.
+
+If live JavaScript execution is required, use an appropriate isolation mechanism such as a sandboxed iframe and define its capabilities explicitly.
+
+---
+
+# 27. iframe Security
+
+If an iframe is used for Preview:
+
+Consider:
+
+```text
+sandbox
+```
+
+and the minimum permissions required.
+
+Do not blindly use:
+
+```html
+sandbox="allow-scripts allow-same-origin"
+```
+
+without understanding the security implications.
+
+Do not grant permissions that Preview does not require.
+
+---
+
+# 28. Preview Origin Isolation
+
+When practical, generated user content should be isolated from the Formly application's origin.
+
+Do not allow user-generated Preview content to gain unnecessary access to:
+
+```text
+Formly cookies
+Formly localStorage
+Formly DOM
+Formly JavaScript context
+Formly API credentials
+```
+
+---
+
+# 29. Generated CSS
+
+User-created CSS can affect the Preview environment.
+
+If custom CSS is supported:
+
+* Isolate it from the main application.
+* Do not inject arbitrary user CSS into the Formly application page.
+* Prevent CSS from unintentionally modifying Formly's own UI.
+
+Preview isolation is preferred.
+
+---
+
+# 30. Generated Forms and External Resources
+
+Generated forms may contain:
+
+```text
+Images
+External links
+External stylesheets
+External scripts
+```
+
+Do not allow arbitrary external resources to compromise the Formly application.
+
+Validate or restrict external resources according to the product requirements.
+
+---
+
+# 31. External URLs
+
+Treat user-provided URLs as untrusted.
+
+Be careful with:
+
+* Redirect URLs
+* External links
+* Callback URLs
+* Image URLs
+* Embedded content
+* Form action URLs
+
+Validate URLs according to their intended purpose.
+
+---
+
+# 32. URL Schemes
+
+Do not allow dangerous URL schemes where they are not required.
+
+Be especially careful with:
+
+```text
+javascript:
+data:
+vbscript:
+```
+
+when accepting user-provided URLs.
+
+Only allow schemes required by the product.
+
+For ordinary external links, prefer:
+
+```text
+https:
+```
+
+and other explicitly supported schemes.
+
+---
+
+# 33. Open Redirect Prevention
+
+Do not blindly redirect to a user-provided URL.
+
+Bad:
+
+```ts
+navigate(searchParams.get("redirect"));
+```
+
+or:
+
+```ts
+redirect(userProvidedUrl);
+```
+
+Prefer validating the destination before redirecting.
+
+Internal application paths should be preferred for post-login redirects.
+
+---
+
+# 34. CSRF
+
+Protect state-changing operations against Cross-Site Request Forgery where applicable.
+
+Follow the security mechanisms provided by the authentication and application architecture.
+
+Do not assume that a request is safe merely because it uses:
+
+```text
+POST
+PUT
+PATCH
+DELETE
+```
+
+If cookie-based authentication is introduced, explicitly review CSRF protections.
+
+---
+
+# 35. Cookies
+
+Authentication cookies should use secure attributes appropriate to the environment.
+
+Consider:
+
+```text
+HttpOnly
+Secure
+SameSite
+```
+
+Do not expose authentication cookies to JavaScript unless explicitly required.
+
+Never store sensitive authentication information in ordinary application cookies without a defined security model.
+
+---
+
+# 36. CORS
+
+Do not allow unrestricted CORS by default.
+
+Avoid:
+
+```text
+Access-Control-Allow-Origin: *
+```
+
+for authenticated APIs unless there is a specific documented reason.
+
+Restrict origins when cross-origin access is required.
+
+---
+
+# 37. Security Headers
+
+Use appropriate security headers for the deployed application.
+
+Consider:
+
+```text
+Content-Security-Policy
+X-Content-Type-Options
+Referrer-Policy
+Permissions-Policy
+Strict-Transport-Security
+```
+
+Do not add headers blindly.
+
+Verify compatibility with:
+
+```text
+React
+React Router
+Cloudflare Workers
+Preview
+Generated content
+```
+
+---
+
+# 38. Content Security Policy
+
+If a Content Security Policy is introduced:
+
+* Define the required sources explicitly.
+* Avoid unsafe directives where possible.
+* Review generated Preview behavior.
+* Review inline scripts and styles.
+* Review third-party resources.
+
+Do not weaken CSP simply to make generated code execute.
+
+---
+
+# 39. Database Security
+
+Database access must remain behind the server-side/infrastructure boundary.
+
+Never expose database credentials to the browser.
+
+Never expose:
+
+```text
+Database credentials
+D1 credentials
+Database connection details
+Server-only environment variables
+```
+
+to client-side code.
+
+Follow:
+
+```text
+docs/05_database.md
+```
+
+and:
+
+```text
+.cursor/rules/cloudflare.mdc
+```
+
+---
+
+# 40. Database Query Authorization
+
+Database queries must respect authorization boundaries.
+
+Do not retrieve all private Forms and filter them only in the UI.
+
+Bad:
+
+```text
+Database
+  ↓
+All Forms
+  ↓
+Client filters Forms for current user
+```
+
+Prefer:
+
+```text
+Authenticated User
+  ↓
+Authorized Query
+  ↓
+Only permitted Forms
+```
+
+Authorization-sensitive filtering should happen server-side.
+
+---
+
+# 41. SQL Injection
+
+Never construct SQL queries using raw string concatenation with untrusted input.
+
+Avoid:
+
+```ts
+`SELECT * FROM forms WHERE name = '${name}'`;
+```
+
+Use the project's established database abstraction and parameterized query mechanisms.
+
+If raw SQL is genuinely required:
+
+* Use parameterized queries.
+* Validate inputs.
+* Document why raw SQL is necessary.
+* Review the query for authorization boundaries.
+
+---
+
+# 42. Database Resource Isolation
+
+When authentication exists, every Form query must consider the user's authorization boundary.
+
+Do not query:
+
+```text
+WHERE id = formId
+```
+
+alone when ownership or membership is required.
+
+Prefer an authorization-aware query.
+
+---
+
+# 43. Sensitive Data Minimization
+
+Do not retrieve or expose more data than necessary.
+
+API responses should contain only the fields required by the client.
+
+Avoid returning:
+
+```text
+passwordHash
+authenticationSecret
+private tokens
+database credentials
+internal credentials
+```
+
+or other server-only fields.
+
+---
+
+# 44. API Response Security
+
+Before returning database records:
+
+1. Determine which fields are safe for the client.
+2. Remove server-only fields.
+3. Verify authorization.
+4. Return only the required data.
+
+Do not blindly serialize database models.
+
+---
+
+# 45. Authentication Errors
+
+Do not reveal unnecessary information through authentication errors.
+
+Avoid revealing whether a specific account exists when such information is not required.
+
+Do not expose:
+
+* Passwords
+* Authentication tokens
+* Session secrets
+* Internal authentication details
+
+---
+
+# 46. Error Messages
+
+Do not expose internal implementation details to users.
+
+Avoid returning:
+
+```text
+SQL query
+Database credentials
+Stack trace
+Internal file path
+Environment variables
+Cloudflare binding details
+Authentication internals
+```
+
+User-facing errors should be understandable.
+
+Developer logs may contain additional diagnostic information but must still avoid secrets.
+
+---
+
+# 47. Logging
+
+Never log sensitive information.
+
+Do not log:
+
+* Passwords
+* Access tokens
+* Session tokens
+* API keys
+* Secrets
+* Full authentication cookies
+* Sensitive personal information
+* Private Form content unnecessarily
+
+Logs should contain enough information to diagnose problems without exposing sensitive data.
+
+---
+
+# 48. Client-Side Security
+
+Never treat React Components as a trusted environment.
+
+Anything in browser-executed code can be inspected or modified by the user.
+
+Never place security decisions exclusively in:
+
+```text
+React state
+localStorage
+sessionStorage
+hidden inputs
+disabled buttons
+UI conditions
+```
+
+Security decisions belong at the appropriate server-side boundary.
+
+---
+
+# 49. UI Authorization
+
+Client-side authorization checks may improve UX.
+
+For example:
+
+```tsx
+if (!canDelete) {
+  return null;
+}
+```
+
+may be useful for hiding an unavailable action.
+
+However, this is not a security mechanism.
+
+The server must independently verify authorization.
+
+---
+
+# 50. Local Storage
+
+Do not store sensitive authentication information in:
+
+```text
+localStorage
+sessionStorage
+```
+
+unless explicitly required by the architecture and the security implications are understood.
+
+Avoid storing:
+
+* Access tokens
+* Refresh tokens
+* Passwords
+* Session secrets
+
+in browser storage.
+
+---
+
+# 51. Environment Variables
+
+Separate public and server-only environment variables.
+
+Never expose server-only secrets to browser code.
+
+Before using an environment variable in React components, verify that it is intentionally public.
+
+---
+
+# 52. Secrets
+
+Never commit secrets to Git.
+
+Never include real credentials in:
+
+```text
+.env
+.env.local
+.env.production
+README.md
+Documentation
+Test fixtures
+Source code
+Logs
+Commit messages
+```
+
+Use Cloudflare's supported secret management mechanism.
+
+---
+
+# 53. `.env.example`
+
+Use:
+
+```text
+.env.example
+```
+
+to document required environment variables.
+
+It must contain placeholders only.
+
+Never put real secrets into:
+
+```text
+.env.example
+```
+
+---
+
+# 54. Cloudflare Secrets
+
+When using Cloudflare Workers:
+
+* Keep secrets in Cloudflare's secret management system.
+* Do not expose Worker secrets to browser code.
+* Do not hardcode secret names and values together in source code.
+* Do not log secret values.
+
+Follow:
+
+```text
+.cursor/rules/cloudflare.mdc
+```
+
+for infrastructure-specific rules.
+
+---
+
+# 55. Worker Runtime Security
+
+Cloudflare Worker memory must not be treated as persistent secure storage.
+
+Do not store user-specific secrets in module-level variables.
+
+Bad:
+
+```ts
+let currentUserToken;
+```
+
+Worker instances may be reused across requests.
+
+Request-specific data must remain request-scoped.
+
+---
+
+# 56. Request Isolation
+
+Never store request-specific or user-specific data in mutable global variables.
+
+Bad:
+
+```ts
+let currentForm;
+let currentUser;
+```
+
+This can cause incorrect behavior between requests.
+
+Use request-scoped state.
+
+---
+
+# 57. Cloudflare Bindings
+
+Treat Cloudflare bindings as infrastructure resources.
+
+Do not expose binding objects to browser code.
+
+Keep access to:
+
+```text
+D1
+KV
+R2
+Durable Objects
+Queues
+```
+
+inside appropriate infrastructure boundaries.
+
+Do not introduce a Cloudflare service merely for security theater.
+
+---
+
+# 58. Cache Security
+
+Caching must never leak user-specific data.
+
+Before caching a response, consider:
+
+```text
+User
+Form
+Permissions
+Authentication
+Authorization
+```
+
+Never put private Form data into a shared public cache without an appropriate security model.
+
+When in doubt, do not cache sensitive data.
+
+---
+
+# 59. Authorization and Cache Keys
+
+If user-specific data is cached, the cache key must account for the appropriate security boundary.
+
+Bad:
+
+```text
+forms
+```
+
+when the response differs between users.
+
+Prefer an appropriately scoped strategy such as:
+
+```text
+forms:<userId>
+```
+
+or another secure mechanism appropriate to the architecture.
+
+---
+
+# 60. Generated Code Cache
+
+Do not publicly cache generated output if it contains private user-created Form content unless the content is intentionally public.
+
+Consider:
+
+```text
+Form ownership
+Authentication
+Visibility
+Cache lifetime
+Invalidation
+```
+
+before caching generated output.
+
+---
+
+# 61. Timing and Enumeration
+
+Be aware of information leakage through:
+
+* Error messages
+* Response differences
+* Resource existence
+* Timing differences
+* Search results
+
+Do not expose unnecessary information about private Forms.
+
+For sensitive operations, consider whether the response reveals whether a resource exists.
+
+---
+
+# 62. Rate Limiting
+
+Consider rate limiting for operations that may be abused.
+
+Potential targets include:
+
+```text
+Authentication
+Form creation
+Form deletion
+Code generation
+Preview generation
+Search
+Expensive operations
+External API calls
+```
+
+Do not add rate limiting blindly to every request.
+
+Prioritize operations with meaningful abuse potential.
+
+---
+
+# 63. Denial of Service Considerations
+
+Avoid unbounded operations.
+
+Examples:
+
+```text
+Unlimited Form Schema size
+Unlimited fields
+Unlimited options
+Unlimited pagination
+Unlimited request body size
+Unbounded search
+Unbounded database queries
+Huge generated code
+Expensive code generation
+```
+
+Use appropriate:
+
+* Limits
+* Validation
+* Pagination
+* Query constraints
+* Timeouts
+* Resource limits
+
+---
+
+# 64. Form Schema Size Limits
+
+Define reasonable limits for Form Schema data.
+
+Consider limits for:
+
+```text
+Number of fields
+Field label length
+Placeholder length
+Option count
+Option label length
+Description length
+Form name length
+Total schema size
+```
+
+Do not allow arbitrarily large Form definitions.
+
+---
+
+# 65. Search Security
+
+Search input must be validated.
+
+Prevent:
+
+* Excessively long search strings
+* Unbounded queries
+* Unsafe SQL construction
+* Expensive wildcard queries
+
+Use appropriate database query mechanisms.
+
+---
+
+# 66. Pagination Security
+
+If pagination is implemented, never allow arbitrary client input to create unbounded queries.
+
+Bad:
+
+```text
+?pageSize=999999999
+```
+
+Prefer a server-defined maximum.
+
+Example:
+
+```ts
+const MAX_PAGE_SIZE = 100;
+```
+
+Clamp or reject invalid values appropriately.
+
+---
+
+# 67. File Uploads
+
+If file uploads are introduced:
+
+* Validate file type.
+* Validate file size.
+* Do not trust file extensions.
+* Do not trust client-provided MIME types.
+* Generate safe filenames.
+* Store files outside executable paths.
+* Consider malware scanning where appropriate.
+* Restrict access to private files.
+
+Do not implement file uploads without updating the relevant architecture and security documentation.
+
+---
+
+# 68. External Services
+
+Treat external services as untrusted boundaries.
+
+Validate:
+
+* Requests
+* Responses
+* Authentication
+* Timeouts
+* Errors
+
+Do not expose third-party API keys to the client.
+
+Use server-side integration for secret-bearing APIs.
+
+---
+
+# 69. SSRF Prevention
+
+If Formly ever fetches a user-provided URL from the Worker or server-side environment, treat it as a potential SSRF vector.
+
+Do not blindly perform:
+
+```ts
+fetch(userProvidedUrl);
+```
+
+Validate and restrict destinations according to the feature requirements.
+
+Prefer allowlists where practical.
+
+Be especially careful with:
+
+```text
+localhost
+127.0.0.1
+private IP ranges
+Cloud metadata endpoints
+internal services
+```
+
+---
+
+# 70. External Resource Fetching
+
+Do not fetch arbitrary remote resources merely because a user supplied a URL.
+
+If Formly introduces:
+
+```text
+Remote image import
+URL preview
+External template import
+Webhook
+Remote asset fetching
+```
+
+perform a dedicated security review before implementation.
+
+---
+
+# 71. Third-Party Dependencies
+
+Before adding a security-sensitive dependency:
+
+1. Verify its maintenance status.
+2. Check known vulnerabilities.
+3. Check compatibility with React, React Router, Vite, and Cloudflare.
+4. Check whether an existing dependency already provides the functionality.
+5. Keep the dependency version controlled.
+
+Do not add a package simply because it is popular.
+
+---
+
+# 72. Dependency Updates
+
+Keep security-sensitive dependencies reasonably current.
+
+When a vulnerability affects a dependency:
+
+1. Determine whether Formly is affected.
+2. Check the affected versions.
+3. Upgrade to a supported patched version.
+4. Run tests.
+5. Run the production build.
+6. Verify Cloudflare compatibility.
+
+Do not blindly upgrade unrelated packages during a security fix.
+
+---
+
+# 73. Dependency Audit
+
+Use the project's package manager and security tooling to identify known dependency vulnerabilities.
+
+Do not ignore security advisories without understanding their impact.
+
+If a vulnerability is not applicable to Formly, document the reasoning when appropriate.
+
+---
+
+# 74. Form Preview Isolation
+
+The Preview environment should have the minimum capabilities necessary.
+
+Do not give Preview access to:
+
+```text
+Parent DOM
+Parent JavaScript
+Authentication cookies
+Application storage
+Private API endpoints
+```
+
+unless explicitly required.
+
+Preview should be considered potentially hostile content.
+
+---
+
+# 75. Form Preview Navigation
+
+If generated content contains links:
+
+* Consider whether links should open in a new context.
+* Prevent unintended navigation of the parent application.
+* Consider `noopener` behavior where appropriate.
+* Do not allow Preview content to navigate the Formly application unexpectedly.
+
+---
+
+# 76. Generated Form Submission
+
+If Preview allows actual form submission:
+
+* Define where submissions go.
+* Validate destination URLs.
+* Do not expose internal application credentials.
+* Do not allow arbitrary server-side forwarding.
+* Consider CSRF and abuse implications.
+* Do not treat Preview as a trusted application environment.
+
+If actual submission is not required, prefer a non-submitting Preview.
+
+---
+
+# 77. Form Actions
+
+User-created Form actions such as:
+
+```text
+action
+method
+target
+```
+
+must be validated before being used in generated output.
+
+Do not allow arbitrary server-side proxying.
+
+---
+
+# 78. Custom JavaScript
+
+If custom JavaScript is supported:
+
+* Treat it as untrusted code.
+* Never execute it in the main application context.
+* Never use `eval`.
+* Never use `new Function`.
+* Isolate execution.
+* Define resource limits where possible.
+* Document the security model.
+
+If safe execution cannot be guaranteed, do not execute it.
+
+Displaying JavaScript as generated code is safer than executing it.
+
+---
+
+# 79. Code Generator Security
+
+The Code Generator must treat the Form Schema as data.
+
+Do not execute the generated output during generation.
+
+The generator should:
+
+```text
+Form Schema
+  ↓
+Validated Data
+  ↓
+Generator
+  ↓
+Generated Code
+```
+
+not:
+
+```text
+Form Schema
+  ↓
+Execute User Code
+  ↓
+Generate Code
+```
+
+---
+
+# 80. Code Generator Escaping
+
+Every output format has its own escaping requirements.
+
+When generating:
+
+```text
+HTML
+CSS
+JavaScript
+```
+
+ensure user-provided values are escaped appropriately for the target context.
+
+Do not assume HTML escaping is sufficient for JavaScript or CSS contexts.
+
+---
+
+# 81. CSS Injection
+
+Do not assume CSS is harmless.
+
+User-controlled CSS may:
+
+* Overlay UI
+* Hide content
+* Change visual presentation
+* Create phishing-like interfaces
+* Interact with links and UI elements
+
+Keep user CSS isolated from the main Formly application.
+
+---
+
+# 82. Template Security
+
+If Formly supports templates:
+
+Treat templates as untrusted data if they can be user-created or externally imported.
+
+Validate:
+
+```text
+Template metadata
+Template schema
+Template fields
+Template code
+```
+
+before persistence or rendering.
+
+---
+
+# 83. Imported Forms
+
+If Formly supports importing Form Schema from JSON or other sources:
+
+Treat imported data as untrusted.
+
+Use:
+
+```text
+Input
+  ↓
+Schema Validation
+  ↓
+Security Validation
+  ↓
+Domain Validation
+  ↓
+Persistence
+```
+
+Do not trust imported schemas simply because they match the expected JSON shape.
+
+---
+
+# 84. Exported Forms
+
+Exported Form files may contain user-created data.
+
+Do not expose private data unintentionally.
+
+When generating exports:
+
+* Include only intended fields.
+* Do not include internal secrets.
+* Do not include authentication data.
+* Do not include server-only metadata.
+
+---
+
+# 85. Downloaded Generated Code
+
+Generated code should not contain:
+
+```text
+API secrets
+Database credentials
+Authentication tokens
+Cloudflare secrets
+Internal environment variables
+```
+
+Never interpolate server-side environment variables into generated code unless they are explicitly intended to be public.
+
+---
+
+# 86. Public vs Private Forms
+
+If Formly introduces public/private Form visibility:
+
+The visibility state must be enforced server-side.
+
+Do not rely only on:
+
+```text
+isPublic
+```
+
+stored in client state.
+
+Do not assume that an unguessable Form ID is sufficient authorization.
+
+---
+
+# 87. Form Sharing
+
+If Form sharing is introduced:
+
+Define:
+
+```text
+Who can share?
+Who can view?
+Who can edit?
+Who can delete?
+Can links be revoked?
+Can links expire?
+```
+
+before implementation.
+
+Do not implement public sharing as:
+
+```text
+/form/:id
+```
+
+without an explicit authorization model.
+
+---
+
+# 88. Public Form URLs
+
+If a Form is intentionally public:
+
+Separate:
+
+```text
+Public Form Access
+```
+
+from:
+
+```text
+Private Form Management
+```
+
+Do not expose private management APIs through a public Form URL.
+
+---
+
+# 89. Authentication Bypass
+
+Do not create special public endpoints that accidentally expose private Form data.
+
+For example, a public Preview endpoint must not automatically expose:
+
+```text
+Form owner
+Internal IDs
+Private metadata
+Other Forms
+Private settings
+```
+
+Return only the data required for public rendering.
+
+---
+
+# 90. Error Boundaries
+
+Security-sensitive failures should be contained by appropriate error boundaries.
+
+Do not allow an exception to expose:
+
+```text
+Secrets
+Database queries
+Environment variables
+File paths
+Internal architecture
+```
+
+to the browser.
+
+---
+
+# 91. Security Testing
+
+Security-sensitive functionality must have tests.
+
+At minimum, test important boundaries.
+
+Examples:
+
+```text
+Unauthorized user cannot access private Form.
+Authenticated user can access own Form.
+User cannot access another user's Form.
+Invalid Form ID is rejected.
+Invalid Form Schema is rejected.
+Protected fields cannot be mass-assigned.
+Malicious HTML is not executed.
+Generated JavaScript does not execute in the main application.
+Unsafe URLs are rejected.
+```
+
+---
+
+# 92. Form Security Test Matrix
+
+For protected Form resources, consider:
+
+```text
+Unauthenticated
+    ↓
+401 / appropriate response
+
+Authenticated + Authorized
+    ↓
+Success
+
+Authenticated + Unauthorized
+    ↓
+Forbidden / appropriate response
+
+Authenticated + Form Not Found
+    ↓
+Appropriate response
+
+Malformed Request
+    ↓
+Validation Error
+```
+
+Do not test only the happy path.
+
+---
+
+# 93. Form Schema Security Tests
+
+Test representative malicious Form Schema input.
+
+Examples:
+
+```text
+Unexpected properties
+Invalid field types
+Invalid field IDs
+Invalid option structures
+Extremely large values
+Malformed nested objects
+Unexpected HTML
+Unexpected JavaScript
+```
+
+The application must reject or safely handle invalid schemas.
+
+---
+
+# 94. XSS Regression Tests
+
+Include regression tests for malicious values such as:
+
+```text
+<script>alert(1)</script>
+```
+
+and equivalent payloads appropriate to the target context.
+
+Test:
+
+```text
+Form name
+Field label
+Placeholder
+Option label
+Description
+Generated HTML
+Preview
+```
+
+where applicable.
+
+Do not rely solely on visual manual testing.
+
+---
+
+# 95. Authorization Tests
+
+When authentication exists, test:
+
+```text
+User A
+  ↓
+Own Form
+  → Allowed
+
+User A
+  ↓
+User B's Form
+  → Rejected
+```
+
+Also test mutations:
+
+```text
+Update
+Delete
+Duplicate
+Publish
+Share
+```
+
+when those features exist.
+
+---
+
+# 96. Security Regression Tests
+
+When fixing a security vulnerability:
+
+1. Add a regression test.
+2. Fix the vulnerability.
+3. Verify the regression test fails before the fix when practical.
+4. Verify it passes after the fix.
+5. Review related security paths.
+
+Do not rely solely on manual testing.
+
+---
+
+# 97. Security Review for New Features
+
+Before completing a feature, ask:
+
+```text
+Who can access this?
+
+Who can modify this?
+
+Who can delete this?
+
+What happens if the user changes the ID?
+
+What happens if the user changes the Form ID?
+
+What happens if the request is unauthenticated?
+
+What happens if the request is malformed?
+
+What happens if the Form Schema is malicious?
+
+What happens if the user provides malicious HTML?
+
+What happens if the user provides malicious JavaScript?
+
+What sensitive data is returned?
+
+What happens if the request is repeated?
+
+What happens if the generated code is executed?
+
+What happens if Preview content is hostile?
+```
+
+If any answer is unclear, investigate before completing the feature.
+
+---
+
+# 98. Security and React Router
+
+Follow:
+
+```text
+.cursor/rules/routing.mdc
+```
+
+for routing.
+
+Do not treat a route as an authorization boundary.
+
+For example:
+
+```text
+/forms/:formId
+```
+
+only identifies a resource.
+
+It does not prove that the current user is authorized to access it.
+
+---
+
+# 99. Security and State Management
+
+Follow:
+
+```text
+.cursor/rules/state-management.mdc
+```
+
+Do not store security decisions only in:
+
+```text
+React state
+Context
+localStorage
+sessionStorage
+```
+
+Client state may improve UX but must not become the authoritative security boundary.
+
+---
+
+# 100. Security and i18n
+
+Follow:
+
+```text
+.cursor/rules/i18n.mdc
+```
+
+Security-sensitive errors should use the established i18n system.
+
+Do not expose internal security details merely because an error needs to be translated.
+
+For example:
+
+```text
+FORM_NOT_FOUND
+```
+
+may be translated for the user without exposing database internals.
+
+---
+
+# 101. Security and Forms
+
+Follow:
+
+```text
+.cursor/rules/forms.mdc
+```
+
+The Forms feature must preserve the distinction between:
+
+```text
+Form Metadata
+Form Schema
+User Content
+UI State
+```
+
+Do not mix security-sensitive metadata with user-editable Form Schema.
+
+---
+
+# 102. Security and Cloudflare
+
+Follow:
+
+```text
+.cursor/rules/cloudflare.mdc
+```
+
+Cloudflare is the runtime and infrastructure platform.
+
+Do not assume Cloudflare automatically provides application-level authorization or validation.
+
+Cloudflare security features complement, but do not replace, application security.
+
+---
+
+# 103. Worker Memory Security
+
+Never use Worker module-level state as a substitute for authentication or authorization.
+
+Bad:
+
+```ts
+let authorizedUserId;
+```
+
+Do not assume a Worker instance belongs to one user.
+
+Every request must independently establish its security context.
+
+---
+
+# 104. Request Data Isolation
+
+Do not store request-specific information in reusable module-level objects.
+
+Bad:
+
+```ts
+const requestContext = {
+  userId: null,
+};
+```
+
+Request context must be scoped to the request.
+
+---
+
+# 105. Security Boundaries
+
+Important security boundaries include:
+
+```text
+Browser
+  ↓
+React Router
+  ↓
+Worker / Server Boundary
+  ↓
+Validation
+  ↓
+Authorization
+  ↓
+Domain
+  ↓
+Persistence
+```
+
+and:
+
+```text
+Form Schema
+  ↓
+Generator
+  ↓
+Generated Code
+  ↓
+Preview Isolation
+```
+
+Treat every boundary as a point where assumptions must be validated.
+
+---
+
+# 106. Principle of Least Privilege
+
+Every component, service, API endpoint, binding, and external integration should have only the permissions it needs.
+
+Do not grant:
+
+```text
+Database access
+Private Form access
+Cloudflare binding access
+Secret access
+```
+
+to code that does not require it.
+
+---
+
+# 107. Data Minimization
+
+Only collect and store data required by the product.
+
+Do not add:
+
+```text
+Personal information
+Tracking information
+Metadata
+Logs
+```
+
+merely because it may be useful later.
+
+If new sensitive data is required, document:
+
+* Why it is needed.
+* Where it is stored.
+* Who can access it.
+* How long it is retained.
+
+---
+
+# 108. Security Documentation
+
+When security architecture changes, update the relevant documentation.
+
+Review:
+
+```text
+docs/04_architecture.md
+docs/05_database.md
+docs/06_api.md
+docs/development-log.md
+```
+
+when applicable.
+
+Examples include:
+
+```text
+Authentication
+Authorization
+Public Forms
+Form Sharing
+Preview Execution
+File Uploads
+External Resource Fetching
+New Cloudflare Bindings
+New Sensitive Data
+```
+
+---
+
+# 109. Security Change Workflow
+
+Before implementing a security-sensitive change:
+
+```text
+1. Identify the trust boundary.
+        ↓
+2. Identify all untrusted inputs.
+        ↓
+3. Identify authentication requirements.
+        ↓
+4. Identify authorization requirements.
+        ↓
+5. Define validation.
+        ↓
+6. Define safe data flow.
+        ↓
+7. Implement the smallest solution.
+        ↓
+8. Add security tests.
+        ↓
+9. Review error handling.
+        ↓
+10. Review logging.
+        ↓
+11. Review generated output if applicable.
+        ↓
+12. Update documentation.
+```
+
+---
+
+# 110. Security Checklist
+
+Before completing a security-sensitive change:
+
+* [ ] External input is treated as untrusted.
+* [ ] Authentication is separated from authorization.
+* [ ] Authorization is enforced at the appropriate server boundary.
+* [ ] Resource IDs are not treated as authorization.
+* [ ] Form ownership/access is verified.
+* [ ] Form Schema is validated.
+* [ ] Client-side validation is not treated as sufficient.
+* [ ] Zod validation is used where appropriate.
+* [ ] Mass assignment is prevented.
+* [ ] Protected fields cannot be modified by ordinary users.
+* [ ] Database access remains server-side.
+* [ ] Database queries respect authorization boundaries.
+* [ ] SQL injection is prevented.
+* [ ] API responses expose only necessary data.
+* [ ] Secrets are not committed.
+* [ ] Environment variables are handled safely.
+* [ ] Sensitive information is not logged.
+* [ ] User-facing errors do not expose internals.
+* [ ] XSS risks have been considered.
+* [ ] `dangerouslySetInnerHTML` is avoided unless necessary.
+* [ ] Generated HTML is safely escaped.
+* [ ] Generated JavaScript is safely generated.
+* [ ] Generated JavaScript is not executed in the main application.
+* [ ] Preview is appropriately isolated.
+* [ ] User-provided URLs are validated.
+* [ ] Open redirects are prevented.
+* [ ] CSRF is considered for state-changing requests.
+* [ ] CORS is appropriately restricted.
+* [ ] Security headers are considered.
+* [ ] Unbounded operations have limits.
+* [ ] Search is constrained.
+* [ ] Pagination has limits where applicable.
+* [ ] File uploads are validated if implemented.
+* [ ] External services are treated as untrusted.
+* [ ] SSRF is considered for server-side URL fetching.
+* [ ] Cloudflare Worker runtime boundaries are respected.
+* [ ] Worker memory is not used as persistent or request-shared user state.
+* [ ] Security-sensitive behavior has tests.
+* [ ] Security regressions have regression tests.
+* [ ] Relevant documentation has been updated.
+
+---
+
+# 111. Final Security Principles
+
+Always prefer:
+
+```text
+Untrusted Input
+    ↓
+Validation
+    ↓
+Authentication
+    ↓
+Authorization
+    ↓
+Business Logic
+    ↓
+Persistence
+```
+
+over:
+
+```text
+Client
+    ↓
+Trust
+    ↓
+Database
+```
+
+Always prefer:
+
+```text
+Form Schema
+    ↓
+Validated Data
+    ↓
+Safe Generator
+    ↓
+Generated Code
+```
+
+over:
+
+```text
+Form Schema
+    ↓
+String Concatenation
+    ↓
+Execute
+```
+
+Always prefer:
+
+```text
+Preview
+    ↓
+Isolation
+```
+
+over:
+
+```text
+Preview
+    ↓
+Main Application DOM
+```
+
+Always prefer:
+
+```text
+Server-side Authorization
+```
+
+over:
+
+```text
+Hidden UI
+```
+
+Always prefer:
+
+```text
+Explicit Validation
+```
+
+over:
+
+```text
+Client Assumptions
+```
+
+Always prefer:
+
+```text
+Parameterized Queries
+```
+
+over:
+
+```text
+String-concatenated SQL
+```
+
+Always prefer:
+
+```text
+Server-side Secrets
+```
+
+over:
+
+```text
+Browser-accessible Secrets
+```
+
+Always prefer:
+
+```text
+Minimal Permissions
+```
+
+over:
+
+```text
+Broad Access
+```
+
+Always prefer:
+
+```text
+Safe Failure
+```
+
+over:
+
+```text
+Leaking Internal Errors
+```
+
+Always prefer:
+
+```text
+Security Tests
+```
+
+over:
+
+```text
+Manual Assumptions
+```
+
+Security is part of the Formly architecture.
+
+The Form Builder, Form Schema, generated code, Preview, API, persistence layer, React Router routes, and Cloudflare Worker runtime must all be treated as security boundaries.
+
+Do not assume that code is safe simply because it was generated by Formly or originates from the application's UI.
+
+Validate at trust boundaries, authorize at the server boundary, isolate generated content, protect secrets, and keep security decisions outside the client.
