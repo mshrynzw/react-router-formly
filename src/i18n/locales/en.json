@@ -29,11 +29,123 @@
       "phase1": "Phase 1 — Foundation"
     }
   },
+  "seo": {
+    "titles": {
+      "home": "Formly — Build forms visually. Export clean code.",
+      "builder": "Form Builder | Formly",
+      "preview": "Preview | Formly",
+      "code": "Generated Code | Formly",
+      "templates": "Templates | Formly",
+      "settings": "Settings | Formly",
+      "notFound": "Page not found | Formly"
+    }
+  },
   "home": {
     "title": "Formly",
-    "description": "Design forms in the browser and export HTML, CSS, and JavaScript.",
+    "description": "Design forms in the browser and export HTML, CSS, and JavaScript. No login required — forms are saved in LocalStorage.",
     "cta": "Open Builder",
-    "ctaTemplates": "Start from a template"
+    "ctaTemplates": "Start from a template",
+    "ctaDemo": "View demo",
+    "hero": {
+      "eyebrow": "Browser Form Builder"
+    },
+    "features": {
+      "title": "What you can do",
+      "description": "Core capabilities that work as both a portfolio piece and a practical tool.",
+      "items": {
+        "builder": {
+          "title": "Visual Builder",
+          "description": "Add, edit, and reorder fields to design the form structure directly."
+        },
+        "preview": {
+          "title": "Live Preview",
+          "description": "Review appearance and validation from the same Form Schema."
+        },
+        "code": {
+          "title": "Clean code export",
+          "description": "Export HTML, CSS, and JavaScript you can take to another site."
+        },
+        "templates": {
+          "title": "Templates",
+          "description": "Start quickly from common starters like contact and feedback forms."
+        },
+        "local": {
+          "title": "Local First",
+          "description": "No login. Your Form Schema is saved in browser LocalStorage."
+        },
+        "responsive": {
+          "title": "Responsive",
+          "description": "Built for desktop, tablet, and mobile — including generated forms."
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "description": "The core loop stays simple.",
+      "stepLabel": "STEP {{step}}",
+      "steps": {
+        "build": {
+          "title": "Build",
+          "description": "Configure fields and submission settings in the Builder."
+        },
+        "preview": {
+          "title": "Preview",
+          "description": "Check appearance and validation in Preview."
+        },
+        "export": {
+          "title": "Export",
+          "description": "Copy or download the generated code."
+        }
+      }
+    },
+    "demo": {
+      "title": "Try the demo",
+      "description": "Apply a template, or open Preview to inspect the current form.",
+      "ctaTemplates": "Open templates",
+      "ctaPreview": "Open preview"
+    },
+    "technology": {
+      "title": "Technology",
+      "description": "A production-minded stack centered on React Router and Cloudflare Workers.",
+      "items": {
+        "react": {
+          "name": "React 19",
+          "description": "Foundation for UI composition and interaction."
+        },
+        "router": {
+          "name": "React Router v8",
+          "description": "Route-based screens and navigation."
+        },
+        "typescript": {
+          "name": "TypeScript",
+          "description": "Type-safe Form Schema handling."
+        },
+        "vite": {
+          "name": "Vite",
+          "description": "Fast local development and production builds."
+        },
+        "tailwind": {
+          "name": "Tailwind CSS",
+          "description": "Styling aligned with the design system."
+        },
+        "cloudflare": {
+          "name": "Cloudflare Workers",
+          "description": "Edge deployment and delivery."
+        },
+        "vitest": {
+          "name": "Vitest / Testing Library",
+          "description": "Unit and integration tests."
+        },
+        "playwright": {
+          "name": "Playwright",
+          "description": "End-to-end coverage for critical journeys."
+        }
+      }
+    },
+    "footer": {
+      "note": "MVP architecture: a single form persisted in LocalStorage.",
+      "navLabel": "Footer navigation"
+    }
   },
   "templates": {
     "title": "Templates",

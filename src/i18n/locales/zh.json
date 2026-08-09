@@ -29,11 +29,123 @@
       "phase1": "Phase 1 — Foundation"
     }
   },
+  "seo": {
+    "titles": {
+      "home": "Formly — 可视化构建表单，导出整洁代码",
+      "builder": "表单构建器 | Formly",
+      "preview": "预览 | Formly",
+      "code": "生成代码 | Formly",
+      "templates": "模板 | Formly",
+      "settings": "设置 | Formly",
+      "notFound": "页面未找到 | Formly"
+    }
+  },
   "home": {
     "title": "Formly",
-    "description": "在浏览器中设计表单，并导出 HTML / CSS / JavaScript。",
+    "description": "在浏览器中设计表单，并导出 HTML / CSS / JavaScript。无需登录，数据保存在 LocalStorage。",
     "cta": "打开构建器",
-    "ctaTemplates": "从模板开始"
+    "ctaTemplates": "从模板开始",
+    "ctaDemo": "查看演示",
+    "hero": {
+      "eyebrow": "Browser Form Builder"
+    },
+    "features": {
+      "title": "核心能力",
+      "description": "既适合作品展示，也可作为实用工具使用。",
+      "items": {
+        "builder": {
+          "title": "可视化构建器",
+          "description": "添加、编辑、重排字段，直接设计表单结构。"
+        },
+        "preview": {
+          "title": "实时预览",
+          "description": "基于同一 Form Schema 检查外观与校验。"
+        },
+        "code": {
+          "title": "整洁代码导出",
+          "description": "导出可直接用于其他站点的 HTML / CSS / JavaScript。"
+        },
+        "templates": {
+          "title": "模板",
+          "description": "从联系表单、反馈表单等常用模板快速开始。"
+        },
+        "local": {
+          "title": "Local First",
+          "description": "无需登录。Form Schema 保存在浏览器 LocalStorage。"
+        },
+        "responsive": {
+          "title": "响应式",
+          "description": "面向桌面、平板与手机，并兼顾生成表单。"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "使用流程",
+      "description": "核心流程保持简单。",
+      "stepLabel": "步骤 {{step}}",
+      "steps": {
+        "build": {
+          "title": "Build",
+          "description": "在构建器中配置字段与提交设置。"
+        },
+        "preview": {
+          "title": "Preview",
+          "description": "在预览中检查外观与校验。"
+        },
+        "export": {
+          "title": "Export",
+          "description": "复制或下载生成的代码。"
+        }
+      }
+    },
+    "demo": {
+      "title": "体验演示",
+      "description": "应用模板，或打开预览查看当前表单。",
+      "ctaTemplates": "打开模板",
+      "ctaPreview": "打开预览"
+    },
+    "technology": {
+      "title": "技术栈",
+      "description": "以 React Router 与 Cloudflare Workers 为中心的生产向架构。",
+      "items": {
+        "react": {
+          "name": "React 19",
+          "description": "UI 组合与交互的基础。"
+        },
+        "router": {
+          "name": "React Router v8",
+          "description": "基于路由的页面与导航。"
+        },
+        "typescript": {
+          "name": "TypeScript",
+          "description": "类型安全的 Form Schema。"
+        },
+        "vite": {
+          "name": "Vite",
+          "description": "快速开发体验与生产构建。"
+        },
+        "tailwind": {
+          "name": "Tailwind CSS",
+          "description": "符合设计系统的样式。"
+        },
+        "cloudflare": {
+          "name": "Cloudflare Workers",
+          "description": "边缘部署与分发。"
+        },
+        "vitest": {
+          "name": "Vitest / Testing Library",
+          "description": "单元与集成测试。"
+        },
+        "playwright": {
+          "name": "Playwright",
+          "description": "关键用户路径的端到端测试。"
+        }
+      }
+    },
+    "footer": {
+      "note": "MVP：单个表单，使用 LocalStorage 持久化。",
+      "navLabel": "页脚导航"
+    }
   },
   "templates": {
     "title": "模板",

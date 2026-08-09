@@ -10,7 +10,7 @@ function indent(level: number, line: string): string {
 function renderLabel(field: FormField, forId: string | null, level: number): string[] {
   const labelText = escapeHtml(field.label || "Untitled field");
   const required = field.required
-    ? ' <span class="formly-required" aria-hidden="true">*</span>'
+    ? ' <span class="formly-required" aria-hidden="true">*</span><span class="formly-sr-only"> (required)</span>'
     : "";
 
   if (forId) {

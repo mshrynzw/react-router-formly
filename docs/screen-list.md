@@ -73,7 +73,7 @@ BuilderからPreviewおよびCodeへ直接移動することもできる。
 
 | ID      | Screen               | Route         | Auth | Priority | Status  |
 | ------- | -------------------- | ------------- | ---- | -------- | ------- |
-| SCR-001 | Landing / Home       | `/`           | No   | P0       | Planned |
+| SCR-001 | Landing / Home       | `/`           | No   | P0       | Implemented |
 | SCR-002 | Form Builder         | `/builder`    | No   | P0       | Planned |
 | SCR-003 | Form Preview         | `/preview`    | No   | P0       | Planned |
 | SCR-004 | Generated Code       | `/code`       | No   | P0       | Planned |

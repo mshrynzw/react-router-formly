@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -52,7 +52,12 @@ describe("AppShell accessibility", () => {
 
     await user.click(screen.getByRole("button", { name: "メニューを開く" }));
 
-    expect(screen.getByRole("dialog", { name: "メニュー" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "ビルダー" })).toBeInTheDocument();
+    const menu = screen.getByRole("dialog", { name: "メニュー" });
+    expect(menu).toBeInTheDocument();
+    expect(menu).toContainElement(screen.getByRole("navigation", { name: "メインナビゲーション" }));
+    expect(
+      within(menu).getByRole("link", { name: "ビルダー" }),
+    ).toBeInTheDocument();
   });
 });
+

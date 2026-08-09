@@ -2,7 +2,52 @@
 
 Build forms visually. Export clean code.
 
-Formly はブラウザ上でフォームを視覚的に設計し、HTML / CSS / JavaScript を書き出せる Form Builder です。
+Formly はブラウザ上でフォームを視覚的に設計し、HTML / CSS / JavaScript を書き出せる Form Builder です。  
+ログイン不要。Form Schema は LocalStorage に保存されます。
+
+## Demo
+
+ローカル:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+主な導線:
+
+```text
+Landing (/)
+  → Templates または Builder
+  → Preview（バリデーション確認）
+  → Code（HTML / CSS / JS 書き出し）
+```
+
+デプロイ済みの公開 URL がある場合はここに追記してください。
+
+## Features
+
+- Visual Form Builder（追加・編集・並び替え）
+- Live Preview（同一 Form Schema）
+- Clean Code Export（standalone HTML / CSS / JS）
+- Form Schema Import / Export（`*.formly.json`）
+- Templates（お問い合わせ、フィードバックなど）
+- i18n（日本語 / English / 中文 / 한국어）
+- Cloudflare Workers デプロイ
+
+## Architecture (MVP)
+
+```text
+Form Schema (source of truth)
+  ├── Builder
+  ├── Preview
+  ├── Code Generator
+  └── LocalStorage (`formly.activeForm`)
+```
+
+- 単一フォーム体験（`/forms/:formId` は未導入）
+- Feature First（`src/features/*`）
+- React Router v8 によるルート構成
 
 ## Stack
 
@@ -15,13 +60,14 @@ Formly はブラウザ上でフォームを視覚的に設計し、HTML / CSS / 
 - Cloudflare Workers
 - Vitest / Testing Library / Playwright
 
-## MVP Routes
+## Routes
 
 ```text
 /
 ├── /builder
 ├── /preview
 ├── /code
+├── /templates
 └── /settings
 ```
 
@@ -50,6 +96,16 @@ pnpm deploy       # Cloudflare Workers へデプロイ
 - `docs/06_ui-guideline.md`
 - `docs/development-log.md`
 
+## Generated Code
+
+生成物は Form Schema から導出されます。
+
+- HTML: semantic labels / `aria-invalid` / エラー領域
+- CSS: standalone、レスポンシブ、`prefers-reduced-motion`
+- JavaScript: クライアントバリデーションと送信ハンドリング（外部送信は action URL 設定時）
+
+Preview は React 描画のモック送信であり、生成 JS をアプリ本体では実行しません。
+
 ## Development Status
 
 - Phase 1 — Foundation 完了
@@ -60,6 +116,4 @@ pnpm deploy       # Cloudflare Workers へデプロイ
 - Phase 6 — Quality, Accessibility, Responsive Design, and i18n 完了
 - Phase 7 — Form Schema Import / Export 完了
 - Phase 8 — Form Templates 完了
-
-次は Phase 9 — Portfolio and Production Quality。
-
+- Phase 9 — Portfolio and Production Quality 完了

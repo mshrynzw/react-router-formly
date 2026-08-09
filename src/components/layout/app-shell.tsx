@@ -2,12 +2,14 @@ import { Link, Outlet, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 
 import { AppNav } from "@/components/navigation/app-nav";
+import { useDocumentTitle } from "@/hooks/use-document-title";
 import { cn } from "@/lib/utils";
 
 export function AppShell() {
   const { t } = useTranslation();
   const location = useLocation();
   const isBuilder = location.pathname.startsWith("/builder");
+  useDocumentTitle();
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">

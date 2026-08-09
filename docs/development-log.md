@@ -6,6 +6,39 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-09 — Phase 9 Portfolio and Production Quality
+
+### Summary
+
+Phase 9（Portfolio / Production Quality）を実装した。公開デモ可能なランディング、SEO 基礎、クリティカル E2E、README 強化、生成コードの軽い品質改善を行った。
+
+### Implemented
+
+- Landing（Hero / Features / How it works / Demo / Technology / Footer）
+- Document title（ルート別）と `index.html` OG / meta
+- `public/robots.txt` / `public/sitemap.xml` / `public/favicon.svg`
+- 生成コード: `formly-sr-only` required、`formly-page`、focus-visible、reduced-motion
+- E2E: Landing → Builder → Preview validation → Code、Templates → Builder
+- README（導線・アーキ・生成コード説明・Phase 完了）
+
+### Notes
+
+- 埋め込みインタラクティブデモは作らず、Templates / Preview へ誘導
+- sitemap の `<loc>` は相対パス。本番ドメイン確定後に絶対 URL へ更新可能
+- Lighthouse 本格スコア改善や大規模 code-splitting は follow-up
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm test:e2e
+pnpm build
+```
+
+---
+
 ## 2026-08-09 — Phase 8 Form Templates
 
 ### Summary

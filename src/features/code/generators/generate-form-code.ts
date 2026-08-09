@@ -82,7 +82,7 @@ function generateCombinedHtml(
 ${css}
   </style>
 </head>
-<body style="margin:0;padding:2rem 1rem;background:#f3f3f7;">
+<body class="formly-page">
 ${html}
   <script>
 ${javascript}

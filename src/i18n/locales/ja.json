@@ -29,11 +29,123 @@
       "phase1": "Phase 1 — Foundation"
     }
   },
+  "seo": {
+    "titles": {
+      "home": "Formly — ビジュアルにフォームを作り、きれいなコードを書き出す",
+      "builder": "フォームビルダー | Formly",
+      "preview": "プレビュー | Formly",
+      "code": "生成コード | Formly",
+      "templates": "テンプレート | Formly",
+      "settings": "設定 | Formly",
+      "notFound": "ページが見つかりません | Formly"
+    }
+  },
   "home": {
     "title": "Formly",
-    "description": "ブラウザだけでフォームを設計し、HTML / CSS / JavaScript を書き出せます。",
+    "description": "ブラウザだけでフォームを設計し、HTML / CSS / JavaScript を書き出せます。ログイン不要。データは LocalStorage に保存されます。",
     "cta": "ビルダーを開く",
-    "ctaTemplates": "テンプレートから始める"
+    "ctaTemplates": "テンプレートから始める",
+    "ctaDemo": "デモを見る",
+    "hero": {
+      "eyebrow": "Browser Form Builder"
+    },
+    "features": {
+      "title": "できること",
+      "description": "ポートフォリオとしても、実用ツールとしても使えるコア機能です。",
+      "items": {
+        "builder": {
+          "title": "ビジュアルビルダー",
+          "description": "フィールドを追加・編集・並び替えして、フォーム構造をそのまま設計できます。"
+        },
+        "preview": {
+          "title": "ライブプレビュー",
+          "description": "同じ Form Schema から、実際の見た目とバリデーションを確認できます。"
+        },
+        "code": {
+          "title": "クリーンなコード出力",
+          "description": "HTML / CSS / JavaScript を書き出し、そのまま他サイトへ持ち出せます。"
+        },
+        "templates": {
+          "title": "テンプレート",
+          "description": "お問い合わせやフィードバックなど、よく使う雛形からすぐに始められます。"
+        },
+        "local": {
+          "title": "Local First",
+          "description": "ログインなし。Form Schema はブラウザの LocalStorage に保存されます。"
+        },
+        "responsive": {
+          "title": "レスポンシブ",
+          "description": "Desktop / Tablet / Mobile で使える UI と生成フォームを想定しています。"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "使い方",
+      "description": "コアの流れはシンプルです。",
+      "stepLabel": "STEP {{step}}",
+      "steps": {
+        "build": {
+          "title": "Build",
+          "description": "ビルダーでフィールドと送信設定を整えます。"
+        },
+        "preview": {
+          "title": "Preview",
+          "description": "プレビューで見た目とバリデーションを確認します。"
+        },
+        "export": {
+          "title": "Export",
+          "description": "生成コードをコピーまたはダウンロードします。"
+        }
+      }
+    },
+    "demo": {
+      "title": "デモを体験する",
+      "description": "テンプレートを適用するか、プレビュー画面で現在のフォームを確認してください。",
+      "ctaTemplates": "テンプレートを開く",
+      "ctaPreview": "プレビューを開く"
+    },
+    "technology": {
+      "title": "技術スタック",
+      "description": "本番運用を意識した構成で、React Router と Cloudflare Workers を中心に組み立てています。",
+      "items": {
+        "react": {
+          "name": "React 19",
+          "description": "UI 構成とインタラクションの基盤。"
+        },
+        "router": {
+          "name": "React Router v8",
+          "description": "ルート単位の画面構成とナビゲーション。"
+        },
+        "typescript": {
+          "name": "TypeScript",
+          "description": "Form Schema を型安全に扱う。"
+        },
+        "vite": {
+          "name": "Vite",
+          "description": "高速な開発体験と本番ビルド。"
+        },
+        "tailwind": {
+          "name": "Tailwind CSS",
+          "description": "デザインシステムに沿ったスタイリング。"
+        },
+        "cloudflare": {
+          "name": "Cloudflare Workers",
+          "description": "エッジへのデプロイと配信。"
+        },
+        "vitest": {
+          "name": "Vitest / Testing Library",
+          "description": "ユニット・統合テスト。"
+        },
+        "playwright": {
+          "name": "Playwright",
+          "description": "重要なユーザー導線の E2E テスト。"
+        }
+      }
+    },
+    "footer": {
+      "note": "単一フォームを LocalStorage で扱う MVP 構成です。",
+      "navLabel": "フッターナビゲーション"
+    }
   },
   "templates": {
     "title": "テンプレート",
