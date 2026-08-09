@@ -28,7 +28,94 @@
   },
   "builder": {
     "title": "表单构建器",
-    "description": "用于添加、编辑和排序字段的界面。将在 Phase 2 实现。"
+    "description": "添加、编辑和排序字段。",
+    "workspace": {
+      "subtitle": "编辑 Form Schema。更改会自动保存。"
+    },
+    "palette": {
+      "title": "字段"
+    },
+    "canvas": {
+      "title": "画布",
+      "fieldCount": "{{count}} 个字段"
+    },
+    "empty": {
+      "title": "开始构建表单",
+      "description": "请从左侧字段面板添加第一个字段。"
+    },
+    "settings": {
+      "title": "设置",
+      "tabsLabel": "设置面板",
+      "tabs": {
+        "form": "表单",
+        "field": "字段",
+        "submission": "提交"
+      }
+    },
+    "formSettings": {
+      "name": "表单名称",
+      "description": "说明"
+    },
+    "fieldSettings": {
+      "empty": "选择字段以编辑其设置。",
+      "label": "标签",
+      "name": "name 属性",
+      "placeholder": "占位符",
+      "description": "说明",
+      "required": "必填",
+      "minLength": "最小长度",
+      "maxLength": "最大长度",
+      "min": "最小值",
+      "max": "最大值",
+      "step": "步长",
+      "pattern": "正则",
+      "patternPlaceholder": "例如: ^[A-Za-z]+$",
+      "options": "选项",
+      "optionLabel": "选项标签",
+      "optionValue": "选项值"
+    },
+    "submission": {
+      "action": "Action URL",
+      "actionPlaceholder": "https://example.com/submit",
+      "method": "HTTP Method",
+      "help": "生成表单的提交目标。提交按钮文案可在字段设置中修改。"
+    },
+    "actions": {
+      "moveUp": "上移",
+      "moveDown": "下移",
+      "duplicate": "复制",
+      "delete": "删除",
+      "addOption": "添加选项",
+      "removeOption": "删除选项",
+      "reset": "新建表单"
+    },
+    "status": {
+      "saved": "已保存",
+      "saveFailed": "保存失败",
+      "invalidRestored": "已保存数据无效，已创建新表单"
+    },
+    "fields": {
+      "types": {
+        "text": "文本",
+        "email": "邮箱",
+        "number": "数字",
+        "textarea": "多行文本",
+        "select": "下拉",
+        "radio": "单选",
+        "checkbox": "复选框",
+        "submit": "提交按钮"
+      },
+      "descriptions": {
+        "text": "单行文本输入",
+        "email": "邮箱地址输入",
+        "number": "数字输入",
+        "textarea": "多行文本",
+        "select": "下拉选择",
+        "radio": "单选",
+        "checkbox": "复选框",
+        "submit": "表单提交按钮"
+      }
+    }
   },
   "preview": {
     "title": "预览",

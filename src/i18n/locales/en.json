@@ -28,7 +28,94 @@
   },
   "builder": {
     "title": "Form Builder",
-    "description": "Add, edit, and reorder fields. Implemented in Phase 2."
+    "description": "Add, edit, and reorder fields.",
+    "workspace": {
+      "subtitle": "Edit the Form Schema. Changes are saved automatically."
+    },
+    "palette": {
+      "title": "Fields"
+    },
+    "canvas": {
+      "title": "Canvas",
+      "fieldCount": "{{count}} fields"
+    },
+    "empty": {
+      "title": "Start building your form",
+      "description": "Add your first field from the field palette."
+    },
+    "settings": {
+      "title": "Settings",
+      "tabsLabel": "Settings panels",
+      "tabs": {
+        "form": "Form",
+        "field": "Field",
+        "submission": "Submission"
+      }
+    },
+    "formSettings": {
+      "name": "Form name",
+      "description": "Description"
+    },
+    "fieldSettings": {
+      "empty": "Select a field to edit its settings.",
+      "label": "Label",
+      "name": "Name attribute",
+      "placeholder": "Placeholder",
+      "description": "Description",
+      "required": "Required",
+      "minLength": "Min length",
+      "maxLength": "Max length",
+      "min": "Min",
+      "max": "Max",
+      "step": "Step",
+      "pattern": "Pattern",
+      "patternPlaceholder": "e.g. ^[A-Za-z]+$",
+      "options": "Options",
+      "optionLabel": "Option label",
+      "optionValue": "Option value"
+    },
+    "submission": {
+      "action": "Action URL",
+      "actionPlaceholder": "https://example.com/submit",
+      "method": "HTTP Method",
+      "help": "Destination for the generated form. Change the submit button label in Field settings."
+    },
+    "actions": {
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "addOption": "Add option",
+      "removeOption": "Remove option",
+      "reset": "New form"
+    },
+    "status": {
+      "saved": "Saved",
+      "saveFailed": "Failed to save",
+      "invalidRestored": "Saved data was invalid, so a new form was created"
+    },
+    "fields": {
+      "types": {
+        "text": "Text",
+        "email": "Email",
+        "number": "Number",
+        "textarea": "Textarea",
+        "select": "Select",
+        "radio": "Radio",
+        "checkbox": "Checkbox",
+        "submit": "Submit button"
+      },
+      "descriptions": {
+        "text": "Single-line text input",
+        "email": "Email address input",
+        "number": "Number input",
+        "textarea": "Multi-line text",
+        "select": "Dropdown",
+        "radio": "Single choice",
+        "checkbox": "Checkbox",
+        "submit": "Form submit button"
+      }
+    }
   },
   "preview": {
     "title": "Preview",

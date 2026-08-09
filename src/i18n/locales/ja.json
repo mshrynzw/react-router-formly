@@ -28,7 +28,94 @@
   },
   "builder": {
     "title": "フォームビルダー",
-    "description": "フィールドの追加・編集・並び替えを行う画面です。Phase 2 で実装します。"
+    "description": "フィールドの追加・編集・並び替えを行う画面です。",
+    "workspace": {
+      "subtitle": "Form Schema を編集します。変更は自動的に保存されます。"
+    },
+    "palette": {
+      "title": "フィールド"
+    },
+    "canvas": {
+      "title": "キャンバス",
+      "fieldCount": "フィールド {{count}} 件"
+    },
+    "empty": {
+      "title": "フォームを作り始めましょう",
+      "description": "左のパレットからフィールドを追加してください。"
+    },
+    "settings": {
+      "title": "設定",
+      "tabsLabel": "設定パネル",
+      "tabs": {
+        "form": "フォーム",
+        "field": "フィールド",
+        "submission": "送信"
+      }
+    },
+    "formSettings": {
+      "name": "フォーム名",
+      "description": "説明"
+    },
+    "fieldSettings": {
+      "empty": "フィールドを選択すると設定を編集できます。",
+      "label": "ラベル",
+      "name": "name 属性",
+      "placeholder": "プレースホルダー",
+      "description": "説明",
+      "required": "必須",
+      "minLength": "最小文字数",
+      "maxLength": "最大文字数",
+      "min": "最小値",
+      "max": "最大値",
+      "step": "ステップ",
+      "pattern": "パターン",
+      "patternPlaceholder": "例: ^[A-Za-z]+$",
+      "options": "選択肢",
+      "optionLabel": "選択肢ラベル",
+      "optionValue": "選択肢の値"
+    },
+    "submission": {
+      "action": "Action URL",
+      "actionPlaceholder": "https://example.com/submit",
+      "method": "HTTP Method",
+      "help": "生成フォームの送信先です。Submit ボタンのラベルはフィールド設定で変更できます。"
+    },
+    "actions": {
+      "moveUp": "上へ移動",
+      "moveDown": "下へ移動",
+      "duplicate": "複製",
+      "delete": "削除",
+      "addOption": "選択肢を追加",
+      "removeOption": "選択肢を削除",
+      "reset": "新規フォーム"
+    },
+    "status": {
+      "saved": "保存済み",
+      "saveFailed": "保存に失敗しました",
+      "invalidRestored": "保存データが不正だったため新しいフォームを作成しました"
+    },
+    "fields": {
+      "types": {
+        "text": "テキスト",
+        "email": "メール",
+        "number": "数値",
+        "textarea": "テキストエリア",
+        "select": "セレクト",
+        "radio": "ラジオ",
+        "checkbox": "チェックボックス",
+        "submit": "送信ボタン"
+      },
+      "descriptions": {
+        "text": "1行テキスト入力",
+        "email": "メールアドレス入力",
+        "number": "数値入力",
+        "textarea": "複数行テキスト",
+        "select": "ドロップダウン",
+        "radio": "単一選択",
+        "checkbox": "チェックボックス",
+        "submit": "フォーム送信ボタン"
+      }
+    }
   },
   "preview": {
     "title": "プレビュー",

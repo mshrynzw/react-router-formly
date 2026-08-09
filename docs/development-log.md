@@ -6,6 +6,40 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-09 — Phase 2 Core Form Builder
+
+### Summary
+
+Phase 2（Core Form Builder）を実装した。
+
+### Implemented
+
+- Canonical Form Schema（version / metadata / fields / validation / submission）
+- Zod による Schema Validation
+- Domain operations（add / remove / duplicate / reorder / update / options）
+- Builder UI（Field Palette / Form Canvas / Form・Field・Submission Settings）
+- LocalStorage への自動保存（`formly.activeForm`）
+- Supported fields: text / email / number / textarea / select / radio / checkbox / submit
+- i18n（ja / en / zh / ko）の Builder 文言
+- Unit / Integration tests
+
+### Notes
+
+- Field reorder は Move Up / Move Down で実装（キーボード操作可能）
+- Preview / Code Generator は Phase 3 / 4
+- Submit フィールドは削除不可。通常フィールドは Submit の前に挿入される
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+---
+
 ## 2026-08-09 — Phase 1 Foundation
 
 ### Summary

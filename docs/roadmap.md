@@ -399,51 +399,54 @@ The exact submission behavior should be defined in:
 
 ### Form Schema
 
-- [ ] Define Form Schema
-- [ ] Define Form metadata
-- [ ] Define field types
-- [ ] Define field configuration types
-- [ ] Define validation configuration
-- [ ] Define submission configuration
-- [ ] Define Schema version
+- [x] Define Form Schema
+- [x] Define Form metadata
+- [x] Define field types
+- [x] Define field configuration types
+- [x] Define validation configuration
+- [x] Define submission configuration
+- [x] Define Schema version
 
 ### Builder
 
-- [ ] Implement field palette
-- [ ] Implement field list
-- [ ] Implement field selection
-- [ ] Implement field editor
-- [ ] Implement add field
-- [ ] Implement remove field
-- [ ] Implement duplicate field
-- [ ] Implement reorder field
-- [ ] Implement field configuration
-- [ ] Implement basic form settings
+- [x] Implement field palette
+- [x] Implement field list
+- [x] Implement field selection
+- [x] Implement field editor
+- [x] Implement add field
+- [x] Implement remove field
+- [x] Implement duplicate field
+- [x] Implement reorder field
+- [x] Implement field configuration
+- [x] Implement basic form settings
 
 ### Validation
 
-- [ ] Implement Required configuration
-- [ ] Implement Min Length configuration
-- [ ] Implement Max Length configuration
-- [ ] Implement Min configuration
-- [ ] Implement Max configuration
-- [ ] Implement Pattern configuration
-- [ ] Implement validation configuration UI
+- [x] Implement Required configuration
+- [x] Implement Min Length configuration
+- [x] Implement Max Length configuration
+- [x] Implement Min configuration
+- [x] Implement Max configuration
+- [x] Implement Pattern configuration
+- [x] Implement validation configuration UI
 
 ### Submission
 
-- [ ] Implement Submit Button
-- [ ] Implement Submit Button Label
-- [ ] Implement Form Action configuration
-- [ ] Implement HTTP Method configuration
-- [ ] Implement Submission Settings UI
+- [x] Implement Submit Button
+- [x] Implement Submit Button Label
+- [x] Implement Form Action configuration
+- [x] Implement HTTP Method configuration
+- [x] Implement Submission Settings UI
 
 ### Testing
 
-- [ ] Add unit tests for Form Schema
-- [ ] Add validation tests
-- [ ] Add submission configuration tests
-- [ ] Add Builder interaction tests
+- [x] Add unit tests for Form Schema
+- [x] Add validation tests
+- [x] Add submission configuration tests
+- [x] Add Builder interaction tests
+
+Note: Field reordering is implemented with accessible Move Up / Move Down controls.
+Drag-and-drop can be added later without changing the Form Schema contract.
 
 ## Completion Criteria
 

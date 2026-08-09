@@ -52,6 +52,7 @@ pnpm deploy       # Cloudflare Workers へデプロイ
 
 ## Development Status
 
-Phase 1 — Foundation 完了。
+- Phase 1 — Foundation 完了
+- Phase 2 — Core Form Builder 完了
 
-次は Phase 2 — Core Form Builder。
+次は Phase 3 — Preview。
