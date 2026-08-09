@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
+import { BuilderImportExport } from "@/features/builder/components/builder-import-export";
 import { FieldPalette } from "@/features/builder/components/field-palette";
 import { FieldSettingsPanel } from "@/features/builder/components/field-settings-panel";
 import { FormCanvas } from "@/features/builder/components/form-canvas";
@@ -143,6 +144,7 @@ export function BuilderWorkspace() {
               {t("builder.actions.retrySave")}
             </Button>
           ) : null}
+          <BuilderImportExport schema={builder.schema} onImport={builder.replaceSchema} />
           <Button
             type="button"
             size="sm"

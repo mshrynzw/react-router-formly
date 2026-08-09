@@ -175,6 +175,14 @@ export function useFormBuilder() {
     setLoadStatus("empty");
   }
 
+  function handleReplaceSchema(next: FormSchema) {
+    const selectedId =
+      next.fields.find((field) => field.type !== "submit")?.id ?? next.fields[0]?.id ?? null;
+    commitSchema(next, selectedId, true);
+    setActivePanel("form");
+    setLoadStatus("ok");
+  }
+
   function handleRetryLoad() {
     const result = loadFormFromStorage();
     clearSaveTimer();
@@ -227,6 +235,7 @@ export function useFormBuilder() {
       commitSchema(removeOption(schema, fieldId, optionId));
     },
     resetForm: handleResetForm,
+    replaceSchema: handleReplaceSchema,
     retryLoad: handleRetryLoad,
     retrySave: handleRetrySave,
   };

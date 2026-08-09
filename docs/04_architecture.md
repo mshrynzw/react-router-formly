@@ -819,6 +819,26 @@ Download
 
 ExportするJSONにはSchema Versionを含める。
 
+## 23.1 Form Schema Portable Format
+
+Portable Form Schema は LocalStorage と同じ Canonical `FormSchema` を pretty-printed JSON で保存する。
+
+- ファイル名: `{slug}.formly.json`
+- MIME: `application/json;charset=utf-8`
+- Schema Version: `version: 1`（`FORM_SCHEMA_VERSION`）
+- 含める内容: `id`, `name`, `description`, `fields`, `submission`（action / method）
+- Import 上限: ファイルサイズ 1 MiB、フィールド数 100（submit 含む）
+
+不正な JSON・未対応 version・Zod 検証失敗は Builder に適用しない。
+
+実装:
+
+```text
+src/domain/form-schema/serialization.ts
+src/domain/form-schema/import-schema.ts
+src/domain/form-schema/normalization.ts
+```
+
 ---
 
 # 24. State Management Architecture

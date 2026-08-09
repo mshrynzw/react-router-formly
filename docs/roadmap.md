@@ -904,29 +904,29 @@ Submission configuration must be included in the exported Form Schema.
 
 ## Tasks
 
-- [ ] Define export format
-- [ ] Define schema version
-- [ ] Define submission schema representation
-- [ ] Implement export
-- [ ] Implement import
-- [ ] Validate imported schema
-- [ ] Validate imported submission configuration
-- [ ] Reject invalid schemas
-- [ ] Handle unsupported schema versions
-- [ ] Add import/export tests
-- [ ] Document the schema format
+- [x] Define export format
+- [x] Define schema version
+- [x] Define submission schema representation
+- [x] Implement export
+- [x] Implement import
+- [x] Validate imported schema
+- [x] Validate imported submission configuration
+- [x] Reject invalid schemas
+- [x] Handle unsupported schema versions
+- [x] Add import/export tests
+- [x] Document the schema format
 
 ## Completion Criteria
 
 Phase 7 is complete when:
 
-- A Form can be exported.
-- Exported Form data can be imported.
-- Imported data produces the same Form Schema.
-- Submission configuration is preserved.
-- Invalid data is rejected safely.
-- Schema versions can be identified.
-- Import/export behavior is documented.
+- [x] A Form can be exported.
+- [x] Exported Form data can be imported.
+- [x] Imported data produces the same Form Schema.
+- [x] Submission configuration is preserved.
+- [x] Invalid data is rejected safely.
+- [x] Schema versions can be identified.
+- [x] Import/export behavior is documented.
 
 ---
 

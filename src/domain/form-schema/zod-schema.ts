@@ -2,6 +2,9 @@ import { z } from "zod";
 
 import { FIELD_TYPES, FORM_SCHEMA_VERSION, HTTP_METHODS } from "@/domain/form-schema/types";
 
+/** Maximum number of fields accepted in a Form Schema (including submit). */
+export const MAX_FORM_FIELDS = 100;
+
 const fieldOptionSchema = z.object({
   id: z.string().min(1),
   label: z.string(),
@@ -83,7 +86,7 @@ export const formSchemaSchema = z.object({
   id: z.string().min(1),
   name: z.string().max(200),
   description: z.string().max(2000),
-  fields: z.array(formFieldSchema),
+  fields: z.array(formFieldSchema).max(MAX_FORM_FIELDS),
   submission: formSubmissionSchema,
 });
 

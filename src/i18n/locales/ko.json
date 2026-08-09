@@ -98,7 +98,25 @@
       "retryLoad": "다시 로드",
       "retrySave": "다시 저장",
       "openPalette": "필드",
-      "openSettings": "설정"
+      "openSettings": "설정",
+      "import": "가져오기",
+      "export": "내보내기"
+    },
+    "import": {
+      "success": "폼을 가져왔습니다.",
+      "failedParse": "JSON 파일을 해석할 수 없습니다.",
+      "failedValidation": "선택한 파일은 유효한 Formly 스키마가 아닙니다.",
+      "failedVersion": "이 스키마 버전은 지원되지 않습니다.",
+      "failedTooLarge": "파일이 너무 큽니다.",
+      "dialog": {
+        "title": "폼을 가져올까요?",
+        "description": "현재 폼이 가져온 스키마로 바뀝니다. 이 작업은 되돌릴 수 없습니다.",
+        "confirm": "가져오기"
+      }
+    },
+    "export": {
+      "success": "폼을 내보냈습니다.",
+      "failed": "내보내기에 실패했습니다."
     },
     "status": {
       "saved": "저장됨",

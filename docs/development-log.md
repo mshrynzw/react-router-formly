@@ -6,6 +6,39 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-09 — Phase 7 Form Schema Import / Export
+
+### Summary
+
+Phase 7（Form Schema Import / Export）を実装した。
+
+### Implemented
+
+- Portable JSON 形式（`*.formly.json`、`version: 1`、submission 含む）
+- Export: serialize + download
+- Import: parse → version check → Zod validate → normalize → Builder 置換 + 即時 LocalStorage 保存
+- 不正 JSON / 未対応 version / 検証失敗 / サイズ超過の拒否
+- Builder ヘッダーの Import / Export UI（確認ダイアログ付き）
+- Unit / Integration tests
+- `docs/04_architecture.md` に portable format を追記
+
+### Notes
+
+- Import は untrusted input。検証通過前のデータを Builder に渡さない
+- ファイル上限 1 MiB、フィールド上限 100
+- Code Export（HTML/CSS/JS）とは別機能。Schema portability 専用
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+---
+
 ## 2026-08-09 — Phase 6 Quality / A11y / Responsive / i18n
 
 ### Summary

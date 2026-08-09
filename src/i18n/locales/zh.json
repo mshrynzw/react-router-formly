@@ -98,7 +98,25 @@
       "retryLoad": "重新加载",
       "retrySave": "重新保存",
       "openPalette": "字段",
-      "openSettings": "设置"
+      "openSettings": "设置",
+      "import": "导入",
+      "export": "导出"
+    },
+    "import": {
+      "success": "已导入表单。",
+      "failedParse": "无法解析 JSON 文件。",
+      "failedValidation": "所选文件不是有效的 Formly 架构。",
+      "failedVersion": "不支持此架构版本。",
+      "failedTooLarge": "文件过大。",
+      "dialog": {
+        "title": "要导入表单吗？",
+        "description": "当前表单将被导入的架构替换。此操作无法撤销。",
+        "confirm": "导入"
+      }
+    },
+    "export": {
+      "success": "已导出表单。",
+      "failed": "导出失败。"
     },
     "status": {
       "saved": "已保存",

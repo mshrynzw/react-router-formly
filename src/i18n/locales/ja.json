@@ -98,7 +98,25 @@
       "retryLoad": "再読み込み",
       "retrySave": "再保存",
       "openPalette": "フィールド",
-      "openSettings": "設定"
+      "openSettings": "設定",
+      "import": "インポート",
+      "export": "エクスポート"
+    },
+    "import": {
+      "success": "フォームをインポートしました。",
+      "failedParse": "JSON を解析できませんでした。",
+      "failedValidation": "選択したファイルは有効な Formly スキーマではありません。",
+      "failedVersion": "このスキーマバージョンはサポートされていません。",
+      "failedTooLarge": "ファイルサイズが大きすぎます。",
+      "dialog": {
+        "title": "フォームをインポートしますか？",
+        "description": "現在のフォームはインポートしたスキーマで置き換えられます。この操作は元に戻せません。",
+        "confirm": "インポートする"
+      }
+    },
+    "export": {
+      "success": "フォームをエクスポートしました。",
+      "failed": "エクスポートに失敗しました。"
     },
     "status": {
       "saved": "保存済み",

@@ -4,4 +4,7 @@ export * from "@/domain/form-schema/create-field";
 export * from "@/domain/form-schema/field-operations";
 export * from "@/domain/form-schema/zod-schema";
 export * from "@/domain/form-schema/persistence";
+export * from "@/domain/form-schema/serialization";
+export * from "@/domain/form-schema/import-schema";
+export * from "@/domain/form-schema/normalization";
 export * from "@/domain/form-schema/id";

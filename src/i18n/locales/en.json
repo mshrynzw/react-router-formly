@@ -98,7 +98,25 @@
       "retryLoad": "Try again",
       "retrySave": "Retry save",
       "openPalette": "Fields",
-      "openSettings": "Settings"
+      "openSettings": "Settings",
+      "import": "Import",
+      "export": "Export"
+    },
+    "import": {
+      "success": "Form imported.",
+      "failedParse": "Could not parse the JSON file.",
+      "failedValidation": "The selected file is not a valid Formly schema.",
+      "failedVersion": "This schema version is not supported.",
+      "failedTooLarge": "The file is too large.",
+      "dialog": {
+        "title": "Import form?",
+        "description": "The current form will be replaced by the imported schema. This cannot be undone.",
+        "confirm": "Import"
+      }
+    },
+    "export": {
+      "success": "Form exported.",
+      "failed": "Failed to export the form."
     },
     "status": {
       "saved": "Saved",
