@@ -5,6 +5,10 @@ Build forms visually. Export clean code.
 Formly はブラウザ上でフォームを視覚的に設計し、HTML / CSS / JavaScript を書き出せる Form Builder です。
 ログイン不要。Form Schema は LocalStorage に保存されます。
 
+<img width="1920" height="1412" alt="image" src="https://github.com/user-attachments/assets/4c063652-9936-4c08-9e5e-869601bfd989" />
+<img width="1920" height="911" alt="image" src="https://github.com/user-attachments/assets/abed99a4-16af-4b59-99e8-e194de304206" />
+<img width="1920" height="911" alt="image" src="https://github.com/user-attachments/assets/ee4a9c5b-d4dc-42f5-a3e3-dfa383ff8f83" />
+
 ## Demo
 
 ローカル:
