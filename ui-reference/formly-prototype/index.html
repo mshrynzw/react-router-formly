@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Formly — Visual Form Builder</title>
+<meta name="description" content="コードを書かずに、美しく実用的なWebフォームを視覚的に作成できるツール。">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-view="dashboard">
+
+<a class="skip-link" href="#viewContainer">メインコンテンツへスキップ</a>
+
+<div class="app-shell" id="appShell">
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar" id="sidebar" aria-label="メインナビゲーション">
+    <div class="sidebar__brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M5 4h14M5 4v16M5 4l6 6M19 4v6h-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="brand-name">Formly</span>
+    </div>
+
+    <nav class="sidebar__nav">
+      <div class="nav-group">
+        <p class="nav-group__label" data-i18n="nav.workspace">Workspace</p>
+        <button class="nav-item is-active" data-view-target="dashboard" data-i18n="nav.dashboard">
+          <i data-lucide="layout-grid"></i><span data-i18n="nav.dashboard">ダッシュボード</span>
+        </button>
+        <button class="nav-item" data-view-target="forms">
+          <i data-lucide="file-stack"></i><span data-i18n="nav.forms">フォーム</span>
+        </button>
+        <button class="nav-item" data-view-target="templates">
+          <i data-lucide="layout-template"></i><span data-i18n="nav.templates">テンプレート</span>
+        </button>
+      </div>
+      <div class="nav-group">
+        <p class="nav-group__label" data-i18n="nav.resources">Resources</p>
+        <button class="nav-item" data-action="open-shortcuts">
+          <i data-lucide="keyboard"></i><span data-i18n="nav.shortcuts">キーボードショートカット</span>
+        </button>
+        <button class="nav-item" data-view-target="settings">
+          <i data-lucide="settings"></i><span data-i18n="nav.settings">設定</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="sidebar__footer">
+      <button class="user-chip" data-view-target="settings" data-tooltip="プロフィール設定">
+        <span class="avatar">M</span>
+        <span class="user-chip__info">
+          <span class="user-chip__name">Masahiro</span>
+          <span class="user-chip__plan">Freelance Plan</span>
+        </span>
+      </button>
+    </div>
+  </aside>
+
+  <button class="sidebar-scrim" id="sidebarScrim" hidden aria-hidden="true"></button>
+
+  <!-- ===== Main ===== -->
+  <div class="app-main">
+    <header class="topbar">
+      <button class="icon-btn sidebar-toggle" id="sidebarToggle" data-tooltip="メニュー" aria-label="メニュー">
+        <i data-lucide="panel-left"></i>
+      </button>
+
+      <div class="topbar__heading">
+        <h1 class="topbar__title" id="topbarTitle" data-i18n="nav.dashboard">ダッシュボード</h1>
+        <p class="topbar__subtitle" id="topbarSubtitle"></p>
+      </div>
+
+      <div class="topbar__tabs" id="builderTabs" hidden role="tablist" aria-label="フォームビュー切り替え">
+        <button class="tab-btn is-active" data-subview="builder" role="tab" aria-selected="true">
+          <i data-lucide="layout-panel-left"></i><span data-i18n="tabs.builder">ビルダー</span>
+        </button>
+        <button class="tab-btn" data-subview="preview" role="tab" aria-selected="false">
+          <i data-lucide="monitor-play"></i><span data-i18n="tabs.preview">プレビュー</span>
+        </button>
+        <button class="tab-btn" data-subview="code" role="tab" aria-selected="false">
+          <i data-lucide="code-2"></i><span data-i18n="tabs.code">コード</span>
+        </button>
+        <span class="tab-indicator" aria-hidden="true"></span>
+      </div>
+
+      <div class="topbar__actions">
+        <button class="cmdk-trigger" id="cmdkTrigger" aria-label="コマンドパレットを開く">
+          <i data-lucide="search"></i>
+          <span data-i18n="cmdk.trigger">検索またはコマンド実行</span>
+          <span class="kbd-hint"><kbd>⌘</kbd><kbd>K</kbd></span>
+        </button>
+
+        <div class="popover-wrap">
+          <button class="icon-btn" id="langTrigger" data-tooltip="言語 / Language" aria-haspopup="listbox" aria-expanded="false">
+            <i data-lucide="globe"></i>
+          </button>
+          <div class="popover" id="langPopover" hidden role="listbox" aria-label="Language">
+            <p class="popover__label">Language</p>
+            <button class="popover__item is-active" data-lang="ja" role="option" aria-selected="true">
+              <span>日本語</span><i data-lucide="check"></i>
+            </button>
+            <button class="popover__item" data-lang="en" role="option" aria-selected="false">
+              <span>English</span><i data-lucide="check"></i>
+            </button>
+            <button class="popover__item" data-lang="zh" role="option" aria-selected="false">
+              <span>中文</span><i data-lucide="check"></i>
+            </button>
+            <button class="popover__item" data-lang="ko" role="option" aria-selected="false">
+              <span>한국어</span><i data-lucide="check"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="icon-btn" id="themeToggle" data-tooltip="テーマ切り替え" aria-label="テーマ切り替え">
+          <i data-lucide="moon"></i>
+        </button>
+
+        <button class="btn btn--primary" id="saveBtn" hidden>
+          <i data-lucide="check"></i>
+          <span data-i18n="action.save">保存</span>
+        </button>
+
+        <button class="btn btn--primary" id="createFormBtn">
+          <i data-lucide="plus"></i>
+          <span data-i18n="action.createForm">フォームを作成</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="view-container" id="viewContainer" tabindex="-1">
+
+      <!-- Dashboard -->
+      <section class="view" id="view-dashboard">
+        <div class="stat-row" id="statRow"></div>
+
+        <div class="quick-actions">
+          <div class="section-heading">
+            <h2 data-i18n="dash.quickCreate">クイック作成</h2>
+          </div>
+          <div class="quick-actions__grid" id="quickActionsGrid"></div>
+        </div>
+
+        <div class="dash-columns">
+          <div class="dash-col dash-col--main">
+            <div class="section-heading">
+              <h2 data-i18n="dash.recent">最近のフォーム</h2>
+              <button class="link-btn" data-view-target="forms" data-i18n="dash.viewAll">すべて表示</button>
+            </div>
+            <div class="forms-grid" id="recentFormsGrid"></div>
+          </div>
+
+          <div class="dash-col dash-col--side">
+            <div class="section-heading">
+              <h2 data-i18n="dash.activity">アクティビティ</h2>
+            </div>
+            <ul class="activity-list" id="activityList"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Forms list -->
+      <section class="view" id="view-forms" hidden>
+        <div class="view-toolbar">
+          <div class="search-field">
+            <i data-lucide="search"></i>
+            <input type="search" id="formsSearch" data-i18n-placeholder="forms.search" placeholder="フォームを検索">
+          </div>
+          <button class="btn btn--primary" data-action="create-blank">
+            <i data-lucide="plus"></i><span data-i18n="action.createForm">フォームを作成</span>
+          </button>
+        </div>
+        <div class="forms-grid" id="allFormsGrid"></div>
+      </section>
+
+      <!-- Templates -->
+      <section class="view" id="view-templates" hidden>
+        <div class="section-heading">
+          <h2 data-i18n="templates.title">テンプレートから始める</h2>
+          <p class="section-heading__desc" data-i18n="templates.desc">用途に合わせたテンプレートを選んで、すぐに編集を始められます。</p>
+        </div>
+        <div class="templates-grid" id="templatesGrid"></div>
+      </section>
+
+      <!-- Builder -->
+      <section class="view" id="view-builder" hidden>
+        <div class="builder-layout" id="builderLayout">
+
+          <aside class="builder-panel builder-panel--fields" id="fieldsPanel" aria-label="コンポーネント">
+            <div class="builder-panel__head">
+              <span data-i18n="builder.components">コンポーネント</span>
+            </div>
+            <div class="components-grid" id="componentsGrid"></div>
+          </aside>
+
+          <div class="builder-canvas-wrap">
+            <div class="canvas-toolbar">
+              <div class="canvas-toolbar__group">
+                <button class="icon-btn" id="undoBtn" data-tooltip="元に戻す (⌘Z)" aria-label="元に戻す" disabled>
+                  <i data-lucide="undo-2"></i>
+                </button>
+                <button class="icon-btn" id="redoBtn" data-tooltip="やり直す (⌘⇧Z)" aria-label="やり直す" disabled>
+                  <i data-lucide="redo-2"></i>
+                </button>
+              </div>
+              <span class="canvas-toolbar__status" id="saveStatus"></span>
+              <div class="canvas-toolbar__group">
+                <button class="icon-btn mobile-only" id="openFieldsSheet" data-tooltip="コンポーネントを追加" aria-label="コンポーネントを追加">
+                  <i data-lucide="plus"></i>
+                </button>
+                <button class="icon-btn mobile-only" id="openPropsSheet" data-tooltip="プロパティ" aria-label="プロパティ" disabled>
+                  <i data-lucide="sliders-horizontal"></i>
+                </button>
+              </div>
+            </div>
+            <div class="form-canvas-scroll">
+              <div class="form-canvas" id="formCanvas"></div>
+            </div>
+          </div>
+
+          <aside class="builder-panel builder-panel--properties" id="propertiesPanel" aria-label="プロパティ">
+            <div class="builder-panel__head">
+              <span data-i18n="builder.properties">プロパティ</span>
+            </div>
+            <div class="properties-body" id="propertiesBody"></div>
+          </aside>
+
+        </div>
+      </section>
+
+      <!-- Preview -->
+      <section class="view" id="view-preview" hidden>
+        <div class="preview-toolbar">
+          <div class="device-switch" role="tablist" aria-label="デバイスプレビュー">
+            <button class="device-switch__btn is-active" data-device="desktop" data-tooltip="デスクトップ" aria-pressed="true">
+              <i data-lucide="monitor"></i>
+            </button>
+            <button class="device-switch__btn" data-device="tablet" data-tooltip="タブレット" aria-pressed="false">
+              <i data-lucide="tablet"></i>
+            </button>
+            <button class="device-switch__btn" data-device="mobile" data-tooltip="モバイル" aria-pressed="false">
+              <i data-lucide="smartphone"></i>
+            </button>
+          </div>
+        </div>
+        <div class="preview-stage">
+          <div class="browser-frame" id="browserFrame" data-device="desktop">
+            <div class="browser-frame__bar">
+              <span class="browser-dot browser-dot--red"></span>
+              <span class="browser-dot browser-dot--yellow"></span>
+              <span class="browser-dot browser-dot--green"></span>
+              <span class="browser-frame__url" id="browserUrl">formly.app/f/preview</span>
+            </div>
+            <div class="browser-frame__body">
+              <div class="preview-render" id="previewRender"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Code -->
+      <section class="view" id="view-code" hidden>
+        <div class="code-panel">
+          <div class="code-panel__tabs" role="tablist" aria-label="コード言語">
+            <button class="code-tab is-active" data-code-tab="html" role="tab" aria-selected="true">HTML</button>
+            <button class="code-tab" data-code-tab="css" role="tab" aria-selected="false">CSS</button>
+            <button class="code-tab" data-code-tab="js" role="tab" aria-selected="false">JavaScript</button>
+            <div class="code-panel__actions">
+              <button class="icon-btn" id="copyCodeBtn" data-tooltip="コピー" aria-label="コードをコピー">
+                <i data-lucide="copy"></i>
+              </button>
+              <button class="icon-btn" id="downloadCodeBtn" data-tooltip="ダウンロード" aria-label="ファイルをダウンロード">
+                <i data-lucide="download"></i>
+              </button>
+              <button class="btn btn--ghost" id="exportBtn">
+                <i data-lucide="package"></i><span data-i18n="action.export">エクスポート</span>
+              </button>
+            </div>
+          </div>
+          <div class="code-panel__body">
+            <pre class="code-block"><code id="codeContent" class="language-markup"></code></pre>
+            <div class="copy-flag" id="copyFlag" data-i18n="code.copied">Copied!</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section class="view" id="view-settings" hidden>
+        <div class="settings-layout" id="settingsLayout"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Command palette -->
+<div class="cmdk-overlay" id="cmdkOverlay" hidden>
+  <div class="cmdk" role="dialog" aria-modal="true" aria-label="Command Palette">
+    <div class="cmdk__input-row">
+      <i data-lucide="search"></i>
+      <input type="text" id="cmdkInput" data-i18n-placeholder="cmdk.placeholder" placeholder="コマンドを入力または検索..." autocomplete="off">
+      <kbd>Esc</kbd>
+    </div>
+    <div class="cmdk__list" id="cmdkList" role="listbox"></div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Generic dialog -->
+<div class="dialog-overlay" id="dialogOverlay" hidden>
+  <div class="dialog" id="dialogRoot" role="dialog" aria-modal="true"></div>
+</div>
+
+<!-- Context menu -->
+<div class="context-menu" id="contextMenu" hidden role="menu"></div>
+
+<!-- Mobile sheet overlay -->
+<div class="sheet-overlay" id="sheetOverlay" hidden></div>
+<div class="sheet sheet--fields" id="fieldsSheet" hidden>
+  <div class="sheet__handle"></div>
+  <div class="sheet__head"><span data-i18n="builder.components">コンポーネント</span><button class="icon-btn" data-action="close-sheet" aria-label="閉じる"><i data-lucide="x"></i></button></div>
+  <div class="components-grid" id="componentsGridMobile"></div>
+</div>
+<div class="sheet sheet--props" id="propsSheet" hidden>
+  <div class="sheet__handle"></div>
+  <div class="sheet__head"><span data-i18n="builder.properties">プロパティ</span><button class="icon-btn" data-action="close-sheet" aria-label="閉じる"><i data-lucide="x"></i></button></div>
+  <div class="properties-body" id="propertiesBodyMobile"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
