@@ -18,23 +18,29 @@ Formlyは、ブラウザ上でフォームを視覚的に設計し、生成さ�
 
 ユーザーは専門的なコーディング知識がなくても、フォームの構造や外観を視覚的に構築できる。
 
-Formlyは、フォームの送信処理を提供するサービスではない。
+Formlyは、フォームの作成・編集・プレビュー・コード生成だけでなく、生成されたフォームを実際に送信できる状態までを扱う。
 
 Formlyの役割は、
 
 ```text
 フォームを作る
     ↓
+フォームを設定する
+    ↓
 フォームを確認する
+    ↓
+フォーム送信を設定する
     ↓
 コードを生成する
     ↓
 コードを持ち出す
+    ↓
+Webサイトへ組み込む
 ```
 
-````
-
 というワークフローを提供することである。
+
+ただし、MVPではFormly自身が送信データを保存・管理するバックエンドサービスは提供しない。
 
 ---
 
@@ -46,6 +52,7 @@ Formlyの役割は、
 - Web制作におけるフォーム実装の手間を削減する
 - HTML / CSS / JavaScriptを生成できる実用的なツールを作る
 - ブラウザだけでフォームを作成できる体験を提供する
+- フォームを実際に送信できる状態まで構築できるようにする
 - ポートフォリオとして実務レベルのFrontend Engineeringを示す
 - React Router v8を利用した実践的なWebアプリケーションを構築する
 
@@ -84,6 +91,11 @@ Formlyでは以下の機能を提供する。
 - Form Builder
 - Form Preview
 - Builder内Preview
+- Field Management
+- Field Configuration
+- Form Validation
+- Form Submission Configuration
+- Form Submission Preview
 - HTML生成
 - CSS生成
 - JavaScript生成
@@ -107,6 +119,10 @@ Form Builder
    ↓
 Add / Configure Fields
    ↓
+Configure Validation
+   ↓
+Configure Submission
+   ↓
 Builder Preview
    ↓
 Full Preview
@@ -114,7 +130,29 @@ Full Preview
 Generated Code
    ↓
 Copy / Export
+   ↓
+Web Site Integration
+   ↓
+Form Submission
 ```
+
+FormlyのCore Product Loopは、
+
+```text
+Build
+  ↓
+Configure
+  ↓
+Preview
+  ↓
+Generate
+  ↓
+Export
+```
+
+を基本とする。
+
+Form SubmissionはGenerated Formを実際に利用するための重要な機能として扱う。
 
 ---
 
@@ -160,6 +198,8 @@ Copy / Export
 
 現在のコア機能では使用しない。
 
+Formly自身がSubmission Dataを保存・管理するBackend APIはMVPでは提供しない。
+
 ---
 
 # 6. 基本プロダクト構成
@@ -167,20 +207,28 @@ Copy / Export
 Formlyは以下の構造を基本とする。
 
 ```text
-                    Form Schema
-                         │
-          ┌──────────────┼──────────────┐
-          ↓              ↓              ↓
-       Builder         Preview       Generator
-          │                              │
-          ↓                         ┌────┼────┐
-     LocalStorage                   ↓    ↓    ↓
-                                   HTML CSS   JS
+                         Form Schema
+                              │
+               ┌──────────────┼──────────────┐
+               ↓              ↓              ↓
+            Builder         Preview       Generator
+               │              │              │
+               │              │         ┌────┼────┐
+               │              │         ↓    ↓    ↓
+               │              │       HTML CSS   JS
+               │              │
+               ↓              ↓
+          LocalStorage    Form Renderer
+                              │
+                              ↓
+                       Submission Logic
 ```
 
 Form SchemaをCanonical Sourceとする。
 
-Builder、Preview、Code Generatorがそれぞれ独自のFormデータを保持することは禁止する。
+Builder、Preview、Code Generator、Submission Logicがそれぞれ独自のFormデータを保持することは禁止する。
+
+Form Submissionに必要な設定もForm Schemaに含める。
 
 ---
 
@@ -193,6 +241,8 @@ Builder、Preview、Code Generatorがそれぞれ独自のFormデータを保持
 | Field Management      | Fieldの追加・削除・並び替え                        | P0       |
 | Field Configuration   | Fieldの各種設定                                    | P0       |
 | Form Schema           | FormのCanonical Data Model                         | P0       |
+| Form Validation       | Client-side Validation                             | P0       |
+| Form Submission       | フォーム送信設定・送信処理                         | P0       |
 | Builder Preview       | Builder内でフォームを確認                          | P0       |
 | Form Preview          | 独立したPreview画面                                | P0       |
 | HTML Generator        | HTMLを生成                                         | P0       |
@@ -271,6 +321,7 @@ Formlyの価値をユーザーへ伝え、Form Builderの利用へ誘導する�
 
 - `/builder`への明確なCTAを提供する
 - Formlyの用途を短時間で理解できる
+- Formlyがフォーム送信まで扱えることを理解できる
 - Desktop / Tablet / Mobileに対応する
 - 多言語に対応する
 - アクセシビリティを考慮する
@@ -289,7 +340,7 @@ Formlyの価値をユーザーへ伝え、Form Builderの利用へ誘導する�
 
 Formlyの中心機能。
 
-ユーザーがフォームを視覚的に作成・編集できるようにする。
+ユーザーがフォームを視覚的に作成・編集し、ValidationおよびSubmission設定まで行えるようにする。
 
 ## 機能
 
@@ -301,6 +352,9 @@ Formlyの中心機能。
 - Field並び替え
 - Field複製
 - Form設定
+- Validation設定
+- Submission設定
+- Submit Button設定
 - Builder Preview
 - LocalStorage保存
 - LocalStorage復元
@@ -363,6 +417,9 @@ Builderで作成したFormを独立した画面で確認する。
 - Mobile Preview
 - Basic Interaction
 - Validation Preview
+- Submission Preview
+- Submission Success State
+- Submission Error State
 - Builderへの移動
 - Codeへの移動
 
@@ -371,6 +428,9 @@ Builderで作成したFormを独立した画面で確認する。
 - Form SchemaをSourceとして使用する
 - BuilderとPreviewでForm構造が一致する
 - Desktop / Tablet / Mobileを確認できる
+- Validation動作を確認できる
+- Submit操作を確認できる
+- Submission Success / Error Stateを確認できる
 - 不正なForm Schemaを安全に処理する
 
 ---
@@ -416,6 +476,7 @@ Generated Codeは以下を満たすこと。
 - Semantic
 - Responsive
 - Accessible where practical
+- Form Submissionを実行できる
 - Formly本体へ依存しない
 
 Generated JavaScriptをFormly本体の実行コンテキストで直接実行しない。
@@ -516,7 +577,166 @@ Canvas上のFieldを選択できる。
 
 ---
 
-# 11. Form Schema Requirements
+# 11. Form Validation Requirements
+
+FormlyはGenerated Formで利用するValidation設定をBuilderから構成できる。
+
+## 基本Validation
+
+- Required
+- Min Length
+- Max Length
+- Min
+- Max
+- Pattern
+
+Field Typeに応じて適切なValidationを提供する。
+
+## Client-side Validation
+
+Generated Formでは、必要に応じてJavaScriptによるClient-side Validationを生成する。
+
+HTML標準Validation Attributeを利用できる場合は、適切に利用する。
+
+## Validation Error
+
+Validation Errorはユーザーが理解できる形で表示する。
+
+例:
+
+```text
+This field is required.
+Please enter a valid email address.
+```
+
+Generated FormではError MessageとFieldの関係をAccessibleにする。
+
+---
+
+# 12. Form Submission Requirements
+
+Formlyは、作成したフォームを実際に送信できるフォームとしてExportできなければならない。
+
+## Submission Configuration
+
+Form Builderから以下を設定できる。
+
+- Form Action
+- HTTP Method
+- Submit Button Label
+
+## HTTP Method
+
+初期実装では以下を対象とする。
+
+```text
+GET
+POST
+```
+
+Default:
+
+```text
+POST
+```
+
+とする。
+
+詳細な仕様は`03_detail_design.md`で定義する。
+
+## Form Action
+
+Form ActionはGenerated Formの送信先として利用する。
+
+例:
+
+```html
+<form action="https://example.com/contact" method="POST"></form>
+```
+
+Form Actionが未設定の場合は、Preview上で実際の外部送信を実行せず、設定不足をユーザーへ通知する。
+
+## Submit Button
+
+Submit ButtonをFormへ配置できる。
+
+設定:
+
+- Label
+- Disabled State where necessary
+
+Default Label:
+
+```text
+Submit
+```
+
+とする。
+
+## Submission Processing
+
+Generated Formでは、設定されたActionおよびMethodに従ってSubmitできる。
+
+JavaScriptによるSubmission処理が必要な場合は、Generated JavaScriptへ反映する。
+
+## Submission Success State
+
+Submissionが成功した場合、ユーザーが成功を認識できるUIを提供する。
+
+例:
+
+```text
+Your form has been submitted successfully.
+```
+
+## Submission Error State
+
+Submissionが失敗した場合、ユーザーが再試行できるUIを提供する。
+
+例:
+
+```text
+We couldn't submit the form.
+Please try again.
+```
+
+## Preview Submission
+
+PreviewではSubmit操作を確認できる。
+
+ただし、Previewから意図しない外部Endpointへ実際のSubmissionを発生させないよう、安全に扱う。
+
+Previewでは必要に応じてMock Submissionを使用する。
+
+## Formlyの責務
+
+Formlyが担当する:
+
+- フォームの送信項目の定義
+- RequiredなどのValidation設定
+- Submit Buttonの設定
+- 送信先に関する設定
+- 送信方法に関する設定
+- Generated Codeへの送信処理の反映
+- Previewにおける送信動作の確認
+- Submission Success State
+- Submission Error State
+
+## Formlyが担当しない
+
+MVPでは以下を提供しない。
+
+- Formly側での送信データ保存
+- Formly側でのSubmission管理画面
+- ユーザーアカウント
+- サーバー側Database
+- Formly Hosted Submission Endpoint
+- メール配信基盤
+- CRM Integration
+
+---
+
+# 13. Form Schema Requirements
 
 Form SchemaはFormlyにおけるCanonical Sourceとする。
 
@@ -534,7 +754,41 @@ Form Schemaには以下の情報を保持する。
 - Required
 - Options
 - Validation Configuration
+- Submission Configuration
 - Presentation-related Configuration
+
+概念例:
+
+```ts
+type FormSubmission = {
+  action: string;
+  method: "GET" | "POST";
+};
+```
+
+Form Schema:
+
+```text
+FormSchema
+├── version
+├── metadata
+│   ├── id
+│   └── name
+├── fields
+│   ├── id
+│   ├── type
+│   ├── label
+│   ├── placeholder
+│   ├── required
+│   ├── options
+│   └── validation
+├── submission
+│   ├── action
+│   └── method
+└── presentation
+```
+
+Submission設定はBuilderから編集でき、PreviewおよびCode Generatorで利用する。
 
 Form Schemaの詳細仕様は:
 
@@ -547,7 +801,7 @@ docs/03_detail_design.md
 
 ---
 
-# 12. Preview Requirements
+# 14. Preview Requirements
 
 PreviewはForm Schemaから生成する。
 
@@ -571,10 +825,15 @@ Previewでは以下を確認できる。
 - Button appearance
 - Responsive behavior
 - Basic validation behavior
+- Submission behavior
+- Submission Success State
+- Submission Error State
+
+Previewでは、Form Actionが未設定の場合や外部Submissionを実行できない場合に、その状態を明確に表示する。
 
 ---
 
-# 13. Code Generation Requirements
+# 15. Code Generation Requirements
 
 ## HTML
 
@@ -590,6 +849,10 @@ HTML GeneratorはSemantic HTMLを優先する。
 - Buttons
 - Accessible relationships
 - Appropriate attributes
+- `action`
+- `method`
+
+Form Validationに対応する適切なHTML Attributeも生成する。
 
 ## CSS
 
@@ -604,6 +867,8 @@ CSS GeneratorはFormの外観を再現する。
 - Buttons
 - Responsive behavior
 - States
+- Validation Error State
+- Submission State
 
 ## JavaScript
 
@@ -614,14 +879,45 @@ JavaScript GeneratorはFrontend behaviorを生成する。
 - Client-side validation
 - Interaction
 - Form behavior
+- Submission handling
+- Submission Error Handling
+- Submission Success Handling
 
 などを生成する。
 
 Generated JavaScriptはFormly本体に依存しない。
 
+## Submission Code Generation
+
+Form Submission設定はGenerated Codeへ反映する。
+
+基本:
+
+```text
+Form Schema
+    ↓
+Submission Configuration
+    ↓
+HTML Generator
+    ↓
+<form action="..." method="...">
+```
+
+必要な場合:
+
+```text
+Form Schema
+    ↓
+Submission Configuration
+    ↓
+JavaScript Generator
+    ↓
+Submission Handling
+```
+
 ---
 
-# 14. Code Export Requirements
+# 16. Code Export Requirements
 
 ユーザーはGenerated Codeを取得できる。
 
@@ -642,7 +938,7 @@ Export形式の詳細は`03_detail_design.md`で定義する。
 
 ---
 
-# 15. LocalStorage Requirements
+# 17. LocalStorage Requirements
 
 Formlyはユーザーアカウントを必要としない。
 
@@ -675,7 +971,7 @@ LocalStorageに保存されたデータはユーザー環境に存在するデ�
 
 ---
 
-# 16. Form Schema Import / Export Requirements
+# 18. Form Schema Import / Export Requirements
 
 Import / ExportはMVP後のP1機能とする。
 
@@ -717,7 +1013,7 @@ Form SchemaにはSchema Versionを持たせる。
 
 ---
 
-# 17. Internationalization Requirements
+# 19. Internationalization Requirements
 
 Formlyは以下の4言語に対応する。
 
@@ -735,19 +1031,23 @@ Formlyは以下の4言語に対応する。
 - Error Messages
 - Empty States
 - Loading States
+- Success States
 - Settings
 - Landing Page
 - Builder UI
 - Preview UI
 - Code UI
+- Submission UI
 
 ## 非対象
 
 ユーザーがForm Builderで入力した任意のLabelやPlaceholderなどを自動翻訳することは、現在の要件には含めない。
 
+User-generated Form Contentはユーザーが指定した言語・内容を維持する。
+
 ---
 
-# 18. Responsive Requirements
+# 20. Responsive Requirements
 
 Formlyは以下のViewportに対応する。
 
@@ -794,7 +1094,7 @@ MobileではCodeを無理に折り返さず、Horizontal Scrollを許可する�
 
 ---
 
-# 19. Accessibility Requirements
+# 21. Accessibility Requirements
 
 Formly ApplicationはAccessibilityを考慮する。
 
@@ -806,6 +1106,7 @@ Formly ApplicationはAccessibilityを考慮する。
 - Semantic HTML
 - Accessible Buttons
 - Error Messages
+- Success Messages
 - Focus Visibility
 - Color Contrast
 - Reduced Motion
@@ -819,11 +1120,18 @@ Generated HTMLも以下を優先する。
 - Accessible Attributes
 - Keyboard操作
 - Error Communication
+- Success Communication
 - Focus Management where applicable
+
+## Submission Accessibility
+
+Submission状態はColorだけで表現しない。
+
+Success / Errorの状態をTextまたはAccessible Statusとして伝える。
 
 ---
 
-# 20. State Requirements
+# 22. State Requirements
 
 各画面では必要に応じて以下のStateを実装する。
 
@@ -845,6 +1153,7 @@ Field Selected
 Saving
 Saved
 Validation Error
+Submission Configuration Error
 Empty
 Error
 ```
@@ -856,6 +1165,10 @@ Loading
 Loaded
 Empty
 Invalid Schema
+Validation Error
+Submitting
+Submission Success
+Submission Error
 Error
 ```
 
@@ -882,7 +1195,7 @@ Error
 
 ---
 
-# 21. Error Handling Requirements
+# 23. Error Handling Requirements
 
 ユーザーが復旧可能なErrorについては、可能な限り復旧方法を提示する。
 
@@ -900,11 +1213,19 @@ Invalid Form Schema
 
 などのActionを提示する。
 
+Submission Errorの場合、
+
+- エラーの説明
+- Retry
+- Builderへ戻る
+
+など、状況に応じたRecovery Actionを提示する。
+
 ApplicationがErrorになった場合でも、ユーザーのFormデータを可能な限り失わない。
 
 ---
 
-# 22. Security Requirements
+# 24. Security Requirements
 
 Formlyでは以下をUntrusted Dataとして扱う。
 
@@ -913,6 +1234,7 @@ Formlyでは以下をUntrusted Dataとして扱う。
 - Imported JSON
 - User-defined Field Labels
 - User-defined Placeholder
+- Form Action
 - Generated HTML
 - Generated CSS
 - Generated JavaScript
@@ -921,11 +1243,13 @@ Formlyでは以下をUntrusted Dataとして扱う。
 
 - Imported SchemaをValidationする
 - LocalStorage DataをValidationする
+- Form Actionを安全に扱う
 - HTMLを安全に扱う
 - PreviewでGenerated JavaScriptを無制限に実行しない
 - XSSを防止する
 - Code Generation時に適切なEscapingを行う
 - Clipboard APIのErrorを処理する
+- Submission Endpointを安全に扱う
 
 詳細なSecurity Ruleは:
 
@@ -937,7 +1261,7 @@ Formlyでは以下をUntrusted Dataとして扱う。
 
 ---
 
-# 23. Performance Requirements
+# 25. Performance Requirements
 
 Formlyは軽量で高速な操作感を目標とする。
 
@@ -950,6 +1274,7 @@ Formlyは軽量で高速な操作感を目標とする。
 - Field Reordering
 - Preview Rendering
 - Code Generation
+- Submission Preview
 - LocalStorage Access
 
 Field数が増加した場合でも、通常のForm Builder操作が著しく遅くならないことを目標とする。
@@ -964,7 +1289,7 @@ Field数が増加した場合でも、通常のForm Builder操作が著しく遅
 
 ---
 
-# 24. Testing Requirements
+# 26. Testing Requirements
 
 新規機能にはテストを追加する。
 
@@ -975,6 +1300,8 @@ Field数が増加した場合でも、通常のForm Builder操作が著しく遅
 - Form Schema
 - Schema Validation
 - Field Logic
+- Validation Logic
+- Submission Configuration
 - Generator
 - LocalStorage
 - Utility Functions
@@ -985,8 +1312,12 @@ Field数が増加した場合でも、通常のForm Builder操作が著しく遅
 
 - Builder + Form Schema
 - Builder + LocalStorage
+- Builder + Submission Configuration
 - Preview + Form Schema
+- Preview + Validation
+- Preview + Submission
 - Generator + Form Schema
+- Generator + Submission Configuration
 
 ## E2E Test
 
@@ -1003,7 +1334,13 @@ Add Field
    ↓
 Configure
    ↓
+Configure Validation
+   ↓
+Configure Submission
+   ↓
 Preview
+   ↓
+Submit
    ↓
 Code
    ↓
@@ -1028,7 +1365,7 @@ Copy / Export
 
 ---
 
-# 25. Code Quality Requirements
+# 27. Code Quality Requirements
 
 FormlyはProduction-orientedなコード品質を目標とする。
 
@@ -1049,10 +1386,11 @@ FormlyはProduction-orientedなコード品質を目標とする。
 - 不必要な抽象化
 - 不必要な依存関係
 - Form Schemaの重複管理
+- ComponentへのDomain Logicの過剰な混在
 
 ---
 
-# 26. React Router Requirements
+# 28. React Router Requirements
 
 FormlyではReact Router v8をApplication Routingの中心として使用する。
 
@@ -1098,7 +1436,7 @@ Route設計の詳細は:
 
 ---
 
-# 27. UI Requirements
+# 29. UI Requirements
 
 FormlyのUIは以下を基本とする。
 
@@ -1132,9 +1470,11 @@ FormlyのUIは以下を基本とする。
 
 を提供する。
 
+Submission UIではSubmitting / Success / Errorを適切に表現する。
+
 ---
 
-# 28. Portfolio Requirements
+# 30. Portfolio Requirements
 
 Formlyは案件獲得を目的としたPortfolio Projectとしても開発する。
 
@@ -1153,6 +1493,7 @@ Formlyは案件獲得を目的としたPortfolio Projectとしても開発する
 - Cloudflare Deployment
 - React Router usage
 - Code Generator architecture
+- Form Submission architecture
 
 ## Portfolio Presentation
 
@@ -1171,7 +1512,7 @@ GitHub Repositoryでは以下を明確にする。
 
 ---
 
-# 29. 非機能要件
+# 31. 非機能要件
 
 ## Design
 
@@ -1191,6 +1532,7 @@ GitHub Repositoryでは以下を明確にする。
 - Builder操作の低遅延
 - 効率的なPreview Rendering
 - 効率的なCode Generation
+- 効率的なSubmission Preview
 
 ## Maintainability
 
@@ -1210,10 +1552,11 @@ GitHub Repositoryでは以下を明確にする。
 - Import Errorを処理する
 - Generator Errorを処理する
 - Clipboard Errorを処理する
+- Submission Errorを処理する
 
 ---
 
-# 30. デザインコンセプト
+# 32. デザインコンセプト
 
 FormlyのUIは、以下の方向性を基本とする。
 
@@ -1248,7 +1591,7 @@ FormlyのUIは、以下の方向性を基本とする。
 
 ---
 
-# 31. 対象外機能
+# 33. 対象外機能
 
 現在のFormlyでは以下を対象外とする。
 
@@ -1267,11 +1610,17 @@ FormlyのUIは、以下の方向性を基本とする。
 
 ## Form Submission Platform
 
+MVPではFormly自身がSubmission Platformになる機能を対象外とする。
+
 - Hosted Form Submission
+- Formly Hosted Submission Endpoint
+- Submission Data Storage
 - Submission Dashboard
 - Submission History
 - Email Notification
 - CRM Integration
+
+ただし、**生成されたフォームが外部の送信先へ実際にSubmitできることはMVPの要件に含める。**
 
 ## Collaboration
 
@@ -1298,7 +1647,7 @@ FormlyのUIは、以下の方向性を基本とする。
 
 ---
 
-# 32. Future Features
+# 34. Future Features
 
 将来的に以下を検討する。
 
@@ -1328,7 +1677,11 @@ FormlyのUIは、以下の方向性を基本とする。
 
 - Form Publishing
 - Hosted Form URLs
+- Hosted Submission Endpoint
 - Submission Management
+- Submission History
+- Email Notification
+- Webhook
 
 ## Collaboration
 
@@ -1341,7 +1694,7 @@ Future機能は、Core Product Loopを損なわない範囲で検討する。
 
 ---
 
-# 33. 成果物
+# 35. 成果物
 
 本プロジェクトでは以下を成果物とする。
 
@@ -1356,7 +1709,10 @@ Future機能は、Core Product Loopを損なわない範囲で検討する。
 ## Core Features
 
 - Form Builder
+- Form Validation
+- Form Submission Configuration
 - Form Preview
+- Submission Preview
 - HTML Generator
 - CSS Generator
 - JavaScript Generator
@@ -1369,6 +1725,7 @@ Future機能は、Core Product Loopを損なわない範囲で検討する。
 - React Router v8
 - Component Architecture
 - Form Schema Architecture
+- Submission Architecture
 - Automated Tests
 - ESLint
 - Prettier
@@ -1381,16 +1738,16 @@ Future機能は、Core Product Loopを損なわない範囲で検討する。
 - Basic Design
 - Detailed Design
 - Architecture
-- Database Design
-- API Design
 - Component Design
 - UI Guideline
 - Development Log
 - README
 
+Database / APIの設計ドキュメントは、現在のFormlyではサーバー側Database / APIを使用しないため、必要最小限とする。
+
 ---
 
-# 34. Requirements Traceability
+# 36. Requirements Traceability
 
 主要な要件と関連ドキュメントの関係を以下とする。
 
@@ -1402,15 +1759,24 @@ Future機能は、Core Product Loopを損なわない範囲で検討する。
 | Basic Design        | `docs/02_basic-design.md`     |
 | Detailed Design     | `docs/03_detail_design.md`    |
 | Architecture        | `docs/04_architecture.md`     |
-| Database            | `docs/05_database.md`         |
-| API                 | `docs/06_api.md`              |
-| Component Design    | `docs/07_component_design.md` |
-| UI Guideline        | `docs/08_ui-guideline.md`     |
+| Component Design    | `docs/05_component_design.md` |
+| UI Guideline        | `docs/06_ui-guideline.md`     |
 | Development History | `docs/development-log.md`     |
+
+Form Submissionの詳細仕様は、主に以下のDocumentで扱う。
+
+```text
+docs/01_requirements.md
+docs/02_basic-design.md
+docs/03_detail_design.md
+docs/04_architecture.md
+docs/05_component_design.md
+docs/06_ui-guideline.md
+```
 
 ---
 
-# 35. Requirements and Cursor Rules
+# 37. Requirements and Cursor Rules
 
 実装時には以下のCursor Rulesを参照する。
 
@@ -1434,7 +1800,7 @@ RequirementsとCursor Rulesに矛盾がある場合は、Architecture / Product 
 
 ---
 
-# 36. Implementation Priority
+# 38. Implementation Priority
 
 実装優先順位は以下とする。
 
@@ -1465,8 +1831,12 @@ Long-term Possibility
 - Form Schema
 - Field Management
 - Field Configuration
+- Form Validation
+- Form Submission Configuration
+- Submit Button
 - Builder Preview
 - Full Preview
+- Submission Preview
 - HTML Generator
 - CSS Generator
 - JavaScript Generator
@@ -1493,13 +1863,17 @@ Long-term Possibility
 - Cloud Storage
 - Authentication
 - Form Hosting
+- Hosted Submission Endpoint
 - Submission Management
+- Submission History
+- Email Notification
+- Webhook
 - Collaboration
 - SaaS
 
 ---
 
-# 37. MVP Requirements
+# 39. MVP Requirements
 
 MVPでは以下を必須とする。
 
@@ -1512,9 +1886,17 @@ Field Management
     ↓
 Form Schema
     ↓
+Field Configuration
+    ↓
+Validation Configuration
+    ↓
+Submission Configuration
+    ↓
 Builder Preview
     ↓
 Full Preview
+    ↓
+Form Submission Preview
     ↓
 HTML Generator
     ↓
@@ -1527,6 +1909,21 @@ Code Viewer
 Copy / Export
     ↓
 LocalStorage
+    ↓
+Web Site Integration
+    ↓
+Form Submission
+```
+
+MVPでフォーム送信に必要な設定:
+
+```text
+Form Action
+HTTP Method
+Submit Button
+Client-side Validation
+Submission Success State
+Submission Error State
 ```
 
 MVPでは以下を必要としない。
@@ -1534,15 +1931,19 @@ MVPでは以下を必要としない。
 - Login
 - Account
 - Cloud Database
-- Server API
+- Formly Server API
 - Cloud Storage
-- Form Hosting
+- Formly Hosted Submission Endpoint
+- Submission Data Storage
 - Submission Management
+- Submission History
+- Email Notification
+- Webhook
 - Team Collaboration
 
 ---
 
-# 38. Definition of Done
+# 40. Definition of Done
 
 Featureは以下を満たした場合に完了とする。
 
@@ -1554,14 +1955,26 @@ Featureは以下を満たした場合に完了とする。
 - Responsive対応されている
 - Accessibilityを確認している
 - Loading / Empty / Error Stateを必要に応じて実装している
+- Success Stateを必要に応じて実装している
 - i18nを確認している
 - Security上の問題を確認している
 - Performance上の問題を確認している
 - 関連ドキュメントが更新されている
 
+Form Submission Featureについては、追加で以下を確認する。
+
+- Submit Buttonが正しく動作する
+- Form ActionがGenerated Codeへ反映される
+- HTTP MethodがGenerated Codeへ反映される
+- Client-side Validationが動作する
+- Submission Success Stateが表示される
+- Submission Error Stateが表示される
+- Previewで意図しない外部Submissionが発生しない
+- Generated CodeがFormly本体へ依存しない
+
 ---
 
-# 39. Product Success Criteria
+# 41. Product Success Criteria
 
 Formlyは、ユーザーが以下を実行できればCore Productとして成立する。
 
@@ -1574,15 +1987,23 @@ Formlyは、ユーザーが以下を実行できればCore Productとして成�
        ↓
 4. Fieldを設定する
        ↓
-5. Fieldを並べ替える
+5. Validationを設定する
        ↓
-6. Previewする
+6. Submissionを設定する
        ↓
-7. HTML / CSS / JavaScriptを生成する
+7. Fieldを並べ替える
        ↓
-8. Codeをコピー / Exportする
+8. Previewする
        ↓
-9. 自分のWebサイトへ組み込む
+9. Submit動作を確認する
+       ↓
+10. HTML / CSS / JavaScriptを生成する
+       ↓
+11. Codeをコピー / Exportする
+       ↓
+12. 自分のWebサイトへ組み込む
+       ↓
+13. 実際にFormをSubmitする
 ```
 
 さらに、
@@ -1599,28 +2020,40 @@ Form Restore
 
 ---
 
-# 40. 今後の設計ドキュメント
+# 42. 今後の設計ドキュメント
 
-本要件定義書を基準として、以下の設計ドキュメントを順次作成・更新する。
+本要件定義書を基準として、以下の設計ドキュメントを作成・更新する。
 
 ```text
-02_basic-design.md
-03_detail_design.md
-04_architecture.md
-05_database.md
-06_api.md
-07_component_design.md
-08_ui-guideline.md
-development-log.md
+docs/product.md
+docs/roadmap.md
+docs/screen-list.md
+docs/01_requirements.md
+docs/02_basic-design.md
+docs/03_detail_design.md
+docs/04_architecture.md
+docs/05_component_design.md
+docs/06_ui-guideline.md
+docs/development-log.md
 ```
 
-Database / APIについては、現在のFormlyではサーバー側Database / APIを使用しないため、実装内容に合わせて必要最小限の設計とする。
+現在のFormlyではサーバー側Database / APIを使用しない。
+
+そのため、Database DesignやAPI Designを独立した必須Documentとして作成する必要はない。
+
+Form Submissionについては、以下の設計Documentで詳細化する。
+
+```text
+docs/02_basic-design.md
+docs/03_detail_design.md
+docs/04_architecture.md
+```
 
 設計上の新しい決定が発生した場合は、関連ドキュメントを更新する。
 
 ---
 
-# 41. Requirement Principles
+# 43. Requirement Principles
 
 FormlyのRequirementsは以下の原則に従う。
 
@@ -1635,6 +2068,10 @@ FormlyのRequirementsは以下の原則に従う。
 ### Practical
 
 生成されたコードを実際のWebサイトで利用できるようにする。
+
+### Functional
+
+フォームを作成するだけでなく、実際にSubmitできる状態まで扱う。
 
 ### Lightweight
 
@@ -1666,9 +2103,9 @@ User-provided dataとGenerated Codeを安全に扱う。
 
 ---
 
-# 42. Final Requirement Statement
+# 44. Final Requirement Statement
 
-Formlyは、Webデザイナー、Web制作者、小規模事業者などが、ブラウザ上でフォームを視覚的に作成し、そのフォームをHTML、CSS、JavaScriptとして自分のWebサイトへ組み込めるようにするForm Builderである。
+Formlyは、Webデザイナー、Web制作者、小規模事業者などが、ブラウザ上でフォームを視覚的に作成し、ValidationやSubmission設定を行ったうえで、そのフォームをHTML、CSS、JavaScriptとして自分のWebサイトへ組み込めるようにするForm Builderである。
 
 FormlyのCore Product Loopは、
 
@@ -1677,14 +2114,22 @@ Build
   ↓
 Configure
   ↓
+Validate
+  ↓
 Preview
   ↓
 Generate
   ↓
 Export
+  ↓
+Submit
 ```
 
 である。
+
+Formlyは、フォーム作成・Validation・Submission Configuration・Preview・Code Generationを提供する。
+
+一方、Formly自身がフォーム送信データを保存・管理するSubmission Platform機能はMVPには含めない。
 
 FormlyはこのCore Product Loopを中心に設計し、不要なBackend、Authentication、Cloud Storage、SaaS機能を早期に導入しない。
 
@@ -1693,4 +2138,3 @@ FormlyはこのCore Product Loopを中心に設計し、不要なBackend、Authe
 > **Build forms visually. Export clean code.**
 
 を実現する、軽量で実用的なForm Builderを目指す。
-````
