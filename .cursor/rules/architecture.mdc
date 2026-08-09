@@ -76,26 +76,46 @@ when appropriate.
 
 The application uses route-based architecture.
 
-The canonical route structure is:
+## MVP Canonical Routes
+
+The current source of truth for MVP routes is:
+
+```text
+/
+├── /builder
+├── /preview
+├── /code
+└── /settings
+```
+
+MVP is a single-form experience. Do not implement `/forms`, `/forms/:formId`, or nested form resource routes for MVP.
+
+See `docs/04_architecture.md` section **"MVP Route Model vs Future Multi-Form Routes"**.
+
+## Future (Not MVP) Multi-Form Routes
+
+Multi-form resource routes may later become:
 
 ```text
 /
 ├── /forms
 ├── /forms/new
 ├── /forms/:formId
-│   ├── /builder
-│   ├── /preview
-│   └── /code
+│   ├── builder
+│   ├── preview
+│   └── code
 ├── /templates
 └── /settings
-````
+```
+
+Do not treat Future routes as the current architecture. Do not implement them unless the product scope explicitly expands beyond MVP.
 
 Keep route definitions centralized and easy to understand.
 
 Route components should primarily be responsible for:
 
 * Composing layouts.
-* Connecting route parameters to features.
+* Connecting route parameters to features (when parameters exist).
 * Rendering feature components.
 * Handling route-specific states.
 * Connecting route-level data to the UI.
@@ -106,56 +126,51 @@ Route components must not contain large amounts of business logic.
 
 # 4. Nested Routes
 
-Formly uses nested routes for form-related screens.
-
-Prefer:
+MVP form-related screens are top-level siblings:
 
 ```text
-/forms/:formId
-/forms/:formId/builder
-/forms/:formId/preview
-/forms/:formId/code
+/builder
+/preview
+/code
 ```
 
-Use a shared parent layout for these routes.
-
-Use `Outlet` to render nested route content.
+Prefer a shared application or editor layout with `Outlet` when these screens share chrome (header, nav tabs).
 
 For example:
 
 ```text
-FormLayout
+AppLayout / EditorLayout
 └── Outlet
     ├── Builder
     ├── Preview
     └── Code
 ```
 
-Do not duplicate the same form layout implementation across Builder, Preview, and Code.
+Do not duplicate the same layout implementation across Builder, Preview, and Code.
+
+### Future (Not MVP)
+
+Nested resource routes under `/forms/:formId` may apply when multi-form support is introduced. See `docs/04_architecture.md` section **"MVP Route Model vs Future Multi-Form Routes"**.
 
 ---
 
 # 5. Dynamic Routes
 
-Use dynamic route parameters for resources.
+MVP routes do not require a `:formId` parameter. The active form is the single local form resource.
 
-Example:
+Do not manually extract IDs from `window.location`.
 
-```text
-/forms/:formId/builder
-```
+When route parameters are used, they should identify resources, not temporary UI state, and must be obtained through React Router (`useParams`).
 
-The `formId` must be obtained through React Router.
+### Future (Not MVP)
 
-Prefer:
+Dynamic form resource routes such as `/forms/:formId/builder` may use:
 
 ```ts
 const { formId } = useParams();
 ```
 
-Do not manually extract IDs from `window.location`.
-
-Route parameters should identify resources, not temporary UI state.
+Only after multi-form routing is an explicit product requirement.
 
 ---
 
@@ -175,12 +190,11 @@ src/
 ├── layouts/
 │
 ├── features/
-│   ├── forms/
 │   ├── builder/
 │   ├── preview/
 │   ├── code/
-│   ├── templates/
 │   └── settings/
+│   # Future (Not MVP): forms/, templates/
 │
 ├── components/
 │   ├── ui/
@@ -544,12 +558,19 @@ Before making significant architectural changes:
 At minimum, review:
 
 ```text
+docs/product.md
+docs/roadmap.md
 docs/01_requirements.md
-docs/02_basic_design.md
-docs/03_detail-design/
+docs/02_basic-design.md
+docs/03_detail_design.md
 docs/04_architecture.md
+docs/05_component_design.md
+docs/06_ui-guideline.md
 docs/screen-list.md
+docs/development-log.md
 ```
+
+MVP has no `docs/05_database.md` or `docs/06_api.md`. Persistence is LocalStorage and is documented in `docs/04_architecture.md`. Do not create database or API documentation files for MVP.
 
 Do not silently introduce architectural patterns that contradict the documentation.
 

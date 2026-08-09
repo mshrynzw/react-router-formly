@@ -278,7 +278,6 @@ The exact implementation must follow:
 
 ```text
 docs/04_architecture.md
-docs/05_database.md
 ```
 
 ---
@@ -344,7 +343,7 @@ Form
 The canonical Form Schema must follow:
 
 ```text
-docs/05_database.md
+docs/04_architecture.md
 ```
 
 and the Forms rules defined in:
@@ -671,19 +670,17 @@ for URL state rules.
 
 If state is intentionally represented in the URL, do not maintain a conflicting duplicate copy in React state.
 
-For example:
+For example (MVP):
 
 ```text
-/forms?search=contact
+/builder?field=field_123
 ```
 
-should not simultaneously maintain:
+should not simultaneously maintain a conflicting React field-selection value without an intentional synchronization model.
 
-```text
-React search = "invoice"
-```
+### Future (Not MVP)
 
-without an explicit synchronization model.
+`/forms?search=contact` must likewise stay consistent with React search state.
 
 Prefer deriving URL state from React Router.
 
@@ -693,7 +690,13 @@ Prefer deriving URL state from React Router.
 
 Use query parameters for shareable, navigable state where appropriate.
 
-Examples:
+## MVP examples
+
+```text
+/builder?field=field_123
+```
+
+### Future (Not MVP)
 
 ```text
 /forms?search=contact
@@ -707,15 +710,17 @@ Do not put temporary UI state into query parameters simply because it is technic
 
 # 28. Route Parameters
 
-Resource identity should be represented by route parameters when appropriate.
+## MVP
 
-Example:
+MVP routes do not require `:formId`. The single form is LocalStorage-backed domain state, not a route parameter.
+
+### Future (Not MVP)
+
+Resource identity may be represented by:
 
 ```text
 /forms/:formId
 ```
-
-The Form ID is route state.
 
 Do not copy the Form ID into unrelated global state merely because multiple child components need it.
 
@@ -864,13 +869,23 @@ const [screen, setScreen] = useState("builder");
 
 when Builder, Preview, and Code are separate routes.
 
-Prefer React Router:
+Prefer React Router (MVP):
+
+```text
+/builder
+/preview
+/code
+```
+
+### Future (Not MVP)
 
 ```text
 /forms/:formId/builder
 /forms/:formId/preview
 /forms/:formId/code
 ```
+
+See `docs/04_architecture.md` section **"MVP Route Model vs Future Multi-Form Routes"**.
 
 See:
 

@@ -21,13 +21,7 @@ The architectural security model is defined in:
 
 `docs/04_architecture.md`
 
-The database security model is defined in:
-
-`docs/05_database.md`
-
-The API security model is defined in:
-
-`docs/06_api.md`
+MVP has no separate database or API documentation. Persistence is LocalStorage (see architecture). Future database/API security rules belong in architecture until dedicated docs exist. Do not create `docs/05_database.md` or `docs/06_api.md` for MVP.
 
 Also follow:
 
@@ -205,7 +199,9 @@ The following must never be sufficient by themselves to access a private Form:
 /api/forms/abc123
 ```
 
-Always verify that the current user has permission to access the referenced resource.
+(Future multi-form / API examples; MVP uses LocalStorage single-form persistence without those routes.)
+
+Always verify that the current user has permission to access the referenced resource when authentication/authorization exists.
 
 Test unauthorized resource access explicitly when authentication exists.
 
@@ -215,13 +211,13 @@ Test unauthorized resource access explicitly when authentication exists.
 
 Never assume a client-provided Form ID is valid or authorized.
 
-A route such as:
+## MVP
 
-```text
-/forms/:formId
-```
+MVP has no `:formId` route. Treat persisted LocalStorage form data as untrusted and validate it before use.
 
-must not automatically grant access to that Form.
+### Future (Not MVP)
+
+A route such as `/forms/:formId` must not automatically grant access to that Form.
 
 Validate:
 
@@ -873,7 +869,7 @@ to client-side code.
 Follow:
 
 ```text
-docs/05_database.md
+docs/04_architecture.md
 ```
 
 and:
@@ -2051,13 +2047,7 @@ for routing.
 
 Do not treat a route as an authorization boundary.
 
-For example:
-
-```text
-/forms/:formId
-```
-
-only identifies a resource.
+For example, a Future (Not MVP) route such as `/forms/:formId` only identifies a resource.
 
 It does not prove that the current user is authorized to access it.
 
@@ -2260,8 +2250,6 @@ Review:
 
 ```text
 docs/04_architecture.md
-docs/05_database.md
-docs/06_api.md
 docs/development-log.md
 ```
 

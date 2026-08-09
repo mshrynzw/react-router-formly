@@ -25,11 +25,11 @@ Follow the project-wide rules defined in:
 
 The canonical UI design system is defined in:
 
-`docs/ui-guideline.md`
+`docs/06_ui-guideline.md`
 
 The canonical component design is defined in:
 
-`docs/07_component_design.md`
+`docs/05_component_design.md`
 
 ---
 
@@ -102,8 +102,8 @@ When implementing the production application:
 
 1. Read the relevant UI reference.
 2. Read the relevant screen design documentation.
-3. Read `docs/ui-guideline.md`.
-4. Read `docs/07_component_design.md`.
+3. Read `docs/06_ui-guideline.md`.
+4. Read `docs/05_component_design.md`.
 5. Inspect existing production components.
 6. Implement the design using React and TypeScript.
 7. Preserve the visual intent of the reference.
@@ -193,7 +193,7 @@ Design Tokens
 Use the design tokens defined in:
 
 ```text
-docs/ui-guideline.md
+docs/06_ui-guideline.md
 ```
 
 Do not create arbitrary colors, spacing values, radii, shadows, or typography values when an existing design token should be used.
@@ -222,7 +222,7 @@ If a new design token is genuinely required:
 
 1. Check whether an existing token can be reused.
 2. Determine whether the value should be global.
-3. Update `docs/ui-guideline.md` if it becomes part of the design system.
+3. Update `docs/06_ui-guideline.md` if it becomes part of the design system.
 
 ---
 
@@ -418,7 +418,7 @@ The primary visual direction is a dark theme.
 Use the color tokens defined in:
 
 ```text
-docs/ui-guideline.md
+docs/06_ui-guideline.md
 ```
 
 Do not use pure black everywhere.
@@ -494,7 +494,7 @@ Do not introduce arbitrary fonts for individual screens.
 Use the spacing system defined in:
 
 ```text
-docs/ui-guideline.md
+docs/06_ui-guideline.md
 ```
 
 Prefer consistent spacing scales.
@@ -1282,7 +1282,7 @@ Before creating a new UI component:
 
 1. Check existing UI components.
 2. Check shared components.
-3. Check `docs/07_component_design.md`.
+3. Check `docs/05_component_design.md`.
 4. Check the UI reference.
 5. Reuse an existing component when appropriate.
 
@@ -1491,8 +1491,8 @@ The goal is consistent visual intent and production-quality implementation.
 Before completing a screen:
 
 * [ ] Relevant design reference was reviewed.
-* [ ] `docs/ui-guideline.md` was followed.
-* [ ] `docs/07_component_design.md` was reviewed.
+* [ ] `docs/06_ui-guideline.md` was followed.
+* [ ] `docs/05_component_design.md` was reviewed.
 * [ ] Existing components were reused where appropriate.
 * [ ] shadcn/ui was used for appropriate primitives.
 * [ ] Tailwind conventions were followed.

@@ -362,7 +362,17 @@ docs/screen-list.md
 
 and the relevant screen design documentation.
 
-Examples of routing changes:
+Examples of MVP routing changes:
+
+```text
+/
+/builder
+/preview
+/code
+/settings
+```
+
+### Future (Not MVP)
 
 ```text
 /forms
@@ -371,8 +381,10 @@ Examples of routing changes:
 /forms/:formId/builder
 /forms/:formId/preview
 /forms/:formId/code
-/settings
+/templates
 ```
+
+See `docs/04_architecture.md` section **"MVP Route Model vs Future Multi-Form Routes"**.
 
 If a route is added, removed, renamed, or structurally changed, update the relevant documentation.
 
@@ -410,8 +422,8 @@ Do not change the schema in one feature while leaving other consumers incompatib
 For UI changes, review:
 
 ```text
-docs/07_component_design.md
-docs/08_ui-guideline.md
+docs/05_component_design.md
+docs/06_ui-guideline.md
 ```
 
 and the relevant screen design documentation.

@@ -37,13 +37,9 @@ Before making Cloudflare-related architectural changes, read:
 docs/04_architecture.md
 ```
 
-Also review:
-
-```text
-docs/05_database.md
-```
-
 and the existing Cloudflare configuration.
+
+MVP has no database documentation file. Persistence is LocalStorage. Do not assume D1/KV unless the architecture and Wrangler config explicitly introduce them.
 
 The documentation and existing configuration are the source of truth for the project's infrastructure architecture.
 
@@ -328,25 +324,27 @@ If the project uses a typed `Env` interface, keep it synchronized with the Cloud
 
 # 18. D1
 
-If Cloudflare D1 is used:
+MVP does not use Cloudflare D1. Do not introduce D1 without an explicit architectural decision and documentation update in `docs/04_architecture.md` (and a dedicated database doc only if the project later adopts one).
 
-* Follow `docs/05_database.md`.
+If Cloudflare D1 is later used:
+
+* Follow `docs/04_architecture.md`.
 * Use the project's established database access layer.
 * Do not access D1 directly from presentation components.
 * Do not create ad-hoc SQL calls throughout the application.
 * Keep migrations under the established migration workflow.
 
-The Forms feature should access persistence through the project's architecture.
+The Forms feature should access persistence through the project's architecture (LocalStorage for MVP).
 
 ---
 
 # 19. Database Migrations
 
-Database schema changes must be intentional.
+MVP has no database migrations. LocalStorage schema/versioning, if any, is documented in `docs/04_architecture.md`.
 
-Before modifying the database:
+If a database is later introduced, schema changes must be intentional:
 
-1. Review `docs/05_database.md`.
+1. Review `docs/04_architecture.md`.
 2. Review existing migrations.
 3. Determine whether a migration is required.
 4. Update documentation when the schema changes.
@@ -1158,16 +1156,12 @@ When infrastructure architecture changes, update:
 
 ```text
 docs/04_architecture.md
-```
-
-and, when relevant:
-
-```text
-docs/05_database.md
 docs/development-log.md
 ```
 
 Do not allow Cloudflare configuration and documentation to drift apart.
+
+Do not create `docs/05_database.md` for MVP.
 
 ---
 

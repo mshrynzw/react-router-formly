@@ -547,14 +547,14 @@ Use `Link` or `NavLink` for declarative navigation.
 Prefer:
 
 ```tsx
-<Link to="/forms">Forms</Link>
+<Link to="/builder">Builder</Link>
 ```
 
 over:
 
 ```tsx
-<button onClick={() => window.location.href = "/forms"}>
-  Forms
+<button onClick={() => window.location.href = "/builder"}>
+  Builder
 </button>
 ```
 
@@ -575,13 +575,13 @@ Do not use `useNavigate` as a replacement for normal links.
 
 Use route parameters for resource identifiers.
 
-Example:
+MVP routes do not require `:formId`. When route parameters exist, obtain them with `useParams`.
+
+### Future (Not MVP)
 
 ```text
 /forms/:formId/builder
 ```
-
-Use:
 
 ```ts
 const { formId } = useParams();
@@ -601,7 +601,15 @@ Do not duplicate route parameter parsing logic across components.
 
 Use nested routes when screens share a common layout.
 
-Formly uses:
+## MVP
+
+```text
+/builder
+/preview
+/code
+```
+
+### Future (Not MVP)
 
 ```text
 /forms/:formId

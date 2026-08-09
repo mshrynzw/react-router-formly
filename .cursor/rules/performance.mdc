@@ -36,7 +36,7 @@ The architectural performance strategy is defined in:
 
 The UI performance rules are defined in:
 
-`docs/08_ui-guideline.md`
+`docs/06_ui-guideline.md`
 
 Also follow:
 
@@ -841,7 +841,7 @@ Do not execute database queries directly from UI components.
 Follow:
 
 ```text
-docs/05_database.md
+docs/04_architecture.md
 ```
 
 and:
@@ -919,7 +919,7 @@ Before adding an index:
 1. Identify the query that needs it.
 2. Confirm the query pattern.
 3. Consider write overhead.
-4. Update `docs/05_database.md`.
+4. Update `docs/04_architecture.md`.
 
 ---
 
@@ -1449,7 +1449,7 @@ Use:
 according to:
 
 ```text
-docs/08_ui-guideline.md
+docs/06_ui-guideline.md
 ```
 
 Avoid blank screens.
@@ -2160,28 +2160,18 @@ Do not claim performance improvements without evidence when measurement is avail
 
 # 103. Performance Documentation
 
-If a performance decision changes the architecture, update:
+If a performance decision changes the architecture or persistence behavior, update:
 
 ```text
 docs/04_architecture.md
 ```
 
-If it changes database behavior, update:
-
-```text
-docs/05_database.md
-```
-
-If it changes API behavior, update:
-
-```text
-docs/06_api.md
-```
+MVP has no separate database or API documentation. Do not create `docs/05_database.md` or `docs/06_api.md` for MVP.
 
 If it changes UI behavior, update:
 
 ```text
-docs/08_ui-guideline.md
+docs/06_ui-guideline.md
 ```
 
 Record significant performance decisions in:

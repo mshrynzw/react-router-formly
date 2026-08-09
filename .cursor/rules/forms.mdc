@@ -9,11 +9,25 @@ You are working on Formly, a portfolio-quality Form Builder application.
 
 Forms are a core domain of the application.
 
-The Forms feature is responsible for managing user-created forms and their lifecycle.
+## MVP note (read first)
 
-The Form Builder is responsible for editing the structure of an individual form.
+MVP is a **single-form** experience. The editor lives at:
 
-Keep these responsibilities separate.
+```text
+/builder
+/preview
+/code
+```
+
+There is no Forms List and no `/forms` or `/forms/:formId` routes in MVP.
+
+Persistence is LocalStorage (documented in `docs/04_architecture.md`). MVP has no database documentation file.
+
+**Future (Not MVP):** Forms List, multi-form CRUD, and routes under `/forms` / `/forms/:formId` may be introduced later. See `docs/04_architecture.md` section **"MVP Route Model vs Future Multi-Form Routes"**. Until then, do not implement multi-form list/management UI or those routes.
+
+The Form Builder is responsible for editing the structure of the form.
+
+Keep Forms-resource concerns (when they exist) separate from Builder editing concerns.
 
 ---
 
@@ -31,7 +45,17 @@ A Form represents the saved form resource.
 
 The Form Builder represents the interface used to modify the form structure.
 
-The Forms feature is responsible for:
+### MVP
+
+The single-form domain is responsible for:
+
+* Persisting the local form resource (LocalStorage)
+* Displaying form metadata where applicable
+* Opening Builder / Preview / Code via MVP routes
+
+### Future (Not MVP) — Forms List / multi-form lifecycle
+
+A dedicated Forms feature may later be responsible for:
 
 * Creating forms
 * Listing forms
@@ -55,6 +79,8 @@ The Builder is responsible for:
 
 Do not mix these responsibilities unnecessarily.
 
+Do not implement Future Forms List / `/forms` behavior for MVP.
+
 ---
 
 # 2. Canonical Documentation
@@ -70,12 +96,14 @@ At minimum, review:
 ```text
 docs/01_requirements.md
 docs/02_basic-design.md
+docs/03_detail_design.md
 docs/04_architecture.md
-docs/05_database.md
-docs/07_component_design.md
-docs/09_ui-guideline.md
+docs/05_component_design.md
+docs/06_ui-guideline.md
 docs/screen-list.md
 ```
+
+MVP has no database documentation file. Persistence is LocalStorage; follow `docs/04_architecture.md`.
 
 Also review the relevant screen-specific design document when one exists.
 
@@ -107,13 +135,16 @@ createdAt
 updatedAt
 ```
 
-The exact schema must follow:
+The exact schema must follow the domain model documented in:
 
 ```text
-docs/05_database.md
+docs/04_architecture.md
+docs/03_detail_design.md
 ```
 
-and the application's actual domain model.
+and the application's actual domain types.
+
+MVP has no database schema document.
 
 Do not invent additional persistent fields without a clear requirement.
 
@@ -452,6 +483,8 @@ Do not search arbitrary internal fields unless explicitly required.
 
 # 19. Search State
 
+### Future (Not MVP)
+
 If Forms search is represented in the URL, use React Router search parameters.
 
 For example:
@@ -459,6 +492,8 @@ For example:
 ```text
 /forms?search=contact
 ```
+
+MVP has no Forms List search route.
 
 Follow:
 
@@ -566,6 +601,8 @@ Do not create different sorting implementations for different screens.
 
 # 24. Sort State
 
+### Future (Not MVP)
+
 If sort state is represented in the URL:
 
 ```text
@@ -573,6 +610,8 @@ If sort state is represented in the URL:
 ```
 
 use React Router search parameters.
+
+MVP has no Forms List sort route.
 
 Do not use translated labels as internal sort values.
 
@@ -655,15 +694,13 @@ Do not add destructive or complex actions simply because the UI has space for th
 
 # 28. Open Form
 
-Opening a Form should navigate to the canonical Form route.
+## MVP
 
-For example:
+Opening the editor should navigate to the canonical Builder route:
 
 ```text
-/forms/:formId
+/builder
 ```
-
-or the documented Builder entry route.
 
 Follow:
 
@@ -803,13 +840,13 @@ After deletion:
 
 # 36. Deleted Form
 
-If a user navigates directly to a deleted Form:
+## MVP
 
-```text
-/forms/:formId
-```
+MVP has no multi-form delete-by-route model. If LocalStorage form data is missing or corrupt, show an explicit recovery/error state.
 
-the application should display an appropriate Not Found or missing-resource state.
+### Future (Not MVP)
+
+If a user navigates directly to a deleted Form at `/forms/:formId`, display an appropriate Not Found or missing-resource state.
 
 Do not silently create a new Form.
 
@@ -825,7 +862,6 @@ Follow:
 
 ```text
 docs/04_architecture.md
-docs/05_database.md
 ```
 
 Do not access persistence directly from presentation components when the architecture defines a service or repository boundary.
@@ -1191,17 +1227,21 @@ All Form navigation must follow:
 .cursor/rules/routing.mdc
 ```
 
+## MVP
+
 Use React Router for:
 
 ```text
-Forms List
-Form
-Builder
-Preview
-Code
+/
+/builder
+/preview
+/code
+/settings
 ```
 
-when those screens are defined as routes.
+### Future (Not MVP)
+
+Forms List and `/forms/:formId` nested routes may apply later. Do not implement them for MVP.
 
 Do not implement Forms navigation using:
 
@@ -1226,13 +1266,13 @@ All Forms UI must follow:
 Use the design system defined in:
 
 ```text
-docs/ui-guideline.md
+docs/06_ui-guideline.md
 ```
 
 and the component rules defined in:
 
 ```text
-docs/07_component_design.md
+docs/05_component_design.md
 ```
 
 Do not introduce Forms-specific visual patterns that conflict with the rest of Formly.
@@ -1669,17 +1709,19 @@ Back
 Forward
 ```
 
-especially:
+especially MVP routes:
 
 ```text
-/forms
-/forms/:formId
-/forms/:formId/builder
-/forms/:formId/preview
-/forms/:formId/code
+/
+/builder
+/preview
+/code
+/settings
 ```
 
-when those routes exist.
+### Future (Not MVP)
+
+Also verify `/forms` and `/forms/:formId/builder|preview|code` when those routes exist.
 
 ---
 
@@ -1692,9 +1734,9 @@ Before implementing a new Forms feature:
         ↓
 2. Read architecture documentation.
         ↓
-3. Read database/domain documentation.
+3. Read persistence/domain documentation in docs/04_architecture.md (MVP has no database.md).
         ↓
-4. Read routing rules.
+4. Read routing rules (MVP routes, not Future /forms).
         ↓
 5. Read i18n rules.
         ↓

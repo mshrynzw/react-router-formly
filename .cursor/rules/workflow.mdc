@@ -50,16 +50,20 @@ Important documents include:
 ```text
 AGENTS.md
 
-docs/01_product.md
-docs/02_roadmap.md
-docs/03_screen-list.md
+docs/product.md
+docs/roadmap.md
+docs/screen-list.md
+docs/development-log.md
+docs/01_requirements.md
+docs/02_basic-design.md
+docs/03_detail_design.md
 docs/04_architecture.md
-docs/05_database.md
-docs/06_api.md
-docs/07_development-log.md
-docs/08_ui-guideline.md
-docs/09_component-design.md
+docs/05_component_design.md
+docs/06_ui-guideline.md
+docs/ui-reference/
 ```
+
+MVP has no `docs/05_database.md` or `docs/06_api.md`. Persistence is LocalStorage; see `docs/04_architecture.md`. Do not create those documentation files for MVP.
 
 Use the actual filenames currently present in the repository.
 
@@ -264,7 +268,7 @@ Do not update documentation for every trivial implementation detail.
 If the feature changes what Formly does from a user's perspective, review:
 
 ```text
-docs/01_product.md
+docs/product.md
 ```
 
 Examples:
@@ -284,7 +288,7 @@ New Builder capability
 If the feature represents a planned product milestone, review:
 
 ```text
-docs/02_roadmap.md
+docs/roadmap.md
 ```
 
 Do not add every small bug fix to the roadmap.
@@ -296,7 +300,7 @@ Do not add every small bug fix to the roadmap.
 If a feature introduces or substantially changes a screen, review:
 
 ```text
-docs/03_screen-list.md
+docs/screen-list.md
 ```
 
 Ensure route and screen documentation remain consistent.
@@ -328,55 +332,27 @@ Architecture changes must not remain undocumented.
 
 ---
 
-# 14. Database Documentation
+# 14. Persistence / Database Documentation
 
-If the database schema or persistence behavior changes:
-
-```text
-docs/05_database.md
-```
-
-must be reviewed and updated.
-
-Include relevant:
+MVP uses LocalStorage persistence documented in:
 
 ```text
-Tables
-Relationships
-Indexes
-Constraints
-Migrations
-Ownership
+docs/04_architecture.md
 ```
 
-where appropriate.
+MVP has no `docs/05_database.md`. Do not create that file for MVP.
+
+If persistence behavior changes, update `docs/04_architecture.md` (and `docs/development-log.md` when significant).
+
+If a database is later introduced, document schema, relationships, indexes, constraints, migrations, and ownership before implementation.
 
 ---
 
 # 15. API Documentation
 
-If API behavior changes:
+MVP has no separate API documentation (`docs/06_api.md`). Do not create that file for MVP.
 
-```text
-docs/06_api.md
-```
-
-must be reviewed and updated.
-
-Document relevant:
-
-```text
-Endpoint
-Method
-Request
-Response
-Validation
-Authentication
-Authorization
-Errors
-```
-
-Do not allow API behavior and documentation to drift apart.
+If server/API endpoints are later introduced, document them in architecture first (or a dedicated API doc only after an explicit decision), including endpoint, method, request/response, validation, auth, and errors.
 
 ---
 
@@ -385,7 +361,7 @@ Do not allow API behavior and documentation to drift apart.
 Significant development decisions should be recorded in:
 
 ```text
-docs/07_development-log.md
+docs/development-log.md
 ```
 
 Use the development log for decisions such as:
@@ -409,8 +385,8 @@ Do not record every tiny implementation detail.
 When changing UI behavior, review:
 
 ```text
-docs/08_ui-guideline.md
-docs/09_component-design.md
+docs/06_ui-guideline.md
+docs/05_component_design.md
 ```
 
 Follow the established:
@@ -563,8 +539,8 @@ Do not implement the endpoint first and document it afterward.
 
 When implementing UI:
 
-1. Check `docs/08_ui-guideline.md`.
-2. Check `docs/09_component-design.md`.
+1. Check `docs/06_ui-guideline.md`.
+2. Check `docs/05_component_design.md`.
 3. Reuse existing components.
 4. Define loading state.
 5. Define empty state.
@@ -669,7 +645,7 @@ Do not optimize Preview by weakening isolation.
 
 When adding or modifying routes:
 
-1. Review `docs/03_screen-list.md`.
+1. Review `docs/screen-list.md`.
 2. Review `docs/04_architecture.md`.
 3. Follow `.cursor/rules/routing.mdc`.
 4. Define loading behavior.
@@ -1234,7 +1210,7 @@ Follow:
 ```text
 .cursor/rules/cloudflare.mdc
 .cursor/rules/security.mdc
-docs/05_database.md
+docs/04_architecture.md
 ```
 
 ---

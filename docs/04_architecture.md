@@ -391,6 +391,48 @@ Application Settings
 
 ---
 
+# 8.1 MVP Route Model vs Future Multi-Form Routes
+
+現在の Canonical Route Structure（MVP）は単一 Form を前提とする。
+
+```text
+MVP (Canonical)
+/
+├── /builder
+├── /preview
+├── /code
+└── /settings
+```
+
+MVP では:
+
+- Form は LocalStorage 上の単一作業対象として扱う
+- `/forms` や `/forms/:formId` は実装しない
+- Builder / Preview / Code は独立 Route として共有 Form Schema を参照する
+
+将来、複数 Form のリソース管理が必要になった場合は、次の Route Architecture へ拡張する可能性がある。
+
+```text
+Future (Not MVP)
+/
+├── /forms
+├── /forms/new
+├── /forms/:formId
+│   ├── builder
+│   ├── preview
+│   └── code
+├── /templates
+└── /settings
+```
+
+重要な制約:
+
+- Future Route を MVP 実装時に先行導入しない
+- Route を拡張する場合は、本ドキュメント・`docs/screen-list.md`・Cursor Rules を同時に更新する
+- Form Schema を Single Source of Truth とする方針は、Route 拡張後も維持する
+
+---
+
 # 9. Form Schema Architecture
 
 Form SchemaはFormlyにおける最重要Domain Modelである。
@@ -1167,7 +1209,7 @@ Page ComponentへDomain Logicを過度に集約しない。
 
 # 37. UI Architecture
 
-UI Designは `docs/08_ui-guideline.md` に定義されたDesign Tokenを使用する。
+UI Designは `docs/06_ui-guideline.md` に定義されたDesign Tokenを使用する。
 
 以下を画面ごとに独自定義してはいけない。
 
@@ -2713,16 +2755,21 @@ docs/
 ├── product.md
 ├── roadmap.md
 ├── screen-list.md
+├── development-log.md
 ├── 01_requirements.md
 ├── 02_basic-design.md
 ├── 03_detail_design.md
 ├── 04_architecture.md
-├── 05_database.md
-├── 06_api.md
-├── 07_component_design.md
-├── 08_ui-guideline.md
-└── development-log.md
+├── 05_component_design.md
+├── 06_ui-guideline.md
+└── ui-reference/
 ```
+
+MVP では Server-side Database と Backend API を使用しないため、
+`05_database.md` / `06_api.md` は作成しない。
+
+将来 Database または API を導入する場合は、その時点で専用ドキュメントを追加し、
+本セクションと `AGENTS.md` を更新する。
 
 ---
 

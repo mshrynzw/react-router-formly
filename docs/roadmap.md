@@ -232,14 +232,23 @@ Establish the technical and architectural foundation required to build Formly.
 
 ### Documentation
 
-- [ ] Product documentation
-- [ ] Requirements documentation
-- [ ] Basic design documentation
-- [ ] Architecture documentation
-- [ ] Screen list
-- [ ] UI guideline
-- [ ] Component design
-- [ ] Development log
+- [x] Product documentation
+- [x] Requirements documentation
+- [x] Basic design documentation
+- [x] Architecture documentation
+- [x] Screen list
+- [x] UI guideline
+- [x] Component design
+- [x] Development log
+
+Documentation alignment note (2026-08-09):
+
+- MVP Canonical Routes: `/`, `/builder`, `/preview`, `/code`, `/settings`
+- Future multi-form routes (`/forms/:formId/...`) are documented but not in MVP scope
+- Canonical numbered docs are `05_component_design.md` and `06_ui-guideline.md`
+- MVP has no `05_database.md` / `06_api.md`
+
+See `docs/development-log.md`.
 
 ## Completion Criteria
 

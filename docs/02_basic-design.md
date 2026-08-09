@@ -841,7 +841,7 @@ Formlyは以下のDesign Conceptを基本とする。
 - Responsive Layout
 - 過剰な装飾を避ける
 
-UI詳細は`docs/08_ui-guideline.md`で定義する。
+UI詳細は`docs/06_ui-guideline.md`で定義する。
 
 ---
 
@@ -1429,16 +1429,17 @@ Architectureに関する判断では、`architecture.mdc`と本設計書を確�
 
 # 44. 今後の設計
 
-本基本設計書をもとに、以下のドキュメントを作成・更新する。
+本基本設計書と連携する Canonical Documents は以下とする。
 
 ```text
 03_detail_design.md
 04_architecture.md
-05_database.md
-06_api.md
-07_component_design.md
-08_ui-guideline.md
+05_component_design.md
+06_ui-guideline.md
 development-log.md
+product.md
+roadmap.md
+screen-list.md
 ```
 
 ## 03_detail_design.md
@@ -1449,25 +1450,25 @@ development-log.md
 
 実装レベルのArchitecture、Module Boundary、Data Flow、Dependencyなどを定義する。
 
-## 05_database.md
-
-現在はDatabaseを使用しないため、その方針と将来的な拡張可能性を必要最小限記載する。
-
-## 06_api.md
-
-現在のCore ProductではServer APIを使用しないため、APIが不要であることを明確化する。
-
-## 07_component_design.md
+## 05_component_design.md
 
 Shared ComponentとFeature Componentの詳細を定義する。
 
-## 08_ui-guideline.md
+## 06_ui-guideline.md
 
 Design Token、Typography、Color、Spacing、Radius、Responsiveなどを定義する。
 
 ## development-log.md
 
 Architecture Decisionや重要な実装判断を記録する。
+
+## Database / API Documents
+
+MVP では Server-side Database と Backend API を使用しない。
+
+そのため `05_database.md` / `06_api.md` は作成しない。
+
+将来導入する場合は、その時点で専用ドキュメントを追加する。
 
 ---
 

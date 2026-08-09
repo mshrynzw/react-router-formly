@@ -492,11 +492,13 @@ Do not introduce locale segments into URLs unless the routing architecture expli
 Do not independently implement:
 
 ```text
-/ja/forms
-/en/forms
-/zh/forms
-/ko/forms
+/ja/builder
+/en/builder
+/zh/builder
+/ko/builder
 ```
+
+(or locale-prefixed `/forms` routes)
 
 without an architectural decision.
 
@@ -1507,21 +1509,23 @@ The domain layer must operate on stable internal values.
 
 Routes must remain language-independent unless localized routing is explicitly designed.
 
-For example:
+For example (MVP):
+
+```text
+/builder
+/preview
+```
+
+should not become locale-translated path segments based on application language.
+
+### Future (Not MVP)
 
 ```text
 /forms
 /forms/abc123/builder
 ```
 
-should not become:
-
-```text
-/formularios
-/formulaires
-```
-
-based on application language.
+must likewise remain language-independent.
 
 Keep technical routes stable.
 
@@ -1719,7 +1723,7 @@ Do not blindly copy Japanese strings from the prototype into production componen
 Follow:
 
 ```text
-docs/ui-guideline.md
+docs/06_ui-guideline.md
 ```
 
 for visual consistency.
@@ -1953,7 +1957,7 @@ Review:
 ```text
 docs/04_architecture.md
 docs/screen-list.md
-docs/ui-guideline.md
+docs/06_ui-guideline.md
 ```
 
 and other relevant documentation.

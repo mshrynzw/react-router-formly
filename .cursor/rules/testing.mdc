@@ -692,28 +692,28 @@ Interactive elements should be testable using:
 
 React Router behavior should be tested when routing is part of the feature.
 
-Test important cases such as:
+Test important MVP cases such as:
 
 ```text
-/forms
-/forms/new
-/forms/:formId
-/forms/:formId/builder
-/forms/:formId/preview
-/forms/:formId/code
+/
+/builder
+/preview
+/code
 /settings
 ```
 
 Test:
 
 * Correct route rendering.
-* Navigation between related screens.
-* Dynamic route parameters.
-* Nested routes.
+* Navigation between Builder, Preview, and Code.
+* Nested/shared layout routes where used.
 * Back navigation where appropriate.
 * Invalid routes.
-* Missing form IDs.
-* Navigation after creating a form.
+* Corrupt or missing LocalStorage form data.
+
+### Future (Not MVP)
+
+Also test `/forms`, `/forms/:formId`, and nested builder/preview/code when multi-form routing exists.
 
 Do not test React Router's internal implementation.
 
@@ -723,19 +723,20 @@ Test application behavior built on top of React Router.
 
 # 19. Nested Route Tests
 
-Formly uses nested routes for:
+## MVP
+
+Formly may use a shared editor layout for:
 
 ```text
-/forms/:formId
-├── builder
-├── preview
-└── code
+/builder
+/preview
+/code
 ```
 
 Test that:
 
 ```text
-FormLayout
+EditorLayout
     ↓
 Outlet
     ↓
@@ -743,6 +744,15 @@ Correct child route
 ```
 
 is rendered.
+
+### Future (Not MVP)
+
+```text
+/forms/:formId
+├── builder
+├── preview
+└── code
+```
 
 Test that the correct `formId` is used by the child route.
 

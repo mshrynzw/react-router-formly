@@ -45,23 +45,24 @@ Never implement a major feature first and document it afterwards.
 
 The canonical documentation structure is:
 
-- `docs/01_requirements.md`
-- `docs/02_basic-design.md`
-- `docs/03_detail_design.md`
-- `docs/04_architecture.md`
-- `docs/05_database.md`
-- `docs/06_api.md`
-- `docs/07_component_design.md`
-- `docs/08_ui-guideline.md`
 - `docs/product.md`
 - `docs/roadmap.md`
 - `docs/screen-list.md`
 - `docs/development-log.md`
+- `docs/01_requirements.md`
+- `docs/02_basic-design.md`
+- `docs/03_detail_design.md`
+- `docs/04_architecture.md`
+- `docs/05_component_design.md`
+- `docs/06_ui-guideline.md`
 - `docs/ui-reference/`
 
 Always use these exact paths.
 
 Do not create duplicate documentation files with alternative names.
+
+MVP does not use a server-side database or backend API.
+Do not create `docs/05_database.md` or `docs/06_api.md` unless the architecture intentionally introduces them later.
 
 If a requested document does not exist, determine whether the existing documentation structure should be updated before creating a new file.
 
@@ -145,43 +146,26 @@ Do not bypass architectural layers without a documented reason.
 
 ---
 
-## Database
+## Database / API (MVP)
 
-`docs/05_database.md`
+MVP does not use a server-side database or backend API.
 
-Defines:
+Persistence is browser LocalStorage.
+Hosting / runtime is Cloudflare Workers.
 
-- Database schema
-- Relationships
-- Indexes
-- Constraints
-- Migration strategy
-- Data ownership
+Do not invent `docs/05_database.md` or `docs/06_api.md` for the current architecture.
 
-Do not modify the database schema without updating this document.
+If Database or API support is introduced later:
 
----
-
-## API
-
-`docs/06_api.md`
-
-Defines:
-
-- API endpoints
-- Request schemas
-- Response schemas
-- Authentication requirements
-- Authorization requirements
-- Error handling
-
-Do not introduce undocumented API endpoints.
+1. Update `docs/04_architecture.md`.
+2. Add the dedicated documentation files.
+3. Update this section and related Cursor rules.
 
 ---
 
 ## Component Design
 
-`docs/07_component_design.md`
+`docs/05_component_design.md`
 
 Defines:
 
@@ -197,7 +181,7 @@ Reuse existing components before creating new ones.
 
 ## UI Guideline
 
-`docs/08_ui-guideline.md`
+`docs/06_ui-guideline.md`
 
 Defines:
 
@@ -353,6 +337,21 @@ Route URLs must remain consistent with:
 and:
 
 `docs/04_architecture.md`
+
+MVP Canonical Routes:
+
+```text
+/
+├── /builder
+├── /preview
+├── /code
+└── /settings
+```
+
+Do not implement `/forms/:formId/...` multi-form resource routes for MVP.
+
+Future multi-form routes are documented in `docs/04_architecture.md` under
+**"MVP Route Model vs Future Multi-Form Routes"** and must not be treated as the current architecture.
 
 ---
 
@@ -604,51 +603,43 @@ If Form ownership or permissions exist, users must not be able to access Forms t
 
 # 16. Database Rules
 
+MVP does not use a server-side database.
+
 Follow:
 
-`docs/05_database.md`
+`docs/04_architecture.md`
 
-Database access must go through the repository/data-access layer defined by the architecture.
+Persistence is browser LocalStorage.
 
-Do not introduce direct database access from UI components.
+Do not introduce a database, D1 schema, or repository layer for server-side storage unless the architecture intentionally changes.
 
-When changing:
+If a database is introduced later:
 
-* Tables
-* Columns
-* Relationships
-* Indexes
-* Constraints
-* Migrations
-
-update:
-
-`docs/05_database.md`
-
-and the appropriate migration.
-
-Never modify the production database manually when a migration should be used.
+1. Add dedicated database documentation.
+2. Update `docs/04_architecture.md`.
+3. Update this section and related Cursor rules.
+4. Use migrations rather than manual production schema changes.
 
 ---
 
 # 17. API Rules
 
+MVP does not use a backend API for the core Form Builder product.
+
 Follow:
 
-`docs/06_api.md`
+`docs/04_architecture.md`
 
-Before creating or modifying an API:
+Do not invent undocumented API endpoints for MVP features that are designed to run entirely in the browser.
 
-1. Read the API documentation.
-2. Update the API documentation if the contract changes.
+If an API is introduced later:
+
+1. Add dedicated API documentation.
+2. Update `docs/04_architecture.md`.
 3. Implement request validation.
 4. Implement authorization where required.
-5. Implement service logic.
-6. Add tests.
-
-Do not create undocumented API endpoints.
-
-Do not expose internal database models directly when an explicit response shape is appropriate.
+5. Add tests.
+6. Update this section and related Cursor rules.
 
 ---
 
@@ -659,7 +650,7 @@ Before creating a new component:
 1. Search for an existing component.
 2. Check the existing shared UI components.
 3. Check the relevant feature directory.
-4. Check `docs/07_component_design.md`.
+4. Check `docs/05_component_design.md`.
 5. Check the UI guidelines.
 
 Reuse existing components whenever appropriate.
@@ -674,7 +665,7 @@ Keep reusable components generic enough to be reused, but do not over-generalize
 
 Follow:
 
-`docs/08_ui-guideline.md`
+`docs/06_ui-guideline.md`
 
 and:
 
@@ -724,7 +715,7 @@ Mobile layouts should be intentionally designed for:
 
 Follow:
 
-`docs/08_ui-guideline.md`
+`docs/06_ui-guideline.md`
 
 ---
 
@@ -1200,8 +1191,8 @@ When modifying the Form Builder:
 
 1. Read the relevant detail design.
 2. Read `docs/04_architecture.md`.
-3. Read `docs/07_component_design.md`.
-4. Read `docs/08_ui-guideline.md`.
+3. Read `docs/05_component_design.md`.
+4. Read `docs/06_ui-guideline.md`.
 5. Follow `.cursor/rules/forms.mdc`.
 6. Follow `.cursor/rules/state-management.mdc`.
 7. Define the Form Schema change if necessary.
@@ -1327,20 +1318,28 @@ Tests
 
 Follow:
 
-* `docs/05_database.md`
+* `docs/04_architecture.md`
 * `.cursor/rules/cloudflare.mdc`
 * `.cursor/rules/security.mdc`
+
+MVP does not use a server-side database. Do not invent database migrations for LocalStorage-only persistence.
+
+If a database is introduced later, add dedicated database documentation before implementing schema changes.
 
 ---
 
 # 43. API Change Workflow
 
-When changing an API:
+MVP does not use a backend API for the core product.
+
+If an API is introduced later:
 
 ```text
 API Requirement
     ↓
-API Documentation
+Update Architecture Documentation
+    ↓
+Add Dedicated API Documentation
     ↓
 Request Schema
     ↓
@@ -1350,7 +1349,7 @@ Authorization
     ↓
 Service
     ↓
-Repository
+Repository / Data Access
     ↓
 Response
     ↓

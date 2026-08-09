@@ -17,11 +17,14 @@ The goal is to demonstrate production-quality React Router architecture while ke
 
 # 1. Canonical Routing Documentation
 
-The canonical routing design is defined in the project's documentation under:
+The canonical routing design is defined in:
 
 ```text
-docs/
-````
+docs/04_architecture.md
+docs/screen-list.md
+```
+
+Also see `docs/04_architecture.md` section **"MVP Route Model vs Future Multi-Form Routes"**.
 
 Before creating or modifying routes:
 
@@ -30,11 +33,53 @@ Before creating or modifying routes:
 3. Read `docs/screen-list.md`.
 4. Inspect the existing route configuration.
 5. Check whether the requested route already exists.
-6. Follow the established route hierarchy.
+6. Follow the established MVP route hierarchy.
 
 Do not invent a new route structure when the existing documentation already defines one.
 
+Do not implement Future (Not MVP) multi-form routes unless the product scope explicitly expands.
+
 If the route architecture changes intentionally, update the relevant documentation.
+
+---
+
+# 1a. MVP Canonical Routes
+
+The current source of truth for MVP routes is:
+
+```text
+/
+├── /builder
+├── /preview
+├── /code
+└── /settings
+```
+
+MVP is a single-form experience. Builder, Preview, and Code are top-level routes.
+
+Do not implement `/forms`, `/forms/new`, `/forms/:formId`, or nested `/forms/:formId/builder|preview|code` for MVP.
+
+---
+
+# 1b. Future (Not MVP) Multi-Form Routes
+
+Multi-form resource routes may later become:
+
+```text
+/
+├── /forms
+├── /forms/new
+├── /forms/:formId
+│   ├── builder
+│   ├── preview
+│   └── code
+├── /templates
+└── /settings
+```
+
+These are **Future (Not MVP)** only. See `docs/04_architecture.md` section **"MVP Route Model vs Future Multi-Form Routes"**.
+
+When this document mentions Future multi-form examples, they are guidance for a later phase — not the current architecture to implement.
 
 ---
 
@@ -45,7 +90,7 @@ React Router v8 is the canonical routing solution for Formly.
 Use React Router for:
 
 * Application navigation
-* Route parameters
+* Route parameters (when the route model uses them)
 * Nested routes
 * Layout routes
 * Navigation state
@@ -65,7 +110,7 @@ Do not implement application routing manually.
 Do not use:
 
 ```ts
-window.location.href = "/forms";
+window.location.href = "/builder";
 ```
 
 for normal application navigation.
@@ -73,7 +118,7 @@ for normal application navigation.
 Do not use:
 
 ```ts
-window.location.pathname = "/forms";
+window.location.pathname = "/builder";
 ```
 
 Do not use:
@@ -87,16 +132,16 @@ as a replacement for React Router.
 Prefer:
 
 ```tsx
-<Link to="/forms">
-  Forms
+<Link to="/builder">
+  Builder
 </Link>
 ```
 
 or:
 
 ```tsx
-<NavLink to="/forms">
-  Forms
+<NavLink to="/preview">
+  Preview
 </NavLink>
 ```
 
@@ -117,24 +162,24 @@ Prefer declarative navigation whenever possible.
 Good:
 
 ```tsx
-<Link to="/forms">
-  Forms
+<Link to="/builder">
+  Builder
 </Link>
 ```
 
 Good:
 
 ```tsx
-<NavLink to="/forms">
-  Forms
+<NavLink to="/settings">
+  Settings
 </NavLink>
 ```
 
 Avoid:
 
 ```tsx
-<button onClick={() => navigate("/forms")}>
-  Forms
+<button onClick={() => navigate("/builder")}>
+  Builder
 </button>
 ```
 
@@ -148,11 +193,9 @@ Use a button when the action is actually an action rather than navigation.
 
 Use `useNavigate()` only when navigation depends on application behavior.
 
-Appropriate examples:
+Appropriate MVP examples:
 
-* After creating a form.
-* After deleting a form.
-* After completing a workflow.
+* After completing a workflow that should land on Builder or Preview.
 * After successful form import.
 * After saving a resource when navigation is intentional.
 * When navigation depends on user interaction that is not naturally represented as a link.
@@ -162,12 +205,20 @@ Example:
 ```ts
 const navigate = useNavigate();
 
-const handleCreate = async () => {
-  const form = await createForm();
-
-  navigate(`/forms/${form.id}/builder`);
+const handleOpenBuilder = () => {
+  navigate("/builder");
 };
 ```
+
+### Future (Not MVP)
+
+After creating a form in a multi-form model, navigation may look like:
+
+```ts
+navigate(`/forms/${form.id}/builder`);
+```
+
+Do not implement that pattern for MVP.
 
 Do not use `useNavigate()` for every navigation interaction.
 
@@ -177,31 +228,33 @@ Do not use `useNavigate()` for every navigation interaction.
 
 Routes must reflect the application's information architecture.
 
-Formly's form-related screens should use a hierarchy similar to:
+## MVP
 
 ```text
-/forms
-    ├── new
-    └── :formId
-          ├── builder
-          ├── preview
-          └── code
+/
+├── /builder
+├── /preview
+├── /code
+└── /settings
 ```
 
 Conceptually:
 
 ```text
-Forms
- ├── Create Form
- └── Form
-      ├── Builder
-      ├── Preview
-      └── Code
+Landing /
+ ├── Builder
+ ├── Preview
+ ├── Code
+ └── Settings
 ```
 
-Keep related screens under a shared route hierarchy.
+Keep related editor screens (Builder, Preview, Code) under a shared layout when they share chrome.
 
-Do not create unrelated top-level routes when a nested route better represents the relationship.
+Do not create `/forms/:formId/...` for MVP.
+
+## Future (Not MVP)
+
+A multi-form hierarchy may later use `/forms`, `/forms/:formId`, and nested builder/preview/code. See section **1b** and `docs/04_architecture.md`.
 
 ---
 
@@ -215,12 +268,11 @@ Use nested routes when multiple screens share:
 * Header
 * Sidebar
 * Tabs
-* Route parameters
 
-Example:
+## MVP example
 
 ```text
-/forms/:formId
+/ (or editor layout)
 ├── builder
 ├── preview
 └── code
@@ -237,9 +289,9 @@ when appropriate.
 Conceptually:
 
 ```tsx
-<FormLayout>
+<EditorLayout>
   <Outlet />
-</FormLayout>
+</EditorLayout>
 ```
 
 Do not duplicate the same layout across:
@@ -252,23 +304,29 @@ Code
 
 when a parent route can provide it.
 
+### Future (Not MVP)
+
+Nested resource routes under `/forms/:formId` may apply when multi-form support is introduced.
+
 ---
 
 # 8. Route Layouts
 
 Use route layouts to represent shared application structure.
 
-For example:
+For example (MVP):
 
 ```text
 Application Layout
     ↓
-Forms Layout
-    ↓
-Form Layout
+Editor Layout (shared chrome)
     ↓
 Builder / Preview / Code
 ```
+
+### Future (Not MVP)
+
+A deeper Forms Layout → Form Layout nesting may apply under `/forms/:formId`.
 
 Each layout should have a clear responsibility.
 
@@ -285,11 +343,11 @@ Use React Router's `Outlet` for nested route rendering.
 Example:
 
 ```tsx
-function FormLayout() {
+function EditorLayout() {
   return (
     <div>
-      <FormHeader />
-      <FormNavigation />
+      <EditorHeader />
+      <EditorNavigation />
       <main>
         <Outlet />
       </main>
@@ -314,18 +372,12 @@ React Router should determine which route component is rendered.
 
 # 10. Route Parameters
 
-Use route parameters for resource identifiers.
+MVP routes do not require a `:formId` parameter. The active form is the single local form resource.
 
-Example:
-
-```text
-/forms/:formId
-```
-
-Access the parameter with:
+When route parameters are used, obtain them through React Router:
 
 ```ts
-const { formId } = useParams();
+const params = useParams();
 ```
 
 Do not manually parse:
@@ -338,29 +390,25 @@ to retrieve route parameters.
 
 Do not duplicate route parameter parsing logic across components.
 
----
+### Future (Not MVP)
 
-# 11. Route Parameter Validation
-
-Treat route parameters as untrusted input.
-
-For example:
+Multi-form routes may use `/forms/:formId` and:
 
 ```ts
 const { formId } = useParams();
 ```
 
-does not guarantee that `formId` refers to an existing form.
+---
 
-Handle:
+# 11. Route Parameter Validation
 
-* Missing parameter
-* Invalid parameter
-* Non-existent form
-* Corrupted form data
-* Deleted form
+Treat route parameters as untrusted input when they exist.
 
-appropriately.
+### Future (Not MVP)
+
+For `/forms/:formId`, `useParams()` does not guarantee that `formId` refers to an existing form.
+
+Handle missing, invalid, non-existent, corrupted, or deleted form resources appropriately.
 
 Do not assume that a valid URL parameter guarantees valid domain data.
 
@@ -370,11 +418,16 @@ Do not assume that a valid URL parameter guarantees valid domain data.
 
 Resource-oriented routes should clearly communicate the resource.
 
+## MVP
+
 Prefer:
 
 ```text
-/forms
-/forms/:formId
+/
+/builder
+/preview
+/code
+/settings
 ```
 
 over vague routes such as:
@@ -386,6 +439,10 @@ over vague routes such as:
 /page
 ```
 
+### Future (Not MVP)
+
+Prefer `/forms` and `/forms/:formId` over vague routes when multi-form resources exist.
+
 The URL should communicate what the user is viewing.
 
 ---
@@ -394,16 +451,18 @@ The URL should communicate what the user is viewing.
 
 The Form Builder should be represented as a route rather than a boolean UI state when it represents a distinct application screen.
 
+## MVP
+
 Prefer:
 
 ```text
-/forms/:formId/builder
+/builder
 ```
 
 over:
 
 ```text
-/forms/:formId?mode=builder
+/?mode=builder
 ```
 
 when Builder, Preview, and Code are distinct navigable screens.
@@ -416,21 +475,31 @@ This makes the screens:
 * Directly accessible
 * Clearly represented by the URL
 
+### Future (Not MVP)
+
+Prefer `/forms/:formId/builder` over query-mode switching when multi-form nesting exists.
+
 ---
 
 # 14. Preview Routes
 
 Preview should have a dedicated route when it is a distinct screen.
 
-Example:
+## MVP
 
 ```text
-/forms/:formId/preview
+/preview
 ```
 
 The Preview route should derive its form from the same Form Schema used by Builder.
 
 Do not maintain a separate preview-only form representation.
+
+### Future (Not MVP)
+
+```text
+/forms/:formId/preview
+```
 
 ---
 
@@ -438,10 +507,10 @@ Do not maintain a separate preview-only form representation.
 
 The generated code screen should have a dedicated route.
 
-Example:
+## MVP
 
 ```text
-/forms/:formId/code
+/code
 ```
 
 The Code route should derive generated output from the same Form Schema used by:
@@ -452,6 +521,12 @@ Preview
 ```
 
 Do not store a separate independent copy of generated HTML/CSS/JavaScript merely because the user navigated to the Code screen.
+
+### Future (Not MVP)
+
+```text
+/forms/:formId/code
+```
 
 ---
 
@@ -464,13 +539,14 @@ Use the URL when state should be:
 * Restored by browser navigation
 * Meaningful as part of the current screen
 
-Examples:
+## MVP examples
 
 ```text
-/forms/:formId
-/forms/:formId/builder
-/forms/:formId/preview
-/forms/:formId/code
+/
+/builder
+/preview
+/code
+/settings
 ```
 
 Use component state for temporary UI state such as:
@@ -484,27 +560,37 @@ Use component state for temporary UI state such as:
 
 Do not put every UI state into the URL.
 
+### Future (Not MVP)
+
+```text
+/forms/:formId
+/forms/:formId/builder
+/forms/:formId/preview
+/forms/:formId/code
+```
+
 ---
 
 # 17. Query Parameters
 
 Use query parameters when they represent shareable or navigable state.
 
-Appropriate examples may include:
+## MVP examples
+
+```text
+/builder?field=field_123
+```
+
+only when the state is genuinely useful to preserve in the URL.
+
+### Future (Not MVP)
 
 ```text
 /forms?search=contact
 /forms?sort=updated
 /forms?filter=published
-```
-
-or:
-
-```text
 /forms/:formId/builder?field=field_123
 ```
-
-only when the state is genuinely useful to preserve in the URL.
 
 Do not create query parameters for purely temporary UI state.
 
@@ -577,17 +663,21 @@ Back
 Builder
 ```
 
-and:
+and (MVP):
 
 ```text
-Form List
+Landing /
   ↓
-Form Builder
+Builder
   ↓
 Back
   ↓
-Form List
+Landing /
 ```
+
+### Future (Not MVP)
+
+Form List → Form Builder → Back → Form List may apply under `/forms`.
 
 Do not replace browser navigation with custom application state unless necessary.
 
@@ -597,23 +687,25 @@ Do not replace browser navigation with custom application state unless necessary
 
 Prefer relative navigation when it makes route relationships clearer.
 
-For example, from:
+For example, from a shared editor layout, navigating to:
 
 ```text
-/forms/:formId
+preview
 ```
 
-navigating to:
+or using absolute paths:
 
 ```text
-builder
+/preview
 ```
-
-may be preferable to manually constructing the entire path when appropriate.
 
 Use absolute paths when they improve clarity.
 
 Choose the approach that makes the route relationship easiest to understand.
+
+### Future (Not MVP)
+
+From `/forms/:formId`, relative navigation to `builder` may be preferable.
 
 ---
 
@@ -624,8 +716,8 @@ Use `NavLink` for navigation items that need active state.
 Example:
 
 ```tsx
-<NavLink to="/forms">
-  Forms
+<NavLink to="/builder">
+  Builder
 </NavLink>
 ```
 
@@ -651,7 +743,15 @@ Preview
 Code
 ```
 
-maps to:
+maps to (MVP):
+
+```text
+/builder
+/preview
+/code
+```
+
+### Future (Not MVP)
 
 ```text
 /forms/:formId/builder
@@ -681,13 +781,9 @@ when they represent independent application screens.
 
 Provide appropriate loading behavior when a route depends on asynchronous data.
 
-For example:
+## MVP
 
-```text
-/forms/:formId
-```
-
-may need to load a saved form.
+`/builder`, `/preview`, and `/code` may need to load the single form from LocalStorage.
 
 The user should not see an unexplained blank screen while the route is resolving.
 
@@ -697,7 +793,11 @@ Use appropriate:
 * Skeleton
 * Pending navigation feedback
 
-according to the UI guidelines.
+according to the UI guidelines (`docs/06_ui-guideline.md`).
+
+### Future (Not MVP)
+
+`/forms/:formId` may need to load a specific saved form.
 
 ---
 
@@ -705,13 +805,20 @@ according to the UI guidelines.
 
 Route-level errors must be handled intentionally.
 
-Examples:
+## MVP examples
+
+```text
+Corrupted saved form
+Unexpected loading failure
+Missing LocalStorage data
+```
+
+### Future (Not MVP)
 
 ```text
 Form does not exist
 Invalid form ID
-Corrupted saved form
-Unexpected loading failure
+Deleted form
 ```
 
 Provide a user-friendly error screen or recovery UI.
@@ -737,8 +844,8 @@ should render a meaningful Not Found experience.
 The Not Found UI should provide a clear recovery path such as:
 
 ```text
-Go to Dashboard
-Go to Forms
+Go to Home
+Go to Builder
 ```
 
 Do not allow unknown routes to silently render an unrelated screen.
@@ -747,21 +854,15 @@ Do not allow unknown routes to silently render an unrelated screen.
 
 # 28. Invalid Form Routes
 
-For:
+## MVP
 
-```text
-/forms/:formId
-```
+MVP has no `:formId` route. If the single local form cannot be loaded (corrupt or missing persistence), show an explicit error or recovery state rather than a blank screen.
 
-if the form does not exist:
+### Future (Not MVP)
 
-Do not silently redirect to:
+For `/forms/:formId`, if the form does not exist:
 
-```text
-/forms
-```
-
-unless that behavior is intentionally defined.
+Do not silently redirect to `/forms` unless that behavior is intentionally defined.
 
 Prefer an explicit Not Found or missing-resource state.
 
@@ -785,29 +886,26 @@ For the current local-first Formly architecture, do not invent authentication in
 
 Use redirects intentionally.
 
-Appropriate examples:
+## MVP examples
 
 ```text
-/forms/new
+/
     ↓
-/forms/:formId/builder
+/builder
 ```
 
-after successful creation.
-
-Or:
-
-```text
-/forms/:formId
-    ↓
-/forms/:formId/builder
-```
-
-if the parent route intentionally serves as an entry point.
+if Landing intentionally sends the user into the Builder.
 
 Avoid redirect chains.
 
 Do not redirect users unexpectedly merely to simplify component logic.
+
+### Future (Not MVP)
+
+```text
+/forms/new → /forms/:formId/builder
+/forms/:formId → /forms/:formId/builder
+```
 
 ---
 
@@ -819,15 +917,25 @@ Do not scatter route definitions throughout unrelated components.
 
 Prefer a centralized route configuration or clearly structured route module.
 
-Conceptually:
+## MVP conceptually
 
 ```text
 routes
 ├── application
-├── forms
-├── form
+├── builder
+├── preview
+├── code
 ├── settings
 └── not-found
+```
+
+### Future (Not MVP)
+
+```text
+routes
+├── forms
+├── form
+└── templates
 ```
 
 The exact folder structure should follow the project's architecture.
@@ -896,37 +1004,44 @@ CodeRoute
 each independently:
 
 * Loading the same form.
-* Validating the same form ID.
-* Handling the same missing-form state.
-* Rendering the same form layout.
+* Handling the same missing/corrupt form state.
+* Rendering the same editor layout.
 
 Use shared parent routes, hooks, or services when appropriate.
+
+### Future (Not MVP)
+
+Also avoid duplicating form ID validation across nested form routes.
 
 ---
 
 # 35. Form Context Across Nested Routes
 
-When Builder, Preview, and Code share a form resource:
+When Builder, Preview, and Code share a form resource, provide a shared context or data access pattern from a common parent layout or feature hook.
+
+## MVP
 
 ```text
-/forms/:formId
+Editor layout / shared form access
+       │
+       ├── /builder
+       ├── /preview
+       └── /code
 ```
 
-should provide the appropriate shared context or data access pattern.
+All editor routes must operate on the same logical single Form resource.
 
-Conceptually:
+Do not create three separate mechanisms for loading the same form.
+
+### Future (Not MVP)
 
 ```text
 /forms/:formId
        │
-       ├── Builder
-       ├── Preview
-       └── Code
+       ├── builder
+       ├── preview
+       └── code
 ```
-
-All child routes must operate on the same logical Form resource.
-
-Do not create three separate mechanisms for loading the same form.
 
 ---
 
@@ -934,7 +1049,19 @@ Do not create three separate mechanisms for loading the same form.
 
 Use clear, lowercase route segments.
 
+## MVP
+
 Prefer:
+
+```text
+/
+/builder
+/preview
+/code
+/settings
+```
+
+### Future (Not MVP)
 
 ```text
 /forms
@@ -943,8 +1070,7 @@ Prefer:
 /forms/:formId/builder
 /forms/:formId/preview
 /forms/:formId/code
-/settings
-/profile
+/templates
 ```
 
 Avoid:
@@ -1037,21 +1163,23 @@ Do not hide route navigation solely because the viewport is small.
 
 Every meaningful application screen should be directly addressable.
 
-For example:
+For example (MVP):
+
+```text
+/builder
+```
+
+should be sufficient to open the Builder for the single local form.
+
+Do not require the user to first visit Landing `/` and then click through several screens to reconstruct application state.
+
+### Future (Not MVP)
 
 ```text
 /forms/abc123/builder
 ```
 
-should be sufficient to open the Builder for form `abc123`.
-
-Do not require the user to first visit:
-
-```text
-/forms
-```
-
-and then click through several screens to reconstruct application state.
+should open the Builder for that form without requiring a Forms List visit first.
 
 ---
 
@@ -1059,23 +1187,21 @@ and then click through several screens to reconstruct application state.
 
 Refreshing a route should preserve the route itself.
 
-For example:
+For example (MVP):
 
 ```text
-/forms/abc123/preview
+/preview
 ```
 
-should remain on:
-
-```text
-/forms/abc123/preview
-```
-
-after refresh.
+should remain on `/preview` after refresh.
 
 Do not rely solely on in-memory React state for route identity.
 
-Persist required domain data appropriately.
+Persist required domain data appropriately (LocalStorage for MVP; see `docs/04_architecture.md`).
+
+### Future (Not MVP)
+
+`/forms/abc123/preview` should remain on that URL after refresh.
 
 ---
 
@@ -1114,13 +1240,18 @@ Direct URL Access
 
 for important routes.
 
-Especially verify nested routes such as:
+Especially verify MVP routes such as:
 
 ```text
-/forms/:formId/builder
-/forms/:formId/preview
-/forms/:formId/code
+/builder
+/preview
+/code
+/settings
 ```
+
+### Future (Not MVP)
+
+Also verify `/forms/:formId/builder|preview|code` when multi-form routing exists.
 
 ---
 
@@ -1259,7 +1390,8 @@ Before completing a routing change:
 * [ ] No second routing library was introduced.
 * [ ] Normal navigation uses `Link` or `NavLink`.
 * [ ] Programmatic navigation uses `useNavigate` only when appropriate.
-* [ ] Route parameters use `useParams`.
+* [ ] MVP routes follow `/`, `/builder`, `/preview`, `/code`, `/settings` (not Future `/forms/:formId/...`).
+* [ ] Route parameters use `useParams` when parameters exist.
 * [ ] Nested routes use `Outlet` where appropriate.
 * [ ] Shared layouts are not duplicated.
 * [ ] URL state is not duplicated unnecessarily in React state.

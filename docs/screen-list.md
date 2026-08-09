@@ -213,7 +213,7 @@ MobileではSingle Columnへ変更する。
 
 ```text
 docs/03_detail_design.md
-docs/08_ui-guideline.md
+docs/06_ui-guideline.md
 ```
 
 ---
@@ -408,8 +408,8 @@ MobileでField Settingsを常時表示する必要はない。
 
 ```text
 docs/03_detail_design.md
-docs/07_component_design.md
-docs/08_ui-guideline.md
+docs/05_component_design.md
+docs/06_ui-guideline.md
 .cursor/rules/forms.mdc
 .cursor/rules/state-management.mdc
 ```
@@ -532,7 +532,7 @@ Previewのセキュリティ要件は:
 
 ```text
 docs/03_detail_design.md
-docs/08_ui-guideline.md
+docs/06_ui-guideline.md
 .cursor/rules/security.mdc
 .cursor/rules/performance.mdc
 ```
@@ -655,8 +655,8 @@ Code自体を無理に折り返して可読性を損なわない。
 
 ```text
 docs/03_detail_design.md
-docs/07_component_design.md
-docs/08_ui-guideline.md
+docs/05_component_design.md
+docs/06_ui-guideline.md
 .cursor/rules/security.mdc
 .cursor/rules/performance.mdc
 ```
@@ -760,7 +760,7 @@ MobileではSettings Sectionを縦方向に配置する。
 
 ```text
 docs/03_detail_design.md
-docs/08_ui-guideline.md
+docs/06_ui-guideline.md
 .cursor/rules/i18n.mdc
 ```
 
@@ -1099,7 +1099,44 @@ Builderの機能として提供する。
 
 ---
 
-# 20. Templates
+# 20. Future Multi-Form Routes
+
+現在の Canonical Routes（MVP）は単一 Form 前提とする。
+
+```text
+MVP
+/
+├── /builder
+├── /preview
+├── /code
+└── /settings
+```
+
+将来、複数 Form の一覧・作成・編集が必要になった場合は、次の Route へ拡張する可能性がある。
+
+```text
+Future (Not MVP)
+/
+├── /forms
+├── /forms/new
+├── /forms/:formId
+│   ├── builder
+│   ├── preview
+│   └── code
+├── /templates
+└── /settings
+```
+
+制約:
+
+- Future Route を MVP 実装時に導入しない
+- Route 拡張時は `docs/04_architecture.md`・本ドキュメント・Cursor Rules を同時更新する
+
+詳細は `docs/04_architecture.md` の「MVP Route Model vs Future Multi-Form Routes」を参照する。
+
+---
+
+# 21. Templates
 
 Templatesは現在のMVPには含めない。
 
@@ -1126,7 +1163,7 @@ Feedback Form
 
 ---
 
-# 21. Authentication Boundary
+# 22. Authentication Boundary
 
 現在のFormlyではAuthentication Boundaryを持たない。
 
@@ -1146,7 +1183,7 @@ Public
 
 ---
 
-# 22. Error / Loading / Empty State Convention
+# 23. Error / Loading / Empty State Convention
 
 各Screenでは、必要に応じて以下の状態を定義する。
 
@@ -1166,7 +1203,7 @@ Success
 
 ---
 
-# 23. Screen State Summary
+# 24. Screen State Summary
 
 | Screen   | Loading | Empty | Error   | Success |
 | -------- | ------- | ----- | ------- | ------- |
@@ -1178,7 +1215,7 @@ Success
 
 ---
 
-# 24. Responsive Screen Summary
+# 25. Responsive Screen Summary
 
 | Screen   | Desktop          | Tablet             | Mobile            |
 | -------- | ---------------- | ------------------ | ----------------- |
@@ -1190,7 +1227,7 @@ Success
 
 ---
 
-# 25. Priority
+# 26. Priority
 
 Priorityは以下の基準とする。
 
@@ -1229,7 +1266,7 @@ SCR-005 Application Settings
 
 ---
 
-# 26. Current MVP Screen Scope
+# 27. Current MVP Screen Scope
 
 MVPでは以下のScreenを実装する。
 
@@ -1263,7 +1300,7 @@ SCR-002 Form Builder
 
 ---
 
-# 27. Core User Journey
+# 28. Core User Journey
 
 Formlyの主要User Journeyは以下とする。
 
@@ -1299,7 +1336,7 @@ Code
 
 ---
 
-# 28. Definition of Done
+# 29. Definition of Done
 
 Screenは以下を満たした場合に完成とする。
 
@@ -1317,7 +1354,7 @@ Screenは以下を満たした場合に完成とする。
 
 ---
 
-# 29. Related Documents
+# 30. Related Documents
 
 Screen設計は以下のドキュメントと連携する。
 
@@ -1328,8 +1365,8 @@ docs/01_requirements.md
 docs/02_basic-design.md
 docs/03_detail_design.md
 docs/04_architecture.md
-docs/07_component_design.md
-docs/08_ui-guideline.md
+docs/05_component_design.md
+docs/06_ui-guideline.md
 docs/development-log.md
 ```
 
@@ -1349,7 +1386,7 @@ docs/development-log.md
 
 ---
 
-# 30. Screen Expansion Rules
+# 31. Screen Expansion Rules
 
 新しいScreenを追加する場合:
 
@@ -1370,7 +1407,7 @@ docs/development-log.md
 
 ---
 
-# 31. Screen Design Principles
+# 32. Screen Design Principles
 
 FormlyのScreen設計では以下を優先する。
 
@@ -1408,7 +1445,7 @@ Form Builder → Preview → Generated CodeというCore Product Loopを中心�
 
 ---
 
-# 32. Final Screen Architecture
+# 33. Final Screen Architecture
 
 Formlyの現在のScreen Architectureは以下を正式な構成とする。
 

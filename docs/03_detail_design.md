@@ -2602,7 +2602,7 @@ Screen / Featureは以下を満たした場合に完了とする。
 詳細なVisual Designは:
 
 ```text
-docs/08_ui-guideline.md
+docs/06_ui-guideline.md
 ```
 
 で定義する。
@@ -2620,10 +2620,8 @@ docs/screen-list.md
 docs/01_requirements.md
 docs/02_basic-design.md
 docs/04_architecture.md
-docs/05_database.md
-docs/06_api.md
-docs/07_component_design.md
-docs/08_ui-guideline.md
+docs/05_component_design.md
+docs/06_ui-guideline.md
 docs/development-log.md
 ```
 
