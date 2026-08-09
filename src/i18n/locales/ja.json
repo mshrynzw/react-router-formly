@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "Formly",
+    "tagline": "ビジュアルにフォームを作り、きれいなコードを書き出す。"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "builder": "ビルダー",
+    "preview": "プレビュー",
+    "code": "コード",
+    "settings": "設定",
+    "primary": "メインナビゲーション"
+  },
+  "common": {
+    "actions": {
+      "getStarted": "ビルダーを開く",
+      "backHome": "ホームへ戻る"
+    },
+    "status": {
+      "placeholder": "準備中",
+      "phase1": "Phase 1 — Foundation"
+    }
+  },
+  "home": {
+    "title": "Formly",
+    "description": "ブラウザだけでフォームを設計し、HTML / CSS / JavaScript を書き出せます。",
+    "cta": "ビルダーを開く"
+  },
+  "builder": {
+    "title": "フォームビルダー",
+    "description": "フィールドの追加・編集・並び替えを行う画面です。Phase 2 で実装します。"
+  },
+  "preview": {
+    "title": "プレビュー",
+    "description": "Form Schema から生成されるフォームの見た目と操作を確認する画面です。Phase 3 で実装します。"
+  },
+  "code": {
+    "title": "生成コード",
+    "description": "HTML / CSS / JavaScript を表示・コピーする画面です。Phase 4 で実装します。"
+  },
+  "settings": {
+    "title": "設定",
+    "description": "言語やテーマなどのアプリケーション設定画面です。",
+    "language": "言語",
+    "languageHelp": "表示言語を切り替えます。ユーザーが作成したフォーム内容は翻訳されません。"
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "description": "指定された URL の画面は存在しません。",
+    "action": "ホームへ戻る"
+  },
+  "language": {
+    "ja": "日本語",
+    "en": "English",
+    "zh": "中文",
+    "ko": "한국어",
+    "label": "言語を選択"
+  }
+}

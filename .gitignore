@@ -29,3 +29,10 @@ dist-ssr
 !.dev.vars.example
 .env*
 !.env.example
+
+# test / coverage
+coverage
+playwright-report
+test-results
+blob-report
+.tsbuildinfo

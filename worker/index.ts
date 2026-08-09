@@ -1,12 +1,10 @@
+/**
+ * Cloudflare Worker entry.
+ * Static assets and SPA fallback are handled by Wrangler assets configuration.
+ * MVP does not expose application APIs from the Worker.
+ */
 export default {
-  fetch(request) {
-    const url = new URL(request.url);
-
-    if (url.pathname.startsWith("/api/")) {
-      return Response.json({
-        name: "Cloudflare",
-      });
-    }
-		return new Response(null, { status: 404 });
+  fetch() {
+    return new Response(null, { status: 404 });
   },
 } satisfies ExportedHandler<Env>;

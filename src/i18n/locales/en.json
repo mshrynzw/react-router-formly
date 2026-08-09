@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "Formly",
+    "tagline": "Build forms visually. Export clean code."
+  },
+  "navigation": {
+    "home": "Home",
+    "builder": "Builder",
+    "preview": "Preview",
+    "code": "Code",
+    "settings": "Settings",
+    "primary": "Primary navigation"
+  },
+  "common": {
+    "actions": {
+      "getStarted": "Open Builder",
+      "backHome": "Back to Home"
+    },
+    "status": {
+      "placeholder": "Coming soon",
+      "phase1": "Phase 1 — Foundation"
+    }
+  },
+  "home": {
+    "title": "Formly",
+    "description": "Design forms in the browser and export HTML, CSS, and JavaScript.",
+    "cta": "Open Builder"
+  },
+  "builder": {
+    "title": "Form Builder",
+    "description": "Add, edit, and reorder fields. Implemented in Phase 2."
+  },
+  "preview": {
+    "title": "Preview",
+    "description": "Review the form derived from the Form Schema. Implemented in Phase 3."
+  },
+  "code": {
+    "title": "Generated Code",
+    "description": "View and copy HTML, CSS, and JavaScript. Implemented in Phase 4."
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Application settings such as language and theme.",
+    "language": "Language",
+    "languageHelp": "Switch the UI language. User-created form content is not translated."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The requested page does not exist.",
+    "action": "Back to Home"
+  },
+  "language": {
+    "ja": "日本語",
+    "en": "English",
+    "zh": "中文",
+    "ko": "한국어",
+    "label": "Select language"
+  }
+}

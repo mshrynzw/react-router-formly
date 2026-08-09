@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "Formly",
+    "tagline": "시각적으로 폼을 만들고, 깔끔한 코드를 내보냅니다."
+  },
+  "navigation": {
+    "home": "홈",
+    "builder": "빌더",
+    "preview": "미리보기",
+    "code": "코드",
+    "settings": "설정",
+    "primary": "주요 탐색"
+  },
+  "common": {
+    "actions": {
+      "getStarted": "빌더 열기",
+      "backHome": "홈으로 돌아가기"
+    },
+    "status": {
+      "placeholder": "준비 중",
+      "phase1": "Phase 1 — Foundation"
+    }
+  },
+  "home": {
+    "title": "Formly",
+    "description": "브라우저에서 폼을 설계하고 HTML / CSS / JavaScript를 내보낼 수 있습니다.",
+    "cta": "빌더 열기"
+  },
+  "builder": {
+    "title": "폼 빌더",
+    "description": "필드를 추가·편집·정렬하는 화면입니다. Phase 2에서 구현합니다."
+  },
+  "preview": {
+    "title": "미리보기",
+    "description": "Form Schema에서 파생된 폼의 모양과 동작을 확인하는 화면입니다. Phase 3에서 구현합니다."
+  },
+  "code": {
+    "title": "생성된 코드",
+    "description": "HTML / CSS / JavaScript를 확인하고 복사하는 화면입니다. Phase 4에서 구현합니다."
+  },
+  "settings": {
+    "title": "설정",
+    "description": "언어와 테마 등 애플리케이션 설정 화면입니다.",
+    "language": "언어",
+    "languageHelp": "UI 언어를 전환합니다. 사용자가 만든 폼 내용은 번역되지 않습니다."
+  },
+  "notFound": {
+    "title": "페이지를 찾을 수 없습니다",
+    "description": "요청한 페이지가 존재하지 않습니다.",
+    "action": "홈으로 돌아가기"
+  },
+  "language": {
+    "ja": "日本語",
+    "en": "English",
+    "zh": "中文",
+    "ko": "한국어",
+    "label": "언어 선택"
+  }
+}

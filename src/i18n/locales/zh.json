@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "Formly",
+    "tagline": "可视化构建表单，导出干净代码。"
+  },
+  "navigation": {
+    "home": "首页",
+    "builder": "构建器",
+    "preview": "预览",
+    "code": "代码",
+    "settings": "设置",
+    "primary": "主导航"
+  },
+  "common": {
+    "actions": {
+      "getStarted": "打开构建器",
+      "backHome": "返回首页"
+    },
+    "status": {
+      "placeholder": "准备中",
+      "phase1": "Phase 1 — Foundation"
+    }
+  },
+  "home": {
+    "title": "Formly",
+    "description": "在浏览器中设计表单，并导出 HTML / CSS / JavaScript。",
+    "cta": "打开构建器"
+  },
+  "builder": {
+    "title": "表单构建器",
+    "description": "用于添加、编辑和排序字段的界面。将在 Phase 2 实现。"
+  },
+  "preview": {
+    "title": "预览",
+    "description": "根据 Form Schema 预览表单外观与交互。将在 Phase 3 实现。"
+  },
+  "code": {
+    "title": "生成代码",
+    "description": "查看并复制 HTML / CSS / JavaScript。将在 Phase 4 实现。"
+  },
+  "settings": {
+    "title": "设置",
+    "description": "语言和主题等应用程序设置。",
+    "language": "语言",
+    "languageHelp": "切换界面语言。用户创建的表单内容不会被翻译。"
+  },
+  "notFound": {
+    "title": "页面未找到",
+    "description": "请求的页面不存在。",
+    "action": "返回首页"
+  },
+  "language": {
+    "ja": "日本語",
+    "en": "English",
+    "zh": "中文",
+    "ko": "한국어",
+    "label": "选择语言"
+  }
+}

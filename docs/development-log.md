@@ -6,6 +6,42 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-09 — Phase 1 Foundation
+
+### Summary
+
+Phase 1（Foundation）を実装した。
+
+### Implemented
+
+- React Router v8 による MVP ルート（`/`, `/builder`, `/preview`, `/code`, `/settings`）
+- Feature First を見据えた `src/app`, `src/routes`, `src/components`, `src/i18n`, `src/lib` 構成
+- Tailwind CSS v4（`@tailwindcss/vite`）と UI reference 準拠の Design Tokens
+- shadcn/ui 基盤（`components.json`, `cn`, `Button`）
+- i18n 基盤（`ja` / `en` / `zh` / `ko`、LocalStorage 永続化、デフォルト `ja`）
+- Theme 基盤（Light / Dark / System、デフォルト Dark）
+- Vitest + Testing Library + Playwright
+- Prettier / ESLint 整合
+- Cloudflare Workers + Vite 本番ビルド確認
+
+### Intentionally Deferred
+
+- Cloudflare 本番デプロイ確認（認証情報が必要なため）
+- Form Builder / Preview / Code Generator 本体（Phase 2 以降）
+- Zod を使った Form Schema Validation（依存関係は導入済み）
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm test:e2e
+pnpm build
+```
+
+---
+
 ## 2026-08-09 — Documentation / Rules Alignment
 
 ### Context
