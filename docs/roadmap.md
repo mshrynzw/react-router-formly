@@ -742,25 +742,25 @@ Formly
 
 ## Tasks
 
-- [ ] Define LocalStorage format
-- [ ] Implement persistence layer
-- [ ] Implement automatic save
-- [ ] Implement form restoration
-- [ ] Implement reset
-- [ ] Handle invalid LocalStorage data
-- [ ] Handle storage quota errors
-- [ ] Add persistence tests
+- [x] Define LocalStorage format
+- [x] Implement persistence layer
+- [x] Implement automatic save
+- [x] Implement form restoration
+- [x] Implement reset
+- [x] Handle invalid LocalStorage data
+- [x] Handle storage quota errors
+- [x] Add persistence tests
 
 ## Completion Criteria
 
 Phase 5 is complete when:
 
-- Form data survives page reload.
-- Form data can be restored.
-- Invalid stored data does not crash the application.
-- LocalStorage failures are handled gracefully.
-- Submission configuration survives page reload.
-- The application does not require authentication.
+- [x] Form data survives page reload.
+- [x] Form data can be restored.
+- [x] Invalid stored data does not crash the application.
+- [x] LocalStorage failures are handled gracefully.
+- [x] Submission configuration survives page reload.
+- [x] The application does not require authentication.
 
 ---
 

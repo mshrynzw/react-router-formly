@@ -14,7 +14,9 @@
   "common": {
     "actions": {
       "getStarted": "打开构建器",
-      "backHome": "返回首页"
+      "backHome": "返回首页",
+      "cancel": "取消",
+      "confirm": "确认"
     },
     "status": {
       "placeholder": "准备中",
@@ -87,12 +89,25 @@
       "delete": "删除",
       "addOption": "添加选项",
       "removeOption": "删除选项",
-      "reset": "新建表单"
+      "reset": "新建表单",
+      "retryLoad": "重新加载",
+      "retrySave": "重新保存"
     },
     "status": {
       "saved": "已保存",
+      "saving": "保存中…",
       "saveFailed": "保存失败",
+      "saveFailedQuota": "存储空间不足",
       "invalidRestored": "已保存数据无效，已创建新表单"
+    },
+    "error": {
+      "invalidTitle": "无法加载此表单",
+      "invalidDescription": "LocalStorage 数据无效。请重试或创建新表单。"
+    },
+    "resetDialog": {
+      "title": "要创建新表单吗？",
+      "description": "LocalStorage 中的当前表单将被替换。此操作无法撤销。",
+      "confirm": "创建新表单"
     },
     "fields": {
       "types": {
@@ -225,7 +240,21 @@
     "title": "设置",
     "description": "语言和主题等应用程序设置。",
     "language": "语言",
-    "languageHelp": "切换界面语言。用户创建的表单内容不会被翻译。"
+    "languageHelp": "切换界面语言。用户创建的表单内容不会被翻译。",
+    "storage": {
+      "title": "本地数据",
+      "description": "管理保存在此浏览器 LocalStorage 中的表单数据。不会删除语言设置。",
+      "hasData": "存在已保存的表单。",
+      "empty": "没有已保存的表单。",
+      "clear": "清除已保存数据",
+      "cleared": "已清除保存的数据。",
+      "clearFailed": "清除保存数据失败。",
+      "clearDialog": {
+        "title": "要清除保存的数据吗？",
+        "description": "将删除此浏览器中保存的表单。语言和主题设置会保留。",
+        "confirm": "清除数据"
+      }
+    }
   },
   "notFound": {
     "title": "页面未找到",

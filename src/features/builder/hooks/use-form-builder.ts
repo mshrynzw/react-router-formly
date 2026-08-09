@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   addField,
@@ -19,9 +19,14 @@ import {
   type FormField,
   type FormSchema,
   type HttpMethod,
+  type SaveFailureReason,
 } from "@/domain/form-schema";
 
 export type BuilderPanel = "form" | "field" | "submission";
+
+export type BuilderSaveStatus = "saved" | "saving" | "failed";
+
+const SAVE_DEBOUNCE_MS = 300;
 
 export function useFormBuilder() {
   const initial = useMemo(() => loadFormFromStorage(), []);
@@ -33,13 +38,73 @@ export function useFormBuilder() {
   );
   const [activePanel, setActivePanel] = useState<BuilderPanel>("form");
   const [loadStatus, setLoadStatus] = useState<"ok" | "empty" | "invalid">(initial.status);
-  const [isSaveFailed, setIsSaveFailed] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<BuilderSaveStatus>("saved");
+  const [saveFailureReason, setSaveFailureReason] = useState<SaveFailureReason | null>(null);
+
+  const schemaRef = useRef(schema);
+  const saveTimerRef = useRef<number | null>(null);
 
   const selectedField = getFieldById(schema, selectedFieldId);
 
-  function commitSchema(next: FormSchema, nextSelectedFieldId?: string | null) {
+  useEffect(() => {
+    schemaRef.current = schema;
+  }, [schema]);
+
+  function clearSaveTimer() {
+    if (saveTimerRef.current !== null) {
+      window.clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+  }
+
+  function persistSchema(next: FormSchema): boolean {
+    const result = saveFormToStorage(next);
+    if (result.ok) {
+      setSaveStatus("saved");
+      setSaveFailureReason(null);
+      return true;
+    }
+
+    setSaveStatus("failed");
+    setSaveFailureReason(result.reason);
+    return false;
+  }
+
+  function scheduleSave(next: FormSchema) {
+    setSaveStatus("saving");
+    setSaveFailureReason(null);
+    clearSaveTimer();
+
+    saveTimerRef.current = window.setTimeout(() => {
+      saveTimerRef.current = null;
+      persistSchema(next);
+    }, SAVE_DEBOUNCE_MS);
+  }
+
+  useEffect(() => {
+    const flushPendingSave = () => {
+      clearSaveTimer();
+      saveFormToStorage(schemaRef.current);
+    };
+
+    window.addEventListener("beforeunload", flushPendingSave);
+
+    return () => {
+      window.removeEventListener("beforeunload", flushPendingSave);
+      flushPendingSave();
+    };
+  }, []);
+
+  function commitSchema(next: FormSchema, nextSelectedFieldId?: string | null, immediate = false) {
     setSchema(next);
-    setIsSaveFailed(!saveFormToStorage(next));
+    schemaRef.current = next;
+
+    if (immediate) {
+      clearSaveTimer();
+      persistSchema(next);
+    } else {
+      scheduleSave(next);
+    }
 
     if (nextSelectedFieldId !== undefined) {
       setSelectedFieldId(nextSelectedFieldId);
@@ -105,9 +170,30 @@ export function useFormBuilder() {
 
   function handleResetForm() {
     const next = createEmptyForm();
-    commitSchema(next, next.fields[0]?.id ?? null);
+    commitSchema(next, next.fields[0]?.id ?? null, true);
     setActivePanel("form");
     setLoadStatus("empty");
+  }
+
+  function handleRetryLoad() {
+    const result = loadFormFromStorage();
+    clearSaveTimer();
+    setSchema(result.schema);
+    schemaRef.current = result.schema;
+    setLoadStatus(result.status);
+    setSelectedFieldId(
+      result.schema.fields.find((field) => field.type !== "submit")?.id ??
+        result.schema.fields[0]?.id ??
+        null,
+    );
+    setActivePanel("form");
+    setSaveStatus("saved");
+    setSaveFailureReason(null);
+  }
+
+  function handleRetrySave() {
+    clearSaveTimer();
+    persistSchema(schemaRef.current);
   }
 
   return {
@@ -116,7 +202,8 @@ export function useFormBuilder() {
     selectedField,
     activePanel,
     loadStatus,
-    isSaveFailed,
+    saveStatus,
+    saveFailureReason,
     setActivePanel,
     selectField,
     addField: handleAddField,
@@ -140,5 +227,7 @@ export function useFormBuilder() {
       commitSchema(removeOption(schema, fieldId, optionId));
     },
     resetForm: handleResetForm,
+    retryLoad: handleRetryLoad,
+    retrySave: handleRetrySave,
   };
 }

@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -24,7 +24,29 @@ describe("BuilderWorkspace", () => {
     await user.type(labelInput, "お名前");
 
     expect(screen.getAllByText("お名前").length).toBeGreaterThanOrEqual(1);
-    expect(window.localStorage.getItem(FORM_STORAGE_KEY)).toContain("お名前");
+    await waitFor(() => {
+      expect(window.localStorage.getItem(FORM_STORAGE_KEY)).toContain("お名前");
+    });
+  });
+
+  it("requires confirmation before resetting the form", async () => {
+    const user = userEvent.setup();
+    render(<BuilderWorkspace />);
+
+    await user.click(screen.getByRole("button", { name: /テキスト.*1行テキスト入力/ }));
+    await user.click(screen.getByRole("button", { name: "新規フォーム" }));
+
+    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "キャンセル" }));
+    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    expect(screen.getByText("フィールド 1 件")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "新規フォーム" }));
+    await user.click(screen.getByRole("button", { name: "新規フォームを作成" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("フィールド 0 件")).toBeInTheDocument();
+    });
   });
 
   it("configures submission settings", async () => {

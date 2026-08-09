@@ -14,7 +14,9 @@
   "common": {
     "actions": {
       "getStarted": "빌더 열기",
-      "backHome": "홈으로 돌아가기"
+      "backHome": "홈으로 돌아가기",
+      "cancel": "취소",
+      "confirm": "확인"
     },
     "status": {
       "placeholder": "준비 중",
@@ -87,12 +89,25 @@
       "delete": "삭제",
       "addOption": "옵션 추가",
       "removeOption": "옵션 삭제",
-      "reset": "새 폼"
+      "reset": "새 폼",
+      "retryLoad": "다시 로드",
+      "retrySave": "다시 저장"
     },
     "status": {
       "saved": "저장됨",
+      "saving": "저장 중…",
       "saveFailed": "저장 실패",
+      "saveFailedQuota": "저장 공간이 부족합니다",
       "invalidRestored": "저장된 데이터가 올바르지 않아 새 폼을 만들었습니다"
+    },
+    "error": {
+      "invalidTitle": "이 폼을 불러올 수 없습니다",
+      "invalidDescription": "LocalStorage 데이터가 올바르지 않습니다. 다시 시도하거나 새 폼을 만드세요."
+    },
+    "resetDialog": {
+      "title": "새 폼을 만들까요?",
+      "description": "LocalStorage의 현재 폼이 교체됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "confirm": "새 폼 만들기"
     },
     "fields": {
       "types": {
@@ -225,7 +240,21 @@
     "title": "설정",
     "description": "언어와 테마 등 애플리케이션 설정 화면입니다.",
     "language": "언어",
-    "languageHelp": "UI 언어를 전환합니다. 사용자가 만든 폼 내용은 번역되지 않습니다."
+    "languageHelp": "UI 언어를 전환합니다. 사용자가 만든 폼 내용은 번역되지 않습니다.",
+    "storage": {
+      "title": "로컬 데이터",
+      "description": "이 브라우저 LocalStorage에 저장된 폼 데이터를 관리합니다. 언어 설정은 삭제되지 않습니다.",
+      "hasData": "저장된 폼이 있습니다.",
+      "empty": "저장된 폼이 없습니다.",
+      "clear": "저장 데이터 삭제",
+      "cleared": "저장 데이터를 삭제했습니다.",
+      "clearFailed": "저장 데이터 삭제에 실패했습니다.",
+      "clearDialog": {
+        "title": "저장 데이터를 삭제할까요?",
+        "description": "이 브라우저에 저장된 폼이 삭제됩니다. 언어와 테마 설정은 유지됩니다.",
+        "confirm": "삭제하기"
+      }
+    }
   },
   "notFound": {
     "title": "페이지를 찾을 수 없습니다",

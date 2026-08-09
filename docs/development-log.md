@@ -6,6 +6,39 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-09 — Phase 5 Local Persistence
+
+### Summary
+
+Phase 5（Local Persistence）を実装・硬化した。
+
+### Implemented
+
+- LocalStorage 形式の明確化（key: `formly.activeForm`、value: validated `FormSchema` JSON）
+- Persistence API の強化（`save` / `load` / `clear` / `hasStoredForm`、quota エラー分類）
+- Builder の debounce autosave（300ms）と `beforeunload` / unmount flush
+- Reset Form 確認ダイアログ
+- Invalid LocalStorage 時の再読み込み / リセット UI
+- Settings からのローカルフォームデータ削除
+- Persistence unit / integration tests
+
+### Notes
+
+- 認証は不要。単一フォームのブラウザ永続化のみ
+- locale / theme の LocalStorage はフォーム削除の対象外
+- Phase 2 で導入した autosave を正式な Persistence Layer として拡張
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+---
+
 ## 2026-08-09 — Phase 4 Code Generator
 
 ### Summary

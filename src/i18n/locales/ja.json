@@ -14,7 +14,9 @@
   "common": {
     "actions": {
       "getStarted": "ビルダーを開く",
-      "backHome": "ホームへ戻る"
+      "backHome": "ホームへ戻る",
+      "cancel": "キャンセル",
+      "confirm": "確認"
     },
     "status": {
       "placeholder": "準備中",
@@ -87,12 +89,25 @@
       "delete": "削除",
       "addOption": "選択肢を追加",
       "removeOption": "選択肢を削除",
-      "reset": "新規フォーム"
+      "reset": "新規フォーム",
+      "retryLoad": "再読み込み",
+      "retrySave": "再保存"
     },
     "status": {
       "saved": "保存済み",
+      "saving": "保存中…",
       "saveFailed": "保存に失敗しました",
+      "saveFailedQuota": "保存容量が不足しています",
       "invalidRestored": "保存データが不正だったため新しいフォームを作成しました"
+    },
+    "error": {
+      "invalidTitle": "フォームを読み込めませんでした",
+      "invalidDescription": "LocalStorage のデータが不正です。再読み込みするか、新規フォームを作成してください。"
+    },
+    "resetDialog": {
+      "title": "新規フォームを作成しますか？",
+      "description": "現在のフォームは LocalStorage から置き換えられます。この操作は元に戻せません。",
+      "confirm": "新規フォームを作成"
     },
     "fields": {
       "types": {
@@ -225,7 +240,21 @@
     "title": "設定",
     "description": "言語やテーマなどのアプリケーション設定画面です。",
     "language": "言語",
-    "languageHelp": "表示言語を切り替えます。ユーザーが作成したフォーム内容は翻訳されません。"
+    "languageHelp": "表示言語を切り替えます。ユーザーが作成したフォーム内容は翻訳されません。",
+    "storage": {
+      "title": "ローカルデータ",
+      "description": "このブラウザの LocalStorage に保存されたフォームデータを管理します。言語設定は削除されません。",
+      "hasData": "保存済みのフォームがあります。",
+      "empty": "保存済みのフォームはありません。",
+      "clear": "保存データを削除",
+      "cleared": "保存データを削除しました。",
+      "clearFailed": "保存データの削除に失敗しました。",
+      "clearDialog": {
+        "title": "保存データを削除しますか？",
+        "description": "このブラウザに保存されたフォームが削除されます。言語やテーマの設定は残ります。",
+        "confirm": "削除する"
+      }
+    }
   },
   "notFound": {
     "title": "ページが見つかりません",

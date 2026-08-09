@@ -56,5 +56,6 @@ pnpm deploy       # Cloudflare Workers へデプロイ
 - Phase 2 — Core Form Builder 完了
 - Phase 3 — Preview 完了
 - Phase 4 — Code Generator 完了
+- Phase 5 — Local Persistence 完了
 
-次は Phase 5 — Local Persistence。
+次は Phase 6 — Quality, Accessibility, Responsive Design, and i18n。

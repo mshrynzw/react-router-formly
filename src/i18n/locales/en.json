@@ -14,7 +14,9 @@
   "common": {
     "actions": {
       "getStarted": "Open Builder",
-      "backHome": "Back to Home"
+      "backHome": "Back to Home",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
     },
     "status": {
       "placeholder": "Coming soon",
@@ -87,12 +89,25 @@
       "delete": "Delete",
       "addOption": "Add option",
       "removeOption": "Remove option",
-      "reset": "New form"
+      "reset": "New form",
+      "retryLoad": "Try again",
+      "retrySave": "Retry save"
     },
     "status": {
       "saved": "Saved",
+      "saving": "Saving…",
       "saveFailed": "Failed to save",
+      "saveFailedQuota": "Not enough storage space",
       "invalidRestored": "Saved data was invalid, so a new form was created"
+    },
+    "error": {
+      "invalidTitle": "Unable to load this form",
+      "invalidDescription": "The LocalStorage data is invalid. Try again or create a new form."
+    },
+    "resetDialog": {
+      "title": "Create a new form?",
+      "description": "The current form in LocalStorage will be replaced. This cannot be undone.",
+      "confirm": "Create new form"
     },
     "fields": {
       "types": {
@@ -225,7 +240,21 @@
     "title": "Settings",
     "description": "Application settings such as language and theme.",
     "language": "Language",
-    "languageHelp": "Switch the UI language. User-created form content is not translated."
+    "languageHelp": "Switch the UI language. User-created form content is not translated.",
+    "storage": {
+      "title": "Local data",
+      "description": "Manage the form data saved in this browser’s LocalStorage. Language settings are not removed.",
+      "hasData": "A saved form is available.",
+      "empty": "No saved form.",
+      "clear": "Clear saved data",
+      "cleared": "Saved data was cleared.",
+      "clearFailed": "Failed to clear saved data.",
+      "clearDialog": {
+        "title": "Clear saved data?",
+        "description": "The form saved in this browser will be deleted. Language and theme settings remain.",
+        "confirm": "Clear data"
+      }
+    }
   },
   "notFound": {
     "title": "Page not found",

@@ -1,12 +1,25 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { clearFormFromStorage, hasStoredForm } from "@/domain/form-schema";
 import { setAppLocale } from "@/i18n";
 import { resolveLocale, SUPPORTED_LOCALES } from "@/i18n/locales";
 
 export default function SettingsRoute() {
   const { t, i18n } = useTranslation();
   const currentLocale = resolveLocale(i18n.resolvedLanguage);
+  const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
+  const [hasForm, setHasForm] = useState(() => hasStoredForm());
+  const [clearFeedback, setClearFeedback] = useState<"idle" | "cleared" | "failed">("idle");
+
+  const handleClearConfirm = () => {
+    const result = clearFormFromStorage();
+    setIsClearDialogOpen(false);
+    setHasForm(hasStoredForm());
+    setClearFeedback(result.ok ? "cleared" : "failed");
+  };
 
   return (
     <section className="space-y-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-sm)] sm:p-8">
@@ -38,6 +51,49 @@ export default function SettingsRoute() {
           ))}
         </div>
       </div>
+
+      <div className="space-y-3 border-t border-[var(--border-subtle)] pt-6">
+        <h2 className="text-sm font-medium text-[var(--text-primary)]">
+          {t("settings.storage.title")}
+        </h2>
+        <p className="text-sm text-[var(--text-muted)]">{t("settings.storage.description")}</p>
+        <p className="text-xs text-[var(--text-secondary)]">
+          {hasForm ? t("settings.storage.hasData") : t("settings.storage.empty")}
+        </p>
+        <Button
+          type="button"
+          size="sm"
+          variant="secondary"
+          disabled={!hasForm}
+          onClick={() => {
+            setIsClearDialogOpen(true);
+          }}
+        >
+          {t("settings.storage.clear")}
+        </Button>
+        {clearFeedback === "cleared" ? (
+          <p role="status" className="text-xs text-[var(--success)]">
+            {t("settings.storage.cleared")}
+          </p>
+        ) : null}
+        {clearFeedback === "failed" ? (
+          <p role="alert" className="text-xs text-[var(--danger)]">
+            {t("settings.storage.clearFailed")}
+          </p>
+        ) : null}
+      </div>
+
+      <ConfirmDialog
+        open={isClearDialogOpen}
+        title={t("settings.storage.clearDialog.title")}
+        description={t("settings.storage.clearDialog.description")}
+        confirmLabel={t("settings.storage.clearDialog.confirm")}
+        cancelLabel={t("common.actions.cancel")}
+        onCancel={() => {
+          setIsClearDialogOpen(false);
+        }}
+        onConfirm={handleClearConfirm}
+      />
     </section>
   );
 }

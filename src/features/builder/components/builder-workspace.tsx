@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { FieldPalette } from "@/features/builder/components/field-palette";
 import { FieldSettingsPanel } from "@/features/builder/components/field-settings-panel";
@@ -15,6 +17,22 @@ const panels: BuilderPanel[] = ["form", "field", "submission"];
 export function BuilderWorkspace() {
   const { t } = useTranslation();
   const builder = useFormBuilder();
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+
+  const saveStatusMessage = (() => {
+    if (builder.saveStatus === "saving") {
+      return t("builder.status.saving");
+    }
+
+    if (builder.saveStatus === "failed") {
+      if (builder.saveFailureReason === "quota") {
+        return t("builder.status.saveFailedQuota");
+      }
+      return t("builder.status.saveFailed");
+    }
+
+    return t("builder.status.saved");
+  })();
 
   return (
     <div className="space-y-4">
@@ -24,19 +42,60 @@ export function BuilderWorkspace() {
           <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("builder.workspace.subtitle")}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {builder.loadStatus === "invalid" ? (
-            <p className="text-xs text-[var(--warning)]">{t("builder.status.invalidRestored")}</p>
+          <p
+            className={cn(
+              "text-xs",
+              builder.saveStatus === "failed"
+                ? "text-[var(--danger)]"
+                : "text-[var(--text-muted)]",
+            )}
+          >
+            {saveStatusMessage}
+          </p>
+          {builder.saveStatus === "failed" ? (
+            <Button type="button" size="sm" variant="secondary" onClick={builder.retrySave}>
+              {t("builder.actions.retrySave")}
+            </Button>
           ) : null}
-          {builder.isSaveFailed ? (
-            <p className="text-xs text-[var(--danger)]">{t("builder.status.saveFailed")}</p>
-          ) : (
-            <p className="text-xs text-[var(--text-muted)]">{t("builder.status.saved")}</p>
-          )}
-          <Button type="button" size="sm" variant="secondary" onClick={builder.resetForm}>
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            onClick={() => {
+              setIsResetDialogOpen(true);
+            }}
+          >
             {t("builder.actions.reset")}
           </Button>
         </div>
       </div>
+
+      {builder.loadStatus === "invalid" ? (
+        <div className="flex flex-col gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-elevated)] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-[var(--warning)]">
+              {t("builder.error.invalidTitle")}
+            </p>
+            <p className="mt-1 text-xs text-[var(--text-secondary)]">
+              {t("builder.error.invalidDescription")}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" size="sm" variant="secondary" onClick={builder.retryLoad}>
+              {t("builder.actions.retryLoad")}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => {
+                setIsResetDialogOpen(true);
+              }}
+            >
+              {t("builder.actions.reset")}
+            </Button>
+          </div>
+        </div>
+      ) : null}
 
       <div className="grid gap-4 xl:grid-cols-[240px_minmax(0,1fr)_320px]">
         <FieldPalette onAddField={builder.addField} />
@@ -110,6 +169,21 @@ export function BuilderWorkspace() {
       </div>
 
       <BuilderPreviewPanel schema={builder.schema} />
+
+      <ConfirmDialog
+        open={isResetDialogOpen}
+        title={t("builder.resetDialog.title")}
+        description={t("builder.resetDialog.description")}
+        confirmLabel={t("builder.resetDialog.confirm")}
+        cancelLabel={t("common.actions.cancel")}
+        onCancel={() => {
+          setIsResetDialogOpen(false);
+        }}
+        onConfirm={() => {
+          builder.resetForm();
+          setIsResetDialogOpen(false);
+        }}
+      />
     </div>
   );
 }
