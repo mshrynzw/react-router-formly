@@ -13,6 +13,7 @@ const navItems = [
   { to: "/builder", labelKey: "navigation.builder", end: false },
   { to: "/preview", labelKey: "navigation.preview", end: false },
   { to: "/code", labelKey: "navigation.code", end: false },
+  { to: "/templates", labelKey: "navigation.templates", end: false },
   { to: "/settings", labelKey: "navigation.settings", end: false },
 ] as const;
 

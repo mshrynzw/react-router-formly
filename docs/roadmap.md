@@ -936,7 +936,7 @@ Phase 7 is complete when:
 
 Make common forms faster to create.
 
-Templates are intentionally outside the MVP.
+Templates are available via `/templates` as a static gallery that replaces the single active form (same overwrite model as Import).
 
 ## Potential Templates
 
@@ -968,24 +968,25 @@ Templates may include:
 
 ## Tasks
 
-- [ ] Define template format
-- [ ] Define template metadata
-- [ ] Create initial templates
-- [ ] Implement template gallery
-- [ ] Implement template preview
-- [ ] Implement create-from-template
-- [ ] Add template tests
+- [x] Define template format
+- [x] Define template metadata
+- [x] Create initial templates
+- [x] Implement template gallery
+- [x] Implement template preview
+- [x] Implement create-from-template
+- [x] Add template tests
 
 ## Completion Criteria
 
 Phase 8 is complete when:
 
-- Users can browse templates.
-- Users can preview templates.
-- Users can create a Form from a template.
-- Templates are represented using the canonical Form Schema.
-- Templates can be modified normally after creation.
-- Template submission configuration works correctly.
+- [x] Users can browse templates.
+- [x] Users can preview templates.
+- [x] Users can create a Form from a template.
+- [x] Templates are represented using the canonical Form Schema.
+- [x] Templates can be modified normally after creation.
+- [x] Template submission configuration works correctly.
+
 
 ---
 

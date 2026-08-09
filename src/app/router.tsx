@@ -7,6 +7,7 @@ import HomeRoute from "@/routes/home";
 import NotFoundRoute from "@/routes/not-found";
 import PreviewRoute from "@/routes/preview";
 import SettingsRoute from "@/routes/settings";
+import TemplatesRoute from "@/routes/templates";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
       {
         path: "code",
         element: <CodeRoute />,
+      },
+      {
+        path: "templates",
+        element: <TemplatesRoute />,
       },
       {
         path: "settings",

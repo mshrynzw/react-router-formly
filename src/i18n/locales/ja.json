@@ -8,6 +8,7 @@
     "builder": "ビルダー",
     "preview": "プレビュー",
     "code": "コード",
+    "templates": "テンプレート",
     "settings": "設定",
     "primary": "メインナビゲーション",
     "skipToContent": "メインコンテンツへスキップ",
@@ -31,7 +32,64 @@
   "home": {
     "title": "Formly",
     "description": "ブラウザだけでフォームを設計し、HTML / CSS / JavaScript を書き出せます。",
-    "cta": "ビルダーを開く"
+    "cta": "ビルダーを開く",
+    "ctaTemplates": "テンプレートから始める"
+  },
+  "templates": {
+    "title": "テンプレート",
+    "description": "よく使うフォームの雛形を選んで、すぐに編集を始められます。",
+    "categoriesLabel": "テンプレートカテゴリ",
+    "categories": {
+      "all": "すべて",
+      "general": "一般",
+      "business": "ビジネス",
+      "feedback": "フィードバック"
+    },
+    "fieldCount": "フィールド {{count}} 件",
+    "catalogCount": "テンプレート {{count}} 件",
+    "actions": {
+      "preview": "プレビュー",
+      "use": "このテンプレートを使う"
+    },
+    "confirm": {
+      "title": "テンプレートを適用しますか？",
+      "description": "現在のフォームは選択したテンプレートで置き換えられます。この操作は元に戻せません。",
+      "confirm": "適用する"
+    },
+    "feedback": {
+      "applyFailed": "テンプレートの適用に失敗しました。",
+      "saveFailed": "フォームの保存に失敗しました。"
+    },
+    "empty": {
+      "title": "テンプレートがありません",
+      "description": "このカテゴリにはテンプレートがありません。"
+    },
+    "items": {
+      "blank": {
+        "name": "空白フォーム",
+        "description": "フィールドのない空のフォームから始めます。"
+      },
+      "contact": {
+        "name": "お問い合わせ",
+        "description": "名前・メール・メッセージの定番フォームです。"
+      },
+      "inquiry": {
+        "name": "お問い合わせ（詳細）",
+        "description": "トピック選択付きの問い合わせフォームです。"
+      },
+      "feedback": {
+        "name": "フィードバック",
+        "description": "評価とコメントを集めるフォームです。"
+      },
+      "newsletter": {
+        "name": "ニュースレター",
+        "description": "メール登録と同意チェックのシンプルなフォームです。"
+      },
+      "reservation": {
+        "name": "予約リクエスト",
+        "description": "人数とメモを受け付ける予約フォームです。"
+      }
+    }
   },
   "builder": {
     "title": "フォームビルダー",

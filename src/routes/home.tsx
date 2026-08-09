@@ -12,12 +12,20 @@ export default function HomeRoute() {
         <p className="max-w-2xl text-lg text-[var(--text-secondary)]">{t("app.tagline")}</p>
         <p className="max-w-2xl text-[var(--text-secondary)]">{t("home.description")}</p>
       </div>
-      <Link
-        to="/builder"
-        className="inline-flex h-11 items-center justify-center rounded-md bg-[var(--accent)] px-6 text-sm font-medium text-[var(--text-on-accent)] transition-colors hover:bg-[var(--accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
-      >
-        {t("home.cta")}
-      </Link>
+      <div className="flex flex-wrap gap-3">
+        <Link
+          to="/builder"
+          className="inline-flex h-11 items-center justify-center rounded-md bg-[var(--accent)] px-6 text-sm font-medium text-[var(--text-on-accent)] transition-colors hover:bg-[var(--accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
+        >
+          {t("home.cta")}
+        </Link>
+        <Link
+          to="/templates"
+          className="inline-flex h-11 items-center justify-center rounded-md border border-[var(--border-default)] bg-[var(--bg-elevated)] px-6 text-sm font-medium text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-surface-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)]"
+        >
+          {t("home.ctaTemplates")}
+        </Link>
+      </div>
     </section>
   );
 }

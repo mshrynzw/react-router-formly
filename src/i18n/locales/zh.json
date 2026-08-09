@@ -8,6 +8,7 @@
     "builder": "构建器",
     "preview": "预览",
     "code": "代码",
+    "templates": "模板",
     "settings": "设置",
     "primary": "主导航",
     "skipToContent": "跳到主要内容",
@@ -31,7 +32,64 @@
   "home": {
     "title": "Formly",
     "description": "在浏览器中设计表单，并导出 HTML / CSS / JavaScript。",
-    "cta": "打开构建器"
+    "cta": "打开构建器",
+    "ctaTemplates": "从模板开始"
+  },
+  "templates": {
+    "title": "模板",
+    "description": "浏览常用表单模板，快速开始编辑。",
+    "categoriesLabel": "模板分类",
+    "categories": {
+      "all": "全部",
+      "general": "通用",
+      "business": "商务",
+      "feedback": "反馈"
+    },
+    "fieldCount": "{{count}} 个字段",
+    "catalogCount": "{{count}} 个模板",
+    "actions": {
+      "preview": "预览",
+      "use": "使用此模板"
+    },
+    "confirm": {
+      "title": "要应用模板吗？",
+      "description": "当前表单将被所选模板替换。此操作无法撤销。",
+      "confirm": "应用"
+    },
+    "feedback": {
+      "applyFailed": "应用模板失败。",
+      "saveFailed": "保存表单失败。"
+    },
+    "empty": {
+      "title": "没有模板",
+      "description": "此分类下没有模板。"
+    },
+    "items": {
+      "blank": {
+        "name": "空白表单",
+        "description": "从不含字段的空白表单开始。"
+      },
+      "contact": {
+        "name": "联系表单",
+        "description": "包含姓名、邮箱和留言的经典表单。"
+      },
+      "inquiry": {
+        "name": "咨询表单",
+        "description": "带主题选择的咨询表单。"
+      },
+      "feedback": {
+        "name": "反馈表单",
+        "description": "收集评分和文字反馈。"
+      },
+      "newsletter": {
+        "name": "电子报订阅",
+        "description": "简单的邮箱注册与同意勾选。"
+      },
+      "reservation": {
+        "name": "预约请求",
+        "description": "收集人数与备注的预约表单。"
+      }
+    }
   },
   "builder": {
     "title": "表单构建器",

@@ -8,6 +8,7 @@
     "builder": "Builder",
     "preview": "Preview",
     "code": "Code",
+    "templates": "Templates",
     "settings": "Settings",
     "primary": "Primary navigation",
     "skipToContent": "Skip to main content",
@@ -31,7 +32,64 @@
   "home": {
     "title": "Formly",
     "description": "Design forms in the browser and export HTML, CSS, and JavaScript.",
-    "cta": "Open Builder"
+    "cta": "Open Builder",
+    "ctaTemplates": "Start from a template"
+  },
+  "templates": {
+    "title": "Templates",
+    "description": "Browse common form starters and begin editing immediately.",
+    "categoriesLabel": "Template categories",
+    "categories": {
+      "all": "All",
+      "general": "General",
+      "business": "Business",
+      "feedback": "Feedback"
+    },
+    "fieldCount": "{{count}} fields",
+    "catalogCount": "{{count}} templates",
+    "actions": {
+      "preview": "Preview",
+      "use": "Use template"
+    },
+    "confirm": {
+      "title": "Apply template?",
+      "description": "The current form will be replaced by the selected template. This cannot be undone.",
+      "confirm": "Apply"
+    },
+    "feedback": {
+      "applyFailed": "Failed to apply the template.",
+      "saveFailed": "Failed to save the form."
+    },
+    "empty": {
+      "title": "No templates",
+      "description": "There are no templates in this category."
+    },
+    "items": {
+      "blank": {
+        "name": "Blank form",
+        "description": "Start from an empty form with no fields."
+      },
+      "contact": {
+        "name": "Contact",
+        "description": "A classic name, email, and message form."
+      },
+      "inquiry": {
+        "name": "Inquiry",
+        "description": "An inquiry form with a topic selector."
+      },
+      "feedback": {
+        "name": "Feedback",
+        "description": "Collect a rating and written comments."
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "A simple email signup with consent."
+      },
+      "reservation": {
+        "name": "Reservation",
+        "description": "Request a reservation with guest count and notes."
+      }
+    }
   },
   "builder": {
     "title": "Form Builder",

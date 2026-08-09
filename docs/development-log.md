@@ -6,6 +6,40 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-09 — Phase 8 Form Templates
+
+### Summary
+
+Phase 8（Form Templates）を実装した。`/templates` で静的テンプレートギャラリーを提供し、適用時に単一の active Form Schema を置き換える。
+
+### Implemented
+
+- テンプレート定義（blank / contact / inquiry / feedback / newsletter / reservation）
+- `createFormFromTemplate`（fresh IDs + Zod validate + normalize）
+- Template gallery（カテゴリフィルタ、プレビュー、上書き確認）
+- 適用後 LocalStorage 保存 → `/builder` へ遷移
+- ナビ・ホーム CTA・i18n（ja/en/zh/ko）
+- Unit / Integration / E2E（navigation）tests
+- Canonical routes に `/templates` を追加
+
+### Notes
+
+- テンプレートはバンドル内の静的データ。ユーザー保存のテンプレートは対象外
+- 適用は Import と同様に現在のフォームを置換する（確認ダイアログ必須）
+- Schema に未対応の field type / presentation は含めない
+- 表示名は適用時の UI locale で `name` / `description` に設定する
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+---
+
 ## 2026-08-09 — Phase 7 Form Schema Import / Export
 
 ### Summary

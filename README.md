@@ -59,5 +59,7 @@ pnpm deploy       # Cloudflare Workers へデプロイ
 - Phase 5 — Local Persistence 完了
 - Phase 6 — Quality, Accessibility, Responsive Design, and i18n 完了
 - Phase 7 — Form Schema Import / Export 完了
+- Phase 8 — Form Templates 完了
 
-次は Phase 8 — Form Templates。
+次は Phase 9 — Portfolio and Production Quality。
+

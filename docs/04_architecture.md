@@ -391,29 +391,31 @@ Application Settings
 
 ---
 
-# 8.1 MVP Route Model vs Future Multi-Form Routes
+# 8.1 Current Route Model vs Future Multi-Form Routes
 
-現在の Canonical Route Structure（MVP）は単一 Form を前提とする。
+現在の Canonical Route Structure は単一 Form を前提とする。
 
 ```text
-MVP (Canonical)
+Current (Canonical)
 /
 ├── /builder
 ├── /preview
 ├── /code
+├── /templates
 └── /settings
 ```
 
-MVP では:
+現在のモデルでは:
 
 - Form は LocalStorage 上の単一作業対象として扱う
 - `/forms` や `/forms/:formId` は実装しない
 - Builder / Preview / Code は独立 Route として共有 Form Schema を参照する
+- `/templates` は静的テンプレートギャラリー（Phase 8）。適用時は active Form Schema を置き換える
 
 将来、複数 Form のリソース管理が必要になった場合は、次の Route Architecture へ拡張する可能性がある。
 
 ```text
-Future (Not MVP)
+Future (Not Current)
 /
 ├── /forms
 ├── /forms/new
@@ -427,7 +429,7 @@ Future (Not MVP)
 
 重要な制約:
 
-- Future Route を MVP 実装時に先行導入しない
+- Future の multi-form Route（`/forms/:formId/...`）を先行導入しない
 - Route を拡張する場合は、本ドキュメント・`docs/screen-list.md`・Cursor Rules を同時に更新する
 - Form Schema を Single Source of Truth とする方針は、Route 拡張後も維持する
 

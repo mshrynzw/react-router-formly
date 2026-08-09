@@ -79,6 +79,7 @@ BuilderからPreviewおよびCodeへ直接移動することもできる。
 | SCR-004 | Generated Code       | `/code`       | No   | P0       | Planned |
 | SCR-005 | Application Settings | `/settings`   | No   | P1       | Planned |
 | SCR-006 | Responsive Layout    | Responsive UI | No   | P0       | Planned |
+| SCR-007 | Form Templates       | `/templates`  | No   | P1       | Implemented |
 
 ---
 
@@ -1136,30 +1137,44 @@ Future (Not MVP)
 
 ---
 
-# 21. Templates
+# 21. Templates (SCR-007)
 
-Templatesは現在のMVPには含めない。
-
-将来的にTemplate機能を追加する場合は、
+Route:
 
 ```text
 /templates
 ```
 
-を独立Screenとして追加する可能性がある。
+Purpose:
 
-候補:
+- よく使う Form の雛形を閲覧する
+- テンプレートをプレビューする
+- テンプレートから単一の active Form Schema を作成する
+
+Main Features:
+
+- Template gallery（カテゴリフィルタ）
+- Template preview（Form Schema の読み取りプレビュー）
+- Create from template（確認後に LocalStorage の active form を置換し `/builder` へ遷移）
+
+制約:
+
+- テンプレート自体は永続化しない（静的バンドル）
+- multi-form `/forms` は導入しない
+- 適用後の編集は通常の Builder と同じ
+
+初期テンプレート:
 
 ```text
-Contact Form
-Inquiry Form
-Reservation Form
-Application Form
-Newsletter Form
-Feedback Form
+Blank
+Contact
+Inquiry
+Feedback
+Newsletter
+Reservation
 ```
 
-現在のScreen IDには含めない。
+Status: Implemented（Phase 8）
 
 ---
 
@@ -1174,6 +1189,7 @@ Public
 ├── /builder
 ├── /preview
 ├── /code
+├── /templates
 └── /settings
 ```
 
@@ -1262,6 +1278,7 @@ SCR-006 Responsive Layout
 
 ```text
 SCR-005 Application Settings
+SCR-007 Form Templates
 ```
 
 ---
@@ -1288,6 +1305,9 @@ Application Settings
 
 SCR-006
 Responsive Layout
+
+SCR-007
+Form Templates
 ```
 
 中心となるScreenは:

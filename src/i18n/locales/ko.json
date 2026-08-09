@@ -8,6 +8,7 @@
     "builder": "빌더",
     "preview": "미리보기",
     "code": "코드",
+    "templates": "템플릿",
     "settings": "설정",
     "primary": "주요 탐색",
     "skipToContent": "본문으로 건너뛰기",
@@ -31,7 +32,64 @@
   "home": {
     "title": "Formly",
     "description": "브라우저에서 폼을 설계하고 HTML / CSS / JavaScript를 내보낼 수 있습니다.",
-    "cta": "빌더 열기"
+    "cta": "빌더 열기",
+    "ctaTemplates": "템플릿으로 시작"
+  },
+  "templates": {
+    "title": "템플릿",
+    "description": "자주 쓰는 폼 템플릿을 고르고 바로 편집을 시작하세요.",
+    "categoriesLabel": "템플릿 카테고리",
+    "categories": {
+      "all": "전체",
+      "general": "일반",
+      "business": "비즈니스",
+      "feedback": "피드백"
+    },
+    "fieldCount": "필드 {{count}}개",
+    "catalogCount": "템플릿 {{count}}개",
+    "actions": {
+      "preview": "미리보기",
+      "use": "이 템플릿 사용"
+    },
+    "confirm": {
+      "title": "템플릿을 적용할까요?",
+      "description": "현재 폼이 선택한 템플릿으로 바뀝니다. 이 작업은 되돌릴 수 없습니다.",
+      "confirm": "적용하기"
+    },
+    "feedback": {
+      "applyFailed": "템플릿 적용에 실패했습니다.",
+      "saveFailed": "폼 저장에 실패했습니다."
+    },
+    "empty": {
+      "title": "템플릿이 없습니다",
+      "description": "이 카테고리에는 템플릿이 없습니다."
+    },
+    "items": {
+      "blank": {
+        "name": "빈 폼",
+        "description": "필드가 없는 빈 폼으로 시작합니다."
+      },
+      "contact": {
+        "name": "문의",
+        "description": "이름·이메일·메시지 기본 폼입니다."
+      },
+      "inquiry": {
+        "name": "상세 문의",
+        "description": "주제 선택이 있는 문의 폼입니다."
+      },
+      "feedback": {
+        "name": "피드백",
+        "description": "평가와 코멘트를 받는 폼입니다."
+      },
+      "newsletter": {
+        "name": "뉴스레터",
+        "description": "이메일 등록과 동의 체크가 있는 간단한 폼입니다."
+      },
+      "reservation": {
+        "name": "예약 요청",
+        "description": "인원과 메모를 받는 예약 폼입니다."
+      }
+    }
   },
   "builder": {
     "title": "폼 빌더",
