@@ -22,6 +22,7 @@ import {
   downloadTextFile,
   mimeTypeForLanguage,
 } from "@/features/code/utils/download-text-file";
+import { useRovingTabs } from "@/hooks/use-roving-tabs";
 import { cn } from "@/lib/utils";
 
 const languages: CodeLanguage[] = ["html", "css", "javascript"];
@@ -33,6 +34,12 @@ export function CodeWorkspace() {
   const [loadResult, setLoadResult] = useState<LoadFormResult>(() => loadFormFromStorage());
   const [language, setLanguage] = useState<CodeLanguage>("html");
   const [feedback, setFeedback] = useState<FeedbackStatus>("idle");
+  const languageTabs = useRovingTabs({
+    tabs: languages,
+    value: language,
+    onChange: setLanguage,
+    idPrefix: "code-language",
+  });
 
   useEffect(() => {
     const reload = () => {
@@ -144,14 +151,13 @@ export function CodeWorkspace() {
             <button
               key={item}
               type="button"
-              role="tab"
-              aria-selected={language === item}
               className={cn(
-                "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                "min-h-11 rounded-md px-3 py-1.5 text-xs font-medium transition-colors sm:min-h-8",
                 language === item
                   ? "bg-[var(--accent-subtle)] text-[var(--text-primary)]"
                   : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]",
               )}
+              {...languageTabs.getTabProps(item)}
               onClick={() => {
                 setLanguage(item);
               }}
@@ -186,7 +192,9 @@ export function CodeWorkspace() {
         </p>
       ) : null}
 
-      <CodeViewer language={language} code={activeCode} />
+      <div {...languageTabs.getPanelProps(language)}>
+        <CodeViewer language={language} code={activeCode} />
+      </div>
     </div>
   );
 }

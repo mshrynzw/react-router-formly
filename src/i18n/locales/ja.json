@@ -9,14 +9,19 @@
     "preview": "プレビュー",
     "code": "コード",
     "settings": "設定",
-    "primary": "メインナビゲーション"
+    "primary": "メインナビゲーション",
+    "skipToContent": "メインコンテンツへスキップ",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "menuTitle": "メニュー"
   },
   "common": {
     "actions": {
       "getStarted": "ビルダーを開く",
       "backHome": "ホームへ戻る",
       "cancel": "キャンセル",
-      "confirm": "確認"
+      "confirm": "確認",
+      "close": "閉じる"
     },
     "status": {
       "placeholder": "準備中",
@@ -43,7 +48,7 @@
     },
     "empty": {
       "title": "フォームを作り始めましょう",
-      "description": "左のパレットからフィールドを追加してください。"
+      "description": "フィールドパレットからフィールドを追加してください。"
     },
     "settings": {
       "title": "設定",
@@ -91,7 +96,9 @@
       "removeOption": "選択肢を削除",
       "reset": "新規フォーム",
       "retryLoad": "再読み込み",
-      "retrySave": "再保存"
+      "retrySave": "再保存",
+      "openPalette": "フィールド",
+      "openSettings": "設定"
     },
     "status": {
       "saved": "保存済み",
@@ -241,6 +248,16 @@
     "description": "言語やテーマなどのアプリケーション設定画面です。",
     "language": "言語",
     "languageHelp": "表示言語を切り替えます。ユーザーが作成したフォーム内容は翻訳されません。",
+    "theme": {
+      "title": "テーマ",
+      "help": "画面の配色を切り替えます。",
+      "label": "テーマを選択",
+      "options": {
+        "dark": "ダーク",
+        "light": "ライト",
+        "system": "システム"
+      }
+    },
     "storage": {
       "title": "ローカルデータ",
       "description": "このブラウザの LocalStorage に保存されたフォームデータを管理します。言語設定は削除されません。",

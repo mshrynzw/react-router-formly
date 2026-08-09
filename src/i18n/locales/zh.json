@@ -9,14 +9,19 @@
     "preview": "预览",
     "code": "代码",
     "settings": "设置",
-    "primary": "主导航"
+    "primary": "主导航",
+    "skipToContent": "跳到主要内容",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "menuTitle": "菜单"
   },
   "common": {
     "actions": {
       "getStarted": "打开构建器",
       "backHome": "返回首页",
       "cancel": "取消",
-      "confirm": "确认"
+      "confirm": "确认",
+      "close": "关闭"
     },
     "status": {
       "placeholder": "准备中",
@@ -43,7 +48,7 @@
     },
     "empty": {
       "title": "开始构建表单",
-      "description": "请从左侧字段面板添加第一个字段。"
+      "description": "请从字段面板添加第一个字段。"
     },
     "settings": {
       "title": "设置",
@@ -91,7 +96,9 @@
       "removeOption": "删除选项",
       "reset": "新建表单",
       "retryLoad": "重新加载",
-      "retrySave": "重新保存"
+      "retrySave": "重新保存",
+      "openPalette": "字段",
+      "openSettings": "设置"
     },
     "status": {
       "saved": "已保存",
@@ -241,6 +248,16 @@
     "description": "语言和主题等应用程序设置。",
     "language": "语言",
     "languageHelp": "切换界面语言。用户创建的表单内容不会被翻译。",
+    "theme": {
+      "title": "主题",
+      "help": "切换界面配色。",
+      "label": "选择主题",
+      "options": {
+        "dark": "深色",
+        "light": "浅色",
+        "system": "系统"
+      }
+    },
     "storage": {
       "title": "本地数据",
       "description": "管理保存在此浏览器 LocalStorage 中的表单数据。不会删除语言设置。",

@@ -6,10 +6,18 @@ import { Button } from "@/components/ui/button";
 import { clearFormFromStorage, hasStoredForm } from "@/domain/form-schema";
 import { setAppLocale } from "@/i18n";
 import { resolveLocale, SUPPORTED_LOCALES } from "@/i18n/locales";
+import {
+  readStoredTheme,
+  setAppTheme,
+  type Theme,
+} from "@/lib/theme";
+
+const THEMES: Theme[] = ["dark", "light", "system"];
 
 export default function SettingsRoute() {
   const { t, i18n } = useTranslation();
   const currentLocale = resolveLocale(i18n.resolvedLanguage);
+  const [theme, setTheme] = useState<Theme>(() => readStoredTheme());
   const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
   const [hasForm, setHasForm] = useState(() => hasStoredForm());
   const [clearFeedback, setClearFeedback] = useState<"idle" | "cleared" | "failed">("idle");
@@ -19,6 +27,11 @@ export default function SettingsRoute() {
     setIsClearDialogOpen(false);
     setHasForm(hasStoredForm());
     setClearFeedback(result.ok ? "cleared" : "failed");
+  };
+
+  const handleThemeChange = (next: Theme) => {
+    setTheme(next);
+    setAppTheme(next);
   };
 
   return (
@@ -42,11 +55,37 @@ export default function SettingsRoute() {
               type="button"
               variant={currentLocale === locale ? "default" : "secondary"}
               size="sm"
+              aria-pressed={currentLocale === locale}
               onClick={() => {
                 setAppLocale(locale);
               }}
             >
               {t(`language.${locale}`)}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3 border-t border-[var(--border-subtle)] pt-6">
+        <h2 className="text-sm font-medium text-[var(--text-primary)]">{t("settings.theme.title")}</h2>
+        <p className="text-sm text-[var(--text-muted)]">{t("settings.theme.help")}</p>
+        <div
+          role="group"
+          aria-label={t("settings.theme.label")}
+          className="flex flex-wrap gap-2"
+        >
+          {THEMES.map((item) => (
+            <Button
+              key={item}
+              type="button"
+              variant={theme === item ? "default" : "secondary"}
+              size="sm"
+              aria-pressed={theme === item}
+              onClick={() => {
+                handleThemeChange(item);
+              }}
+            >
+              {t(`settings.theme.options.${item}`)}
             </Button>
           ))}
         </div>

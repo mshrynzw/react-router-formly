@@ -15,9 +15,9 @@ const buttonVariants = cva(
         ghost: "text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-11 rounded-md px-6",
+        default: "min-h-11 h-11 px-4 py-2 sm:min-h-10 sm:h-10",
+        sm: "min-h-11 h-11 rounded-md px-3 text-xs sm:min-h-8 sm:h-8",
+        lg: "min-h-12 h-12 rounded-md px-6 sm:min-h-11 sm:h-11",
       },
     },
     defaultVariants: {

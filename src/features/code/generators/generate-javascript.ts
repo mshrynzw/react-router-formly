@@ -123,21 +123,33 @@ export function generateFormJavaScript(schema: FormSchema): string {
   function setFieldError(form, field, code) {
     var root = getFieldRoot(form, field.name);
     var error = getErrorNode(form, field.name);
+    var controls = namedControls(form, field.name);
+    var invalid = !!code;
 
     if (root) {
-      if (code) {
+      if (invalid) {
         root.classList.add("is-invalid");
       } else {
         root.classList.remove("is-invalid");
       }
     }
 
+    controls.forEach(function (control) {
+      if (invalid) {
+        control.setAttribute("aria-invalid", "true");
+      } else {
+        control.removeAttribute("aria-invalid");
+      }
+    });
+
     if (error) {
-      if (code) {
+      if (invalid) {
         error.hidden = false;
+        error.setAttribute("role", "alert");
         error.textContent = messages[code] || messages.required;
       } else {
         error.hidden = true;
+        error.removeAttribute("role");
         error.textContent = "";
       }
     }
@@ -255,6 +267,7 @@ export function generateFormJavaScript(schema: FormSchema): string {
     );
     if (node) {
       node.hidden = false;
+      node.setAttribute("role", type === "success" ? "status" : "alert");
       node.textContent = message;
     }
   }

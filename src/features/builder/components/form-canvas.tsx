@@ -124,11 +124,12 @@ export function FormCanvas({
                       variant="ghost"
                       disabled={!canMoveUp}
                       aria-label={t("builder.actions.moveUp")}
+                      className="min-w-11 sm:min-w-8"
                       onClick={() => {
                         onMoveField(field.id, "up");
                       }}
                     >
-                      <ArrowUp className="size-3.5" />
+                      <ArrowUp className="size-3.5" aria-hidden />
                     </Button>
                     <Button
                       type="button"
@@ -136,11 +137,12 @@ export function FormCanvas({
                       variant="ghost"
                       disabled={!canMoveDown}
                       aria-label={t("builder.actions.moveDown")}
+                      className="min-w-11 sm:min-w-8"
                       onClick={() => {
                         onMoveField(field.id, "down");
                       }}
                     >
-                      <ArrowDown className="size-3.5" />
+                      <ArrowDown className="size-3.5" aria-hidden />
                     </Button>
                     {field.type !== "submit" ? (
                       <>
@@ -149,22 +151,24 @@ export function FormCanvas({
                           size="sm"
                           variant="ghost"
                           aria-label={t("builder.actions.duplicate")}
+                          className="min-w-11 sm:min-w-8"
                           onClick={() => {
                             onDuplicateField(field.id);
                           }}
                         >
-                          <Copy className="size-3.5" />
+                          <Copy className="size-3.5" aria-hidden />
                         </Button>
                         <Button
                           type="button"
                           size="sm"
                           variant="ghost"
                           aria-label={t("builder.actions.delete")}
+                          className="min-w-11 sm:min-w-8"
                           onClick={() => {
                             onRemoveField(field.id);
                           }}
                         >
-                          <Trash2 className="size-3.5" />
+                          <Trash2 className="size-3.5" aria-hidden />
                         </Button>
                       </>
                     ) : null}

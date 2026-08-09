@@ -9,14 +9,19 @@
     "preview": "Preview",
     "code": "Code",
     "settings": "Settings",
-    "primary": "Primary navigation"
+    "primary": "Primary navigation",
+    "skipToContent": "Skip to main content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menuTitle": "Menu"
   },
   "common": {
     "actions": {
       "getStarted": "Open Builder",
       "backHome": "Back to Home",
       "cancel": "Cancel",
-      "confirm": "Confirm"
+      "confirm": "Confirm",
+      "close": "Close"
     },
     "status": {
       "placeholder": "Coming soon",
@@ -91,7 +96,9 @@
       "removeOption": "Remove option",
       "reset": "New form",
       "retryLoad": "Try again",
-      "retrySave": "Retry save"
+      "retrySave": "Retry save",
+      "openPalette": "Fields",
+      "openSettings": "Settings"
     },
     "status": {
       "saved": "Saved",
@@ -241,6 +248,16 @@
     "description": "Application settings such as language and theme.",
     "language": "Language",
     "languageHelp": "Switch the UI language. User-created form content is not translated.",
+    "theme": {
+      "title": "Theme",
+      "help": "Switch the color scheme.",
+      "label": "Select theme",
+      "options": {
+        "dark": "Dark",
+        "light": "Light",
+        "system": "System"
+      }
+    },
     "storage": {
       "title": "Local data",
       "description": "Manage the form data saved in this browser’s LocalStorage. Language settings are not removed.",

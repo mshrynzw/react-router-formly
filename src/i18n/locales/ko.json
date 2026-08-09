@@ -9,14 +9,19 @@
     "preview": "미리보기",
     "code": "코드",
     "settings": "설정",
-    "primary": "주요 탐색"
+    "primary": "주요 탐색",
+    "skipToContent": "본문으로 건너뛰기",
+    "openMenu": "메뉴 열기",
+    "closeMenu": "메뉴 닫기",
+    "menuTitle": "메뉴"
   },
   "common": {
     "actions": {
       "getStarted": "빌더 열기",
       "backHome": "홈으로 돌아가기",
       "cancel": "취소",
-      "confirm": "확인"
+      "confirm": "확인",
+      "close": "닫기"
     },
     "status": {
       "placeholder": "준비 중",
@@ -43,7 +48,7 @@
     },
     "empty": {
       "title": "폼 만들기를 시작하세요",
-      "description": "왼쪽 팔레트에서 필드를 추가하세요."
+      "description": "필드 팔레트에서 필드를 추가하세요."
     },
     "settings": {
       "title": "설정",
@@ -91,7 +96,9 @@
       "removeOption": "옵션 삭제",
       "reset": "새 폼",
       "retryLoad": "다시 로드",
-      "retrySave": "다시 저장"
+      "retrySave": "다시 저장",
+      "openPalette": "필드",
+      "openSettings": "설정"
     },
     "status": {
       "saved": "저장됨",
@@ -241,6 +248,16 @@
     "description": "언어와 테마 등 애플리케이션 설정 화면입니다.",
     "language": "언어",
     "languageHelp": "UI 언어를 전환합니다. 사용자가 만든 폼 내용은 번역되지 않습니다.",
+    "theme": {
+      "title": "테마",
+      "help": "화면 배색을 전환합니다.",
+      "label": "테마 선택",
+      "options": {
+        "dark": "다크",
+        "light": "라이트",
+        "system": "시스템"
+      }
+    },
     "storage": {
       "title": "로컬 데이터",
       "description": "이 브라우저 LocalStorage에 저장된 폼 데이터를 관리합니다. 언어 설정은 삭제되지 않습니다.",

@@ -6,6 +6,39 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-09 — Phase 6 Quality / A11y / Responsive / i18n
+
+### Summary
+
+Phase 6（品質・アクセシビリティ・レスポンシブ・i18n）を実装した。
+
+### Implemented
+
+- Skip link とモバイル Navigation Sheet
+- Builder のデスクトップ 3 カラム / モバイル Sheet（Palette・Settings）切替（`useMediaQuery`）
+- ConfirmDialog の focus trap / scroll lock / focus restore
+- Settings の Theme 切替（dark / light / system）
+- タッチ向けボタン最小サイズ、roving tabindex なタブ操作
+- 生成 JS の `aria-invalid` / `role="alert|status"` 強化
+- 翻訳キー同期テストと a11y / theme integration tests
+
+### Notes
+
+- Toast ライブラリは導入せず、既存の `role="status"` / `role="alert"` インラインフィードバックで統一
+- 生成フォームの検証メッセージはスタンドアロン出力のため英語フォールバックを維持（アプリ UI の i18n とは分離）
+- レスポンシブ切替は CSS-only の `hidden` に頼らず JS media query でマウントを分け、アクセシビリティツリーの重複を避ける
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+---
+
 ## 2026-08-09 — Phase 5 Local Persistence
 
 ### Summary

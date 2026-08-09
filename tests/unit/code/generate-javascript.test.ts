@@ -18,6 +18,8 @@ describe("generateFormJavaScript", () => {
     expect(js).toContain('"minLength":2');
     expect(js).toContain("validateForm");
     expect(js).toContain("addEventListener(\"submit\"");
+    expect(js).toContain('setAttribute("aria-invalid", "true")');
+    expect(js).toContain('setAttribute("role", "alert")');
   });
 
   it("marks whether an action URL is configured", () => {

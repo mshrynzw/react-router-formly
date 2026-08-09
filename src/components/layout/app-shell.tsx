@@ -11,20 +11,35 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
+      <a href="#main-content" className="skip-link">
+        {t("navigation.skipToContent")}
+      </a>
+
       <header className="border-b border-[var(--border-subtle)] bg-[var(--bg-sidebar)]">
         <div
           className={cn(
-            "mx-auto flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between",
+            "mx-auto flex items-center justify-between gap-4 px-4 py-4",
             isBuilder ? "max-w-none" : "max-w-6xl",
           )}
         >
-          <Link to="/" className="text-lg font-semibold tracking-tight text-[var(--text-primary)]">
+          <Link
+            to="/"
+            className="text-lg font-semibold tracking-tight text-[var(--text-primary)]"
+          >
             {t("app.name")}
           </Link>
           <AppNav />
         </div>
       </header>
-      <main className={cn("mx-auto px-4 py-8", isBuilder ? "max-w-none" : "max-w-6xl")}>
+
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className={cn(
+          "mx-auto px-4 py-6 outline-none sm:py-8",
+          isBuilder ? "max-w-none" : "max-w-6xl",
+        )}
+      >
         <Outlet />
       </main>
     </div>
