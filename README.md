@@ -2,7 +2,7 @@
 
 Build forms visually. Export clean code.
 
-Formly はブラウザ上でフォームを視覚的に設計し、HTML / CSS / JavaScript を書き出せる Form Builder です。  
+Formly はブラウザ上でフォームを視覚的に設計し、HTML / CSS / JavaScript を書き出せる Form Builder です。
 ログイン不要。Form Schema は LocalStorage に保存されます。
 
 ## Demo
@@ -80,7 +80,7 @@ pnpm lint         # ESLint
 pnpm typecheck    # TypeScript
 pnpm test         # Vitest (unit / integration)
 pnpm test:e2e     # Playwright
-pnpm deploy       # Cloudflare Workers へデプロイ
+pnpm run deploy   # Cloudflare Workers へデプロイ
 ```
 
 ## Documentation
