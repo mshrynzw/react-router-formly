@@ -477,7 +477,7 @@ Form Schemaは以下を表現する。
 - Validation
 - Presentation Configuration
 - Form Settings
-- Appearance tokens (colors, radius, typography, spacing, shadow)
+- Appearance tokens (colors with hex + opacity, radius, typography, spacing, shadow)
 - Generated CSS flavor (`css` | `tailwind`)
 
 詳細なSchemaは `03_detail_design.md` および実装時のType Definitionで定義する。
@@ -680,7 +680,7 @@ CSS GeneratorはFormのVisual Styleを生成する。
 - Focus State
 - Error State
 - Responsive Behavior
-- User-configured colors, radius, fonts, spacing, and shadow
+- User-configured colors (`#RRGGBB` + opacity 0–100; border default 10%, others 100%), radius, fonts, spacing, and shadow
 - Optional Liquid Glass preset (default `off`)
 - Optional page backdrop image (allowlisted AVIF, default visible)
 

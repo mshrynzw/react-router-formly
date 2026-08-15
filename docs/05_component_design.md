@@ -419,7 +419,7 @@ Layout
 Appearance / Design は Form 全体の設定として別タブ（Design）で編集する。
 
 ```text
-Colors
+Colors (hex + opacity; border default 10%, others 100%)
 Radius
 Typography
 Spacing

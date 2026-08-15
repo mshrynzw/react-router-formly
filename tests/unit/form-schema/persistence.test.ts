@@ -50,7 +50,8 @@ describe("form persistence", () => {
     const loaded = loadFormFromStorage();
     expect(loaded.status).toBe("ok");
     expect(loaded.schema.appearance.cssFlavor).toBe("css");
-    expect(loaded.schema.appearance.colors.accent).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    expect(loaded.schema.appearance.colors.accent.hex).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    expect(loaded.schema.appearance.colors.border.opacity).toBe(10);
   });
 
   it("returns empty status when nothing is stored", () => {

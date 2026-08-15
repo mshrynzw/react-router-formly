@@ -64,12 +64,13 @@ describe("generateFormHtml", () => {
   it("adds Tailwind utility classes when cssFlavor is tailwind", () => {
     const schema = createEmptyForm("Contact");
     schema.appearance.cssFlavor = "tailwind";
-    schema.appearance.colors.formBackground = "#123456";
+    schema.appearance.colors.formBackground = { hex: "#123456", opacity: 100 };
 
     const html = generateFormHtml(schema);
 
     expect(html).toContain("formly-form");
     expect(html).toContain("bg-[#123456]");
+    expect(html).toContain("border-[rgba(216,216,224,0.1)]");
     expect(html).toContain("font-sans");
   });
 

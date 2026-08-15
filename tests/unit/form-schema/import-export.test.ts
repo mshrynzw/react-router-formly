@@ -107,6 +107,6 @@ describe("Form Schema import/export", () => {
     }
 
     expect(result.schema.appearance.cssFlavor).toBe("css");
-    expect(result.schema.appearance.colors.accent).toBe("#4c6fff");
+    expect(result.schema.appearance.colors.accent).toEqual({ hex: "#4c6fff", opacity: 100 });
   });
 });

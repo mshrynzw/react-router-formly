@@ -813,7 +813,7 @@ Submit Button Label
 デザイン設定（フォーム全体の Appearance Tokens。Design タブ）:
 
 ```text
-Colors (page / form / input / text / muted / border / accent / submit / danger / success)
+Colors (page / form / input / text / muted / border / accent / submit / danger / success; each has hex + opacity 0–100; border default opacity 10, others 100)
 Radius (form / control)
 Typography (font preset / body size / title size)
 Spacing (padding / field gap / max width)

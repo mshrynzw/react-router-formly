@@ -246,6 +246,7 @@
       },
       "colors": {
         "label": "色",
+        "opacity": "透明度",
         "fields": {
           "pageBackground": "ページ背景",
           "formBackground": "フォーム背景",

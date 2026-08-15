@@ -71,8 +71,8 @@ describe("FormRenderer", () => {
     const text = createField("text");
     text.label = "お名前";
     schema.fields = [text, ...schema.fields];
-    schema.appearance.colors.pageBackground = "#abcdef";
-    schema.appearance.colors.accent = "#112233";
+    schema.appearance.colors.pageBackground = { hex: "#abcdef", opacity: 100 };
+    schema.appearance.colors.accent = { hex: "#112233", opacity: 100 };
 
     const { container } = render(<FormRenderer schema={schema} />);
     const surface = container.querySelector('[style*="--formly-page-bg"]');

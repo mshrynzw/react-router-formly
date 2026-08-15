@@ -246,6 +246,7 @@
       },
       "colors": {
         "label": "Colors",
+        "opacity": "Opacity",
         "fields": {
           "pageBackground": "Page background",
           "formBackground": "Form background",

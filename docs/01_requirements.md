@@ -887,7 +887,7 @@ CSS GeneratorはFormの外観を再現する。
 - 生の CSS（デフォルト）
 - Tailwind CSS（HTML utility classes）
 
-任意の生 CSS 文字列は受け付けない。色は `#RRGGBB`、フォントは許可リスト、数値は範囲制限する。
+任意の生 CSS 文字列は受け付けない。色は `#RRGGBB` と透明度 0–100%、フォントは許可リスト、数値は範囲制限する。枠線の初期透明度は 10%、その他の色は 100% とする。
 
 ## JavaScript
 

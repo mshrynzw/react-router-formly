@@ -17,8 +17,8 @@ describe("generateFormCss", () => {
 
   it("interpolates appearance tokens into standalone CSS", () => {
     const schema = createEmptyForm();
-    schema.appearance.colors.accent = "#112233";
-    schema.appearance.colors.pageBackground = "#abcdef";
+    schema.appearance.colors.accent = { hex: "#112233", opacity: 100 };
+    schema.appearance.colors.pageBackground = { hex: "#abcdef", opacity: 100 };
     schema.appearance.radius.control = 4;
 
     const css = generateFormCss(schema);
@@ -27,6 +27,12 @@ describe("generateFormCss", () => {
     expect(css).toContain("#abcdef");
     expect(css).toContain("--formly-radius: 4px");
     expect(css).not.toContain("cdn.tailwindcss.com");
+  });
+
+  it("emits rgba for the default 10% border token", () => {
+    const css = generateFormCss(createEmptyForm());
+
+    expect(css).toContain("--formly-border: rgba(216,216,224,0.1)");
   });
 
   it("includes the default page backdrop and omits glass distortion", () => {
@@ -56,7 +62,7 @@ describe("generateFormCss", () => {
   it("emits a companion stylesheet in Tailwind mode", () => {
     const schema = createEmptyForm();
     schema.appearance.cssFlavor = "tailwind";
-    schema.appearance.colors.danger = "#aa0000";
+    schema.appearance.colors.danger = { hex: "#aa0000", opacity: 100 };
 
     const css = generateFormCss(schema);
 

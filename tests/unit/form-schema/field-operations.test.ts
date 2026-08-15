@@ -89,11 +89,11 @@ describe("form schema operations", () => {
     const next = updateAppearance(form, {
       ...form.appearance,
       cssFlavor: "tailwind",
-      colors: { ...form.appearance.colors, accent: "#010203" },
+      colors: { ...form.appearance.colors, accent: { hex: "#010203", opacity: 100 } },
     });
 
     expect(next.appearance.cssFlavor).toBe("tailwind");
-    expect(next.appearance.colors.accent).toBe("#010203");
+    expect(next.appearance.colors.accent).toEqual({ hex: "#010203", opacity: 100 });
   });
 
   it("parses a valid form schema", () => {

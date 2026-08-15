@@ -7,6 +7,7 @@ import {
   FONT_FAMILIES,
   LIQUID_GLASS_IDS,
   SHADOW_LEVELS,
+  type AppearanceColor,
   type AppearanceColorKey,
   type AppearanceColors,
   type BackdropId,
@@ -26,22 +27,27 @@ export const APPEARANCE_LIMITS = {
   padding: { min: 8, max: 48 },
   fieldGap: { min: 4, max: 32 },
   maxWidth: { min: 320, max: 800 },
+  opacity: { min: 0, max: 100 },
 } as const;
+
+function colorToken(hex: string, opacity = 100): AppearanceColor {
+  return { hex, opacity };
+}
 
 export const DEFAULT_FORM_APPEARANCE: FormAppearance = {
   cssFlavor: "css",
   colors: {
-    pageBackground: "#f3f3f7",
-    formBackground: "#ffffff",
-    inputBackground: "#fafafc",
-    text: "#16161d",
-    muted: "#6b6b76",
-    border: "#d8d8e0",
-    accent: "#4c6fff",
-    accentHover: "#3b5cf0",
-    submitText: "#ffffff",
-    danger: "#d64550",
-    success: "#1f9d6a",
+    pageBackground: colorToken("#f3f3f7"),
+    formBackground: colorToken("#ffffff"),
+    inputBackground: colorToken("#fafafc"),
+    text: colorToken("#16161d"),
+    muted: colorToken("#6b6b76"),
+    border: colorToken("#d8d8e0", 10),
+    accent: colorToken("#4c6fff"),
+    accentHover: colorToken("#3b5cf0"),
+    submitText: colorToken("#ffffff"),
+    danger: colorToken("#d64550"),
+    success: colorToken("#1f9d6a"),
   },
   radius: {
     form: 14,
@@ -124,13 +130,62 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } {
 
 export function hexToRgba(hex: string, alpha: number): string {
   const { r, g, b } = hexToRgb(hex);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  return `rgba(${r},${g},${b},${formatAlpha(alpha)})`;
+}
+
+export function appearanceColorToCss(color: AppearanceColor): string {
+  const opacity = clampInt(
+    color.opacity,
+    APPEARANCE_LIMITS.opacity.min,
+    APPEARANCE_LIMITS.opacity.max,
+    100,
+  );
+
+  if (opacity >= 100) {
+    return color.hex;
+  }
+
+  return hexToRgba(color.hex, opacity / 100);
+}
+
+export function appearanceColorsToCss(
+  colors: AppearanceColors,
+): Record<AppearanceColorKey, string> {
+  const tokens = {} as Record<AppearanceColorKey, string>;
+
+  for (const key of APPEARANCE_COLOR_KEYS) {
+    tokens[key] = appearanceColorToCss(colors[key]);
+  }
+
+  return tokens;
+}
+
+export function cloneAppearanceColors(colors: AppearanceColors): AppearanceColors {
+  const next = {} as AppearanceColors;
+
+  for (const key of APPEARANCE_COLOR_KEYS) {
+    next[key] = { ...colors[key] };
+  }
+
+  return next;
+}
+
+function formatAlpha(alpha: number): string {
+  if (alpha <= 0) {
+    return "0";
+  }
+
+  if (alpha >= 1) {
+    return "1";
+  }
+
+  return String(Number(alpha.toFixed(2)));
 }
 
 export function mergeAppearance(value: unknown): FormAppearance {
   const next: FormAppearance = {
     cssFlavor: DEFAULT_FORM_APPEARANCE.cssFlavor,
-    colors: { ...DEFAULT_FORM_APPEARANCE.colors },
+    colors: cloneAppearanceColors(DEFAULT_FORM_APPEARANCE.colors),
     radius: { ...DEFAULT_FORM_APPEARANCE.radius },
     typography: { ...DEFAULT_FORM_APPEARANCE.typography },
     spacing: { ...DEFAULT_FORM_APPEARANCE.spacing },
@@ -152,8 +207,23 @@ export function mergeAppearance(value: unknown): FormAppearance {
     for (const key of APPEARANCE_COLOR_KEYS) {
       const color = value.colors[key];
       if (isHexColor(color)) {
-        next.colors[key] = color;
+        next.colors[key] = { hex: color, opacity: 100 };
+        continue;
       }
+
+      if (!isRecord(color) || !isHexColor(color.hex)) {
+        continue;
+      }
+
+      next.colors[key] = {
+        hex: color.hex,
+        opacity: clampInt(
+          color.opacity,
+          APPEARANCE_LIMITS.opacity.min,
+          APPEARANCE_LIMITS.opacity.max,
+          next.colors[key].opacity,
+        ),
+      };
     }
   }
 
@@ -231,18 +301,20 @@ export function mergeAppearance(value: unknown): FormAppearance {
 }
 
 export function appearanceToCssVars(appearance: FormAppearance): CSSProperties {
+  const colors = appearanceColorsToCss(appearance.colors);
+
   return {
-    "--formly-page-bg": appearance.colors.pageBackground,
-    "--formly-bg": appearance.colors.formBackground,
-    "--formly-input-bg": appearance.colors.inputBackground,
-    "--formly-text": appearance.colors.text,
-    "--formly-muted": appearance.colors.muted,
-    "--formly-border": appearance.colors.border,
-    "--formly-accent": appearance.colors.accent,
-    "--formly-accent-hover": appearance.colors.accentHover,
-    "--formly-submit-text": appearance.colors.submitText,
-    "--formly-danger": appearance.colors.danger,
-    "--formly-success": appearance.colors.success,
+    "--formly-page-bg": colors.pageBackground,
+    "--formly-bg": colors.formBackground,
+    "--formly-input-bg": colors.inputBackground,
+    "--formly-text": colors.text,
+    "--formly-muted": colors.muted,
+    "--formly-border": colors.border,
+    "--formly-accent": colors.accent,
+    "--formly-accent-hover": colors.accentHover,
+    "--formly-submit-text": colors.submitText,
+    "--formly-danger": colors.danger,
+    "--formly-success": colors.success,
     "--formly-radius-form": `${appearance.radius.form}px`,
     "--formly-radius": `${appearance.radius.control}px`,
     "--formly-font": fontFamilyToCss(appearance.typography.fontFamily),
@@ -270,4 +342,4 @@ function clampInt(value: unknown, min: number, max: number, fallback: number): n
   return Math.min(max, Math.max(min, Math.round(value)));
 }
 
-export type { AppearanceColorKey, AppearanceColors };
+export type { AppearanceColor, AppearanceColorKey, AppearanceColors };

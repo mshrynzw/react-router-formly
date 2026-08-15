@@ -146,7 +146,12 @@ export const APPEARANCE_COLOR_KEYS = [
 
 export type AppearanceColorKey = (typeof APPEARANCE_COLOR_KEYS)[number];
 
-export type AppearanceColors = Record<AppearanceColorKey, string>;
+export interface AppearanceColor {
+  hex: string;
+  opacity: number;
+}
+
+export type AppearanceColors = Record<AppearanceColorKey, AppearanceColor>;
 
 export interface FormAppearance {
   cssFlavor: CssFlavor;

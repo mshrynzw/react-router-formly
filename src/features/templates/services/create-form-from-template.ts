@@ -1,5 +1,5 @@
 import { createId } from "@/domain/form-schema/id";
-import { DEFAULT_FORM_APPEARANCE } from "@/domain/form-schema/appearance";
+import { cloneAppearanceColors, DEFAULT_FORM_APPEARANCE } from "@/domain/form-schema/appearance";
 import { normalizeFormSchema } from "@/domain/form-schema/normalization";
 import { parseFormSchema } from "@/domain/form-schema/zod-schema";
 import {
@@ -34,7 +34,7 @@ export function createFormFromTemplate(
     },
     appearance: {
       ...DEFAULT_FORM_APPEARANCE,
-      colors: { ...DEFAULT_FORM_APPEARANCE.colors },
+      colors: cloneAppearanceColors(DEFAULT_FORM_APPEARANCE.colors),
       radius: { ...DEFAULT_FORM_APPEARANCE.radius },
       typography: { ...DEFAULT_FORM_APPEARANCE.typography },
       spacing: { ...DEFAULT_FORM_APPEARANCE.spacing },

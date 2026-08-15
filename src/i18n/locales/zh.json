@@ -246,6 +246,7 @@
       },
       "colors": {
         "label": "颜色",
+        "opacity": "不透明度",
         "fields": {
           "pageBackground": "页面背景",
           "formBackground": "表单背景",

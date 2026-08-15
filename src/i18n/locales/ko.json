@@ -246,6 +246,7 @@
       },
       "colors": {
         "label": "색상",
+        "opacity": "투명도",
         "fields": {
           "pageBackground": "페이지 배경",
           "formBackground": "폼 배경",

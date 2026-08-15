@@ -1,4 +1,4 @@
-import type { FormAppearance, FormSchema, ShadowLevel } from "@/domain/form-schema";
+import { appearanceColorsToCss, type FormAppearance, type FormSchema, type ShadowLevel } from "@/domain/form-schema";
 import { isLiquidGlassEnabled } from "@/domain/form-schema/liquid-glass";
 
 function cx(...parts: Array<string | false | undefined>): string {
@@ -72,7 +72,7 @@ const SEMANTIC: FormHtmlClassNames = {
 };
 
 function tailwindClassNames(appearance: FormAppearance): FormHtmlClassNames {
-  const colors = appearance.colors;
+  const colors = appearanceColorsToCss(appearance.colors);
   const radiusForm = `rounded-[${appearance.radius.form}px]`;
   const radiusControl = `rounded-[${appearance.radius.control}px]`;
 

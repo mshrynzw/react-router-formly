@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import {
   APPEARANCE_COLOR_KEYS,
   APPEARANCE_LIMITS,
+  cloneAppearanceColors,
   DEFAULT_FORM_APPEARANCE,
   FONT_FAMILIES,
   SHADOW_LEVELS,
@@ -74,10 +75,10 @@ export function AppearanceSettingsPanel({ schema, onChange }: AppearanceSettings
               key={key}
               colorKey={key}
               value={appearance.colors[key]}
-              onChange={(value) => {
+              onChange={(color) => {
                 patch({
                   ...appearance,
-                  colors: { ...appearance.colors, [key]: value },
+                  colors: { ...appearance.colors, [key]: color },
                 });
               }}
             />
@@ -228,7 +229,7 @@ export function AppearanceSettingsPanel({ schema, onChange }: AppearanceSettings
         onClick={() => {
           patch({
             ...DEFAULT_FORM_APPEARANCE,
-            colors: { ...DEFAULT_FORM_APPEARANCE.colors },
+            colors: cloneAppearanceColors(DEFAULT_FORM_APPEARANCE.colors),
             radius: { ...DEFAULT_FORM_APPEARANCE.radius },
             typography: { ...DEFAULT_FORM_APPEARANCE.typography },
             spacing: { ...DEFAULT_FORM_APPEARANCE.spacing },

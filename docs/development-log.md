@@ -6,6 +6,20 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-15 — Appearance color opacity
+
+### Summary
+
+Design タブの各色トークンに透明度（0–100%）を追加した。新しいフォームでは枠線だけ 10%、それ以外は 100%。Preview / 生成 CSS / Tailwind class は同じトークンから `rgba()` または `#RRGGBB` を出す。
+
+### Decision
+
+- Schema は `{ hex: "#RRGGBB", opacity: 0–100 }`。自由記述の `rgba()` 文字列は受け入れない
+- 旧 LocalStorage の `#RRGGBB` 文字列は透明度 100% として読む（既存フォームの見た目を変えない）
+- 100% のときは `#RRGGBB` のまま出力し、それ未満は `rgba()`
+
+---
+
 ## 2026-08-15 — Liquid Glass presets match Aether-style refraction
 
 ### Summary

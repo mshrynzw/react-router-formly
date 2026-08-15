@@ -93,20 +93,25 @@ export const formSubmissionSchema = z.object({
 
 const hexColorSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/);
 
+const appearanceColorValueSchema = z.object({
+  hex: hexColorSchema,
+  opacity: z.number().int().min(0).max(100),
+});
+
 export const formAppearanceSchema = z.object({
   cssFlavor: z.enum(CSS_FLAVORS),
   colors: z.object({
-    pageBackground: hexColorSchema,
-    formBackground: hexColorSchema,
-    inputBackground: hexColorSchema,
-    text: hexColorSchema,
-    muted: hexColorSchema,
-    border: hexColorSchema,
-    accent: hexColorSchema,
-    accentHover: hexColorSchema,
-    submitText: hexColorSchema,
-    danger: hexColorSchema,
-    success: hexColorSchema,
+    pageBackground: appearanceColorValueSchema,
+    formBackground: appearanceColorValueSchema,
+    inputBackground: appearanceColorValueSchema,
+    text: appearanceColorValueSchema,
+    muted: appearanceColorValueSchema,
+    border: appearanceColorValueSchema,
+    accent: appearanceColorValueSchema,
+    accentHover: appearanceColorValueSchema,
+    submitText: appearanceColorValueSchema,
+    danger: appearanceColorValueSchema,
+    success: appearanceColorValueSchema,
   }),
   radius: z.object({
     form: z.number().int().min(0).max(32),
