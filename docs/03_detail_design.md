@@ -576,7 +576,7 @@ FormlyのCore Feature。
 
 # 18. Builder Layout
 
-Desktop:
+Desktop（1024px〜1279px）:
 
 ```text
 +----------------------------------------------------------------+
@@ -593,8 +593,22 @@ Desktop:
 | Checkbox       | └─────────────────────────┘ |                 |
 | Submit         |                             |                 |
 +----------------+-----------------------------+-----------------+
-| Builder Toolbar / Preview                                      |
+| Builder Preview                                                |
 +----------------------------------------------------------------+
+```
+
+Wide Desktop（1280px〜）:
+
+Canvas を左、Builder Preview を右に並べる。Field Palette と Field Settings の位置は変えない。
+
+```text
++----------+--------------------+--------------------+-----------+
+| Field    | Form Canvas        | Builder Preview    | Field     |
+| Palette  |                    |                    | Settings  |
+|          | ┌────────────────┐ | ┌────────────────┐ | Label     |
+| Text     | │ Name           │ | │ Name           │ | Required  |
+| Email    | └────────────────┘ | └────────────────┘ |           |
++----------+--------------------+--------------------+-----------+
 ```
 
 ---
@@ -821,6 +835,19 @@ Builder
    └── Preview Panel
 ```
 
+## Layout
+
+```text
+〜1023px
+Canvas の下（縦積み）
+
+1024px〜1279px
+3 Column の下段に全幅
+
+1280px〜
+Canvas の右隣（Palette | Canvas | Preview | Settings）
+```
+
 ## Purpose
 
 編集途中のFormを確認する。
@@ -1010,14 +1037,23 @@ Failed to import the form schema.
 
 # 35. Builder Responsive
 
-## Desktop
+## Wide Desktop（1280px〜）
 
-3 Panel Layout:
+4 Panel Layout:
+
+```text
+Field Palette | Form Canvas | Builder Preview | Field Settings
+```
+
+## Desktop（1024px〜1279px）
+
+3 Panel Layout + Preview below:
 
 ```text
 Field Palette
 Form Canvas
 Field Settings
+Builder Preview（full width）
 ```
 
 ## Tablet

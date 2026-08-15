@@ -6,6 +6,45 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-15 — Global scrollbar styling
+
+### Summary
+
+Formly 本体のスクロールバーを、OS 標準から Design Token ベースの細い pill 型へ統一した。
+
+### Decision
+
+- 実装は `src/index.css` のグローバル Base Style のみ。Component ごとの再定義はしない
+- Thumb は `--border-strong`、Hover は `--text-disabled`。Accent は使わない
+- Firefox は `scrollbar-width: thin` / `scrollbar-color`
+- Touch（coarse pointer）では OS 標準に戻す
+- 生成フォーム CSS には含めない
+
+---
+
+## 2026-08-15 — Builder wide layout (canvas + preview)
+
+### Summary
+
+`/builder` の 1280px 以上で、Form Canvas と Builder Preview を横並びにした。Field Palette と Settings の位置は維持する。
+
+### Decision
+
+- 1024px〜1279px は従来どおり 3 カラム + Preview 全幅下段
+- 1280px〜 は `Palette | Canvas | Preview | Settings`
+- 4 カラム時は各パネルが独立スクロールし、ビューポート高さを使う
+- ブレークポイントは UI ガイドラインの Content Width（1280px）に合わせる
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+```
+
+---
+
 ## 2026-08-15 — Form appearance tokens and CSS flavor
 
 ### Summary

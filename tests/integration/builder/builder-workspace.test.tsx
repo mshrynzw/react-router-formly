@@ -85,6 +85,26 @@ describe("BuilderWorkspace", () => {
     expect(screen.getByText("フィールド 1 件")).toBeInTheDocument();
   });
 
+  it("places canvas left of builder preview in the wide desktop grid", () => {
+    render(<BuilderWorkspace />);
+
+    const canvas = screen.getByRole("heading", { name: "キャンバス" }).closest("section");
+    const preview = screen.getByRole("heading", { name: "ビルダープレビュー" }).closest("section");
+    const settings = screen.getByRole("heading", { name: "設定" }).closest("section");
+
+    expect(canvas).not.toBeNull();
+    expect(preview).not.toBeNull();
+    expect(settings).not.toBeNull();
+    expect(canvas?.parentElement).toBe(preview?.parentElement);
+    expect(canvas?.parentElement).toBe(settings?.parentElement);
+
+    const grid = canvas?.parentElement;
+    expect(grid?.className).toContain("xl:grid-cols-[240px_minmax(0,1fr)_minmax(0,1fr)_320px]");
+    expect(canvas?.className).toContain("col-start-2");
+    expect(preview?.className).toContain("xl:col-start-3");
+    expect(settings?.className).toContain("xl:col-start-4");
+  });
+
   it("updates appearance from the design panel", async () => {
     const user = userEvent.setup();
     render(<BuilderWorkspace />);

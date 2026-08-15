@@ -19,6 +19,7 @@ import { useRovingTabs } from "@/hooks/use-roving-tabs";
 import { cn } from "@/lib/utils";
 
 const panels: BuilderPanel[] = ["form", "design", "field", "submission"];
+const widePanelClassName = "min-w-0 xl:h-full xl:min-h-0 xl:overflow-y-auto";
 
 function SettingsContent({
   builder,
@@ -124,8 +125,8 @@ export function BuilderWorkspace() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-4 xl:h-[calc(100dvh-9rem)]">
+      <div className="flex shrink-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{t("builder.title")}</h1>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
@@ -165,7 +166,7 @@ export function BuilderWorkspace() {
       {builder.loadStatus === "invalid" ? (
         <div
           role="alert"
-          className="flex flex-col gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-elevated)] p-4 sm:flex-row sm:items-center sm:justify-between"
+          className="flex shrink-0 flex-col gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-elevated)] p-4 sm:flex-row sm:items-center sm:justify-between"
         >
           <div>
             <p className="text-sm font-medium text-[var(--warning)]">
@@ -193,9 +194,13 @@ export function BuilderWorkspace() {
       ) : null}
 
       {isDesktopLayout ? (
-        <div className="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)_320px]">
-          <FieldPalette onAddField={builder.addField} />
+        <div className="grid min-h-0 flex-1 grid-cols-[240px_minmax(0,1fr)_320px] gap-4 xl:grid-cols-[240px_minmax(0,1fr)_minmax(0,1fr)_320px] xl:grid-rows-[minmax(0,1fr)]">
+          <FieldPalette
+            className={cn("col-start-1 row-start-1", widePanelClassName)}
+            onAddField={builder.addField}
+          />
           <FormCanvas
+            className={cn("col-start-2 row-start-1", widePanelClassName)}
             schema={builder.schema}
             selectedFieldId={builder.selectedFieldId}
             onSelectField={builder.selectField}
@@ -203,9 +208,20 @@ export function BuilderWorkspace() {
             onRemoveField={builder.removeField}
             onMoveField={builder.moveField}
           />
+          <BuilderPreviewPanel
+            className={cn(
+              "col-span-3 col-start-1 row-start-2 min-w-0",
+              "xl:col-span-1 xl:col-start-3 xl:row-start-1 xl:h-full xl:min-h-0 xl:overflow-hidden",
+            )}
+            schema={builder.schema}
+          />
           <section
             aria-labelledby="builder-settings-title"
-            className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4"
+            className={cn(
+              "col-start-3 row-start-1 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4",
+              "xl:col-start-4",
+              widePanelClassName,
+            )}
           >
             <h2
               id="builder-settings-title"
@@ -252,6 +268,8 @@ export function BuilderWorkspace() {
             onMoveField={builder.moveField}
           />
 
+          <BuilderPreviewPanel schema={builder.schema} />
+
           <Sheet
             open={isPaletteOpen}
             title={t("builder.palette.title")}
@@ -277,8 +295,6 @@ export function BuilderWorkspace() {
           </Sheet>
         </>
       )}
-
-      <BuilderPreviewPanel schema={builder.schema} />
 
       <ConfirmDialog
         open={isResetDialogOpen}

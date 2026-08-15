@@ -303,8 +303,17 @@ Submit Button
 │              │                        │                 │
 │              │                        │                 │
 ├──────────────┴────────────────────────┴─────────────────┤
-│ Builder Toolbar / Preview Controls                      │
+│ Builder Preview                                         │
 └─────────────────────────────────────────────────────────┘
+```
+
+1280px以上:
+
+```text
+┌──────────┬────────────────┬────────────────┬────────────┐
+│ Field    │ Form Canvas    │ Builder        │ Field      │
+│ Palette  │                │ Preview        │ Settings   │
+└──────────┴────────────────┴────────────────┴────────────┘
 ```
 
 ### Field Palette
@@ -1238,7 +1247,7 @@ Success
 | Screen   | Desktop          | Tablet             | Mobile            |
 | -------- | ---------------- | ------------------ | ----------------- |
 | Landing  | Multi-column     | Reduced columns    | Single column     |
-| Builder  | 3-panel layout   | Reduced panels     | Stacked / Drawer  |
+| Builder  | 4-panel (1280px〜) / 3-panel | Reduced panels     | Stacked / Drawer  |
 | Preview  | Full preview     | Responsive preview | Mobile preview    |
 | Code     | Wide code viewer | Scrollable         | Horizontal scroll |
 | Settings | Multi-section    | Reduced width      | Single column     |

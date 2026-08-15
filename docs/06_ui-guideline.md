@@ -394,6 +394,8 @@ Application画面では以下を基本とする。
 
 Builderでは必要に応じて3 Panel Layoutを使用する。
 
+1280px以上では Canvas と Builder Preview を横並びにし、4 Panel Layoutとする。
+
 ```text
 +-------------------------------------------------------------+
 | Header                                                      |
@@ -403,11 +405,19 @@ Builderでは必要に応じて3 Panel Layoutを使用する。
 +-------------+---------------------------+------------------+
 ```
 
+```text
+1280px〜
++----------+------------------+------------------+------------+
+| Field    | Form Canvas      | Builder Preview  | Field      |
+| Palette  |                  |                  | Settings   |
++----------+------------------+------------------+------------+
+```
+
 ---
 
 # 16. Builder Layout
 
-Desktop:
+Desktop（1024px〜1279px）:
 
 ```text
 Field Palette
@@ -419,7 +429,7 @@ Form Canvas
 Field Settings
 ```
 
-実際には3 Column Layoutとする。
+実際には3 Column Layoutとし、Builder Previewは下段に全幅で置く。
 
 ```text
 +-----------+----------------------+----------------+
@@ -429,6 +439,20 @@ Field Settings
 |           |                      | Placeholder    |
 |           |                      | Required       |
 +-----------+----------------------+----------------+
+| Builder Preview                                   |
++---------------------------------------------------+
+```
+
+Wide Desktop（1280px〜）:
+
+Canvas を左、Builder Preview を右に並べる。Palette と Settings の位置は変えない。
+
+```text
++-----------+------------------+------------------+------------+
+| Palette   | Canvas           | Builder Preview  | Settings   |
+|           |                  |                  |            |
+| Fields    | Form             | Live form        | Label      |
++-----------+------------------+------------------+------------+
 ```
 
 ---
@@ -446,9 +470,14 @@ Field Settings
 
 Form Canvas
 Remaining Space
+
+Builder Preview（1280px〜）
+Canvas と残り幅を分配
 ```
 
 固定値にしすぎず、Viewportに応じて調整する。
+
+1280px以上では Canvas と Builder Preview が独立してスクロールできるようにする。
 
 ---
 
@@ -556,6 +585,61 @@ Dialog
 ```
 
 Dark ModeではShadowよりBorder / Surface Contrastを優先する。
+
+---
+
+# Scrollbar
+
+Formly本体のスクロールバーはOS標準ではなく、Design Tokenに基づく細いpill型で統一する。
+
+目的:
+
+```text
+コンテンツを邪魔しない
+ダーク / ライトで同じ階層を保つ
+Builder Panel / Preview / Code Viewer を同じ見た目にする
+```
+
+仕様:
+
+```text
+Width / Height
+8px
+
+Track
+transparent
+
+Thumb
+var(--border-strong)
+
+Thumb Hover
+var(--text-disabled)
+
+Radius
+999px
+
+Thumb inset
+2px transparent border + background-clip: padding-box
+```
+
+Firefox:
+
+```text
+scrollbar-width: thin
+scrollbar-color: var(--border-strong) transparent
+```
+
+Touch（`hover: none` かつ `pointer: coarse`）ではOS標準に戻す。指操作のヒット領域を細くしない。
+
+禁止:
+
+- Accent ColorのThumb
+- 12px以上の太いScrollbar
+- Trackへの背景色
+- 画面ごとの独自Scrollbar
+- 生成フォームCSSへの混入
+
+実装は `src/index.css` のグローバルBase Styleに置く。Componentごとに再定義しない。
 
 ---
 
@@ -1106,6 +1190,8 @@ Border Change
 
 過度なTransformを使用しない。
 
+Scrollbar ThumbのHoverは `var(--text-disabled)` へ上げる。Accent Colorは使わない。
+
 ---
 
 # 52. Focus
@@ -1503,10 +1589,17 @@ MobileをDesktopの縮小版として設計しない。
 
 # 72. Builder Responsive
 
-Desktop:
+Wide Desktop（1280px〜）:
+
+```text
+Palette | Canvas | Builder Preview | Settings
+```
+
+Desktop（1024px〜1279px）:
 
 ```text
 Palette | Canvas | Settings
+Builder Preview（full width below）
 ```
 
 Tablet:
@@ -1649,6 +1742,8 @@ Interactive Elementは原則として44px程度以上のTarget Sizeを目安と�
 - 過剰なShadow
 - 画面ごとの独自Design
 - 不必要な装飾
+- Accent ColorのScrollbar
+- 画面ごとの独自Scrollbar
 - 巨大なButton
 - Colorだけによる状態表現
 
@@ -2168,6 +2263,7 @@ Cursorは以下を必ず守る。
 - Dialog
 - Toast
 - Focus
+- Scrollbar
 - Responsive Behavior
 
 ---

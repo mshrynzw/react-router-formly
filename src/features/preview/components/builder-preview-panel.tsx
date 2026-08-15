@@ -4,12 +4,14 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import type { FormSchema } from "@/domain/form-schema";
 import { FormRenderer } from "@/features/preview/components/form-renderer";
+import { cn } from "@/lib/utils";
 
 interface BuilderPreviewPanelProps {
   schema: FormSchema;
+  className?: string;
 }
 
-export function BuilderPreviewPanel({ schema }: BuilderPreviewPanelProps) {
+export function BuilderPreviewPanel({ schema, className }: BuilderPreviewPanelProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(true);
   const [simulateError, setSimulateError] = useState(false);
@@ -17,7 +19,10 @@ export function BuilderPreviewPanel({ schema }: BuilderPreviewPanelProps) {
   return (
     <section
       aria-labelledby="builder-preview-title"
-      className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4"
+      className={cn(
+        "flex flex-col rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4",
+        className,
+      )}
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
@@ -52,7 +57,15 @@ export function BuilderPreviewPanel({ schema }: BuilderPreviewPanelProps) {
       </div>
 
       {isOpen ? (
-        <FormRenderer schema={schema} viewport="desktop" simulateError={simulateError} compact />
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <FormRenderer
+            schema={schema}
+            viewport="desktop"
+            simulateError={simulateError}
+            compact
+            className="max-w-full"
+          />
+        </div>
       ) : null}
     </section>
   );

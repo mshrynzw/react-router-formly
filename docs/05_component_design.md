@@ -976,6 +976,8 @@ ScrollArea
 
 使用しないComponentを大量に追加しない。
 
+スクロール可能な Panel / Sheet / CodeViewer は native `overflow` を使い、見た目は `src/index.css` のグローバルScrollbarに従う。Radix `ScrollArea` は、ネイティブでは足りない場合に限って導入する。生成フォームのCSSにFormly本体のScrollbarスタイルを含めない。
+
 ---
 
 # 44. Layout Components
@@ -2438,12 +2440,14 @@ BuilderPreview
       <FormFieldItem />
     </FormCanvas>
 
+    <BuilderPreview />
+
     <FieldSettings />
   </BuilderContent>
-
-  <BuilderPreview />
 </BuilderLayout>
 ```
+
+1280px未満では `BuilderPreview` は Canvas / Settings の下段に全幅表示する。1280px以上では Canvas の右隣へ配置する。
 
 各Componentが明確な責務を持つ。
 
@@ -2454,23 +2458,15 @@ BuilderPreview
 ```text
                     BuilderLayout
                           │
-             ┌────────────┼────────────┐
-             ▼            ▼            ▼
-      BuilderHeader   FormCanvas   FieldSettings
-                           │
-                           ▼
-                    FormFieldItem
-                           │
-                           ▼
-                  FormFieldToolbar
-
-             BuilderLayout
-                    │
-                    ▼
-             BuilderPreview
-                    │
-                    ▼
-              FormRenderer
+        ┌─────────┬───────┼────────┬──────────┐
+        ▼         ▼       ▼        ▼          ▼
+ BuilderHeader Palette Canvas  Preview   Settings
+                          │        │
+                          ▼        ▼
+                   FormFieldItem  FormRenderer
+                          │
+                          ▼
+                 FormFieldToolbar
 ```
 
 ---

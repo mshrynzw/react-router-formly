@@ -12,6 +12,7 @@ interface FormCanvasProps {
   onDuplicateField: (fieldId: string) => void;
   onRemoveField: (fieldId: string) => void;
   onMoveField: (fieldId: string, direction: "up" | "down") => void;
+  className?: string;
 }
 
 function fieldPreview(field: FormField, t: (key: string) => string) {
@@ -41,6 +42,7 @@ export function FormCanvas({
   onDuplicateField,
   onRemoveField,
   onMoveField,
+  className,
 }: FormCanvasProps) {
   const { t } = useTranslation();
   const editableFields = schema.fields.filter((field) => field.type !== "submit");
@@ -49,7 +51,10 @@ export function FormCanvas({
   return (
     <section
       aria-labelledby="form-canvas-title"
-      className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4"
+      className={cn(
+        "rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4",
+        className,
+      )}
     >
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>

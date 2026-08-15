@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { FIELD_TYPES, type FieldType } from "@/domain/form-schema";
+import { cn } from "@/lib/utils";
 
 const fieldIcons: Record<FieldType, typeof Type> = {
   text: Type,
@@ -26,15 +27,19 @@ const fieldIcons: Record<FieldType, typeof Type> = {
 
 interface FieldPaletteProps {
   onAddField: (type: FieldType) => void;
+  className?: string;
 }
 
-export function FieldPalette({ onAddField }: FieldPaletteProps) {
+export function FieldPalette({ onAddField, className }: FieldPaletteProps) {
   const { t } = useTranslation();
 
   return (
     <section
       aria-labelledby="field-palette-title"
-      className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4"
+      className={cn(
+        "rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4",
+        className,
+      )}
     >
       <h2 id="field-palette-title" className="mb-3 text-sm font-semibold text-[var(--text-primary)]">
         {t("builder.palette.title")}
