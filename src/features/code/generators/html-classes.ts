@@ -1,4 +1,5 @@
 import type { FormAppearance, FormSchema, ShadowLevel } from "@/domain/form-schema";
+import { isLiquidGlassEnabled } from "@/domain/form-schema/liquid-glass";
 
 function cx(...parts: Array<string | false | undefined>): string {
   return parts.filter((part): part is string => Boolean(part)).join(" ");
@@ -76,13 +77,19 @@ function tailwindClassNames(appearance: FormAppearance): FormHtmlClassNames {
   const radiusControl = `rounded-[${appearance.radius.control}px]`;
 
   return {
-    page: cx(SEMANTIC.page, "m-0 min-h-screen px-4 py-8", `bg-[${colors.pageBackground}]`),
+    page: cx(
+      SEMANTIC.page,
+      appearance.backdropVisible && "formly-page--backdrop",
+      "m-0 min-h-screen px-4 py-8",
+      `bg-[${colors.pageBackground}]`,
+    ),
     form: cx(
       SEMANTIC.form,
+      isLiquidGlassEnabled(appearance) && "formly-form--glass",
       "box-border mx-auto w-full border",
       `max-w-[${appearance.spacing.maxWidth}px]`,
       `p-[${appearance.spacing.padding}px]`,
-      `bg-[${colors.formBackground}]`,
+      isLiquidGlassEnabled(appearance) ? "bg-transparent" : `bg-[${colors.formBackground}]`,
       `text-[${colors.text}]`,
       `border-[${colors.border}]`,
       `text-[${appearance.typography.bodySize}px]`,
@@ -149,5 +156,9 @@ export function getFormHtmlClassNames(schema: FormSchema): FormHtmlClassNames {
     return tailwindClassNames(schema.appearance);
   }
 
-  return SEMANTIC;
+  return {
+    ...SEMANTIC,
+    page: cx(SEMANTIC.page, schema.appearance.backdropVisible && "formly-page--backdrop"),
+    form: cx(SEMANTIC.form, isLiquidGlassEnabled(schema.appearance) && "formly-form--glass"),
+  };
 }

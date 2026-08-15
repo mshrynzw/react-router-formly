@@ -17,6 +17,9 @@ describe("form appearance", () => {
     }
 
     expect(parsed.data.appearance).toEqual(DEFAULT_FORM_APPEARANCE);
+    expect(parsed.data.appearance.liquidGlass).toBe("off");
+    expect(parsed.data.appearance.backdropVisible).toBe(true);
+    expect(parsed.data.appearance.backdropId).toBe("01");
   });
 
   it("ignores invalid colors and cssFlavor values", () => {
@@ -47,5 +50,29 @@ describe("form appearance", () => {
     expect(merged.spacing.padding).toBe(8);
     expect(merged.spacing.fieldGap).toBe(32);
     expect(merged.spacing.maxWidth).toBe(320);
+  });
+
+  it("ignores invalid liquidGlass and backdrop tokens", () => {
+    const merged = mergeAppearance({
+      liquidGlass: "custom-css",
+      backdropVisible: "yes",
+      backdropId: "/etc/passwd",
+    });
+
+    expect(merged.liquidGlass).toBe("off");
+    expect(merged.backdropVisible).toBe(true);
+    expect(merged.backdropId).toBe("01");
+  });
+
+  it("accepts an allowlisted glass preset and hidden backdrop", () => {
+    const merged = mergeAppearance({
+      liquidGlass: "nebula",
+      backdropVisible: false,
+      backdropId: "06",
+    });
+
+    expect(merged.liquidGlass).toBe("nebula");
+    expect(merged.backdropVisible).toBe(false);
+    expect(merged.backdropId).toBe("06");
   });
 });

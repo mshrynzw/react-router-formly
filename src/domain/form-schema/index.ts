@@ -1,5 +1,6 @@
 export * from "@/domain/form-schema/types";
 export * from "@/domain/form-schema/appearance";
+export * from "@/domain/form-schema/liquid-glass";
 export * from "@/domain/form-schema/create-form";
 export * from "@/domain/form-schema/create-field";
 export * from "@/domain/form-schema/field-operations";

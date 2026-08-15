@@ -80,4 +80,18 @@ describe("FormRenderer", () => {
     expect(surface).not.toBeNull();
     expect(surface).toHaveStyle({ "--formly-page-bg": "#abcdef", "--formly-accent": "#112233" });
   });
+
+  it("renders a displacement filter when liquid glass is enabled", () => {
+    const schema = createEmptyForm("Glass");
+    const text = createField("text");
+    text.label = "お名前";
+    schema.fields = [text, ...schema.fields];
+    schema.appearance.liquidGlass = "aurora";
+
+    const { container } = render(<FormRenderer schema={schema} />);
+
+    expect(container.querySelector("feDisplacementMap")).not.toBeNull();
+    expect(container.querySelector("feDisplacementMap")).toHaveAttribute("in2", "blurred");
+    expect(container.querySelector('[style*="backdrop-filter"]')).not.toBeNull();
+  });
 });

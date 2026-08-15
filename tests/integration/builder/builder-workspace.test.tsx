@@ -119,4 +119,27 @@ describe("BuilderWorkspace", () => {
       expect(window.localStorage.getItem(FORM_STORAGE_KEY)).toContain("#112233");
     });
   });
+
+  it("stores an independent liquid glass preset and backdrop choice from the preview dialog", async () => {
+    const user = userEvent.setup();
+    render(<BuilderWorkspace />);
+
+    await user.click(screen.getByRole("tab", { name: "デザイン" }));
+    expect(screen.queryByRole("button", { name: "Ocean Wave" })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "背景" }));
+    expect(screen.getByRole("dialog", { name: "背景" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Ocean Wave" }));
+    await user.click(screen.getByRole("button", { name: "背景 06" }));
+
+    await waitFor(() => {
+      const stored = window.localStorage.getItem(FORM_STORAGE_KEY);
+      expect(stored).toContain("ocean");
+      expect(stored).toContain("\"backdropId\":\"06\"");
+    });
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: "背景" })).not.toBeInTheDocument();
+  });
 });

@@ -232,6 +232,9 @@ export function AppearanceSettingsPanel({ schema, onChange }: AppearanceSettings
             radius: { ...DEFAULT_FORM_APPEARANCE.radius },
             typography: { ...DEFAULT_FORM_APPEARANCE.typography },
             spacing: { ...DEFAULT_FORM_APPEARANCE.spacing },
+            liquidGlass: appearance.liquidGlass,
+            backdropVisible: appearance.backdropVisible,
+            backdropId: appearance.backdropId,
           });
         }}
       >

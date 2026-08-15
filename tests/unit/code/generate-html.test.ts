@@ -72,4 +72,27 @@ describe("generateFormHtml", () => {
     expect(html).toContain("bg-[#123456]");
     expect(html).toContain("font-sans");
   });
+
+  it("does not emit glass layers when liquid glass is off", () => {
+    const html = generateFormHtml(createEmptyForm("Contact"));
+
+    expect(html).not.toContain("formly-form--glass");
+    expect(html).not.toContain("feDisplacementMap");
+    expect(html).not.toContain("formly-glass-layer");
+  });
+
+  it("emits an SVG displacement filter when liquid glass is on", () => {
+    const schema = createEmptyForm("Contact");
+    schema.appearance.liquidGlass = "crystal";
+
+    const html = generateFormHtml(schema);
+
+    expect(html).toContain("formly-form--glass");
+    expect(html).toContain("feDisplacementMap");
+    expect(html).toContain('in2="blurred"');
+    expect(html).toContain("feGaussianBlur");
+    expect(html).toContain('scale="85"');
+    expect(html).not.toContain("formly-glass-layer");
+    expect(html).not.toContain("formly-glass-tint");
+  });
 });

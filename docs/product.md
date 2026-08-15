@@ -312,7 +312,7 @@ The output should be usable independently of Formly.
 
 The CSS generator should produce styles required to reproduce the configured form appearance.
 
-Form appearance is stored as validated design tokens on the Form Schema (colors, radius, typography, spacing, shadow). Users configure these tokens in the Builder. Preview and generated code both derive from the same tokens.
+Form appearance is stored as validated design tokens on the Form Schema (colors, radius, typography, spacing, shadow, optional Liquid Glass preset, optional page backdrop). Users configure color and layout tokens in Builder Design settings, and Liquid Glass / page backdrop from the Builder Preview background dialog. Preview and generated code both derive from the same tokens. Liquid Glass is off by default. Page backdrop images are allowlisted assets and can be shown or hidden independently of the glass preset.
 
 Generated CSS should prioritize:
 
@@ -326,7 +326,7 @@ The default output is standalone raw CSS. Users may instead choose Tailwind CSS 
 
 The generated CSS should not require Formly itself to function.
 
-Arbitrary user CSS is not accepted. Only allowlisted tokens (hex colors, numeric radii, font presets) are persisted.
+Arbitrary user CSS is not accepted. Only allowlisted tokens (hex colors, numeric radii, font presets, Liquid Glass IDs, backdrop IDs) are persisted.
 
 ---
 

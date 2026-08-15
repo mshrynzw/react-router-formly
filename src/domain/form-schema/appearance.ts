@@ -2,14 +2,18 @@ import type { CSSProperties } from "react";
 
 import {
   APPEARANCE_COLOR_KEYS,
+  BACKDROP_IDS,
   CSS_FLAVORS,
   FONT_FAMILIES,
+  LIQUID_GLASS_IDS,
   SHADOW_LEVELS,
   type AppearanceColorKey,
   type AppearanceColors,
+  type BackdropId,
   type CssFlavor,
   type FontFamilyId,
   type FormAppearance,
+  type LiquidGlassId,
   type ShadowLevel,
 } from "@/domain/form-schema/types";
 
@@ -54,6 +58,9 @@ export const DEFAULT_FORM_APPEARANCE: FormAppearance = {
     maxWidth: 640,
   },
   shadow: "md",
+  liquidGlass: "off",
+  backdropVisible: true,
+  backdropId: "01",
 };
 
 export function isHexColor(value: unknown): value is string {
@@ -70,6 +77,14 @@ export function isFontFamilyId(value: unknown): value is FontFamilyId {
 
 export function isShadowLevel(value: unknown): value is ShadowLevel {
   return typeof value === "string" && (SHADOW_LEVELS as readonly string[]).includes(value);
+}
+
+export function isLiquidGlassId(value: unknown): value is LiquidGlassId {
+  return typeof value === "string" && (LIQUID_GLASS_IDS as readonly string[]).includes(value);
+}
+
+export function isBackdropId(value: unknown): value is BackdropId {
+  return typeof value === "string" && (BACKDROP_IDS as readonly string[]).includes(value);
 }
 
 export function fontFamilyToCss(fontFamily: FontFamilyId): string {
@@ -120,6 +135,9 @@ export function mergeAppearance(value: unknown): FormAppearance {
     typography: { ...DEFAULT_FORM_APPEARANCE.typography },
     spacing: { ...DEFAULT_FORM_APPEARANCE.spacing },
     shadow: DEFAULT_FORM_APPEARANCE.shadow,
+    liquidGlass: DEFAULT_FORM_APPEARANCE.liquidGlass,
+    backdropVisible: DEFAULT_FORM_APPEARANCE.backdropVisible,
+    backdropId: DEFAULT_FORM_APPEARANCE.backdropId,
   };
 
   if (!isRecord(value)) {
@@ -197,6 +215,18 @@ export function mergeAppearance(value: unknown): FormAppearance {
     next.shadow = value.shadow;
   }
 
+  if (isLiquidGlassId(value.liquidGlass)) {
+    next.liquidGlass = value.liquidGlass;
+  }
+
+  if (typeof value.backdropVisible === "boolean") {
+    next.backdropVisible = value.backdropVisible;
+  }
+
+  if (isBackdropId(value.backdropId)) {
+    next.backdropId = value.backdropId;
+  }
+
   return next;
 }
 
@@ -222,6 +252,9 @@ export function appearanceToCssVars(appearance: FormAppearance): CSSProperties {
     "--formly-gap": `${appearance.spacing.fieldGap}px`,
     "--formly-max-width": `${appearance.spacing.maxWidth}px`,
     "--formly-shadow": shadowToCss(appearance.shadow),
+    "--formly-backdrop": appearance.backdropVisible
+      ? `url("/backdrops/${appearance.backdropId}.avif")`
+      : "none",
   } as CSSProperties;
 }
 

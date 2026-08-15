@@ -291,6 +291,32 @@
           "sm": "약함",
           "md": "보통"
         }
+      },
+      "liquidGlass": {
+        "label": "Liquid Glass",
+        "help": "폼 전체에 유리 굴절을 적용합니다. 프리셋마다 왜곡이 달라집니다. 입력 텍스트는 왜곡되지 않습니다.",
+        "options": {
+          "off": "끄기",
+          "crystal": "Liquid Crystal",
+          "amber": "Fluid Amber",
+          "ice": "Ice Ripple",
+          "mercury": "Mercury Drop",
+          "ocean": "Ocean Wave",
+          "mist": "Crystal Mist",
+          "molten": "Molten Glass",
+          "silk": "Silk Veil",
+          "plasma": "Plasma Flow",
+          "frost": "Frost Lens",
+          "aurora": "Aurora Gel",
+          "nebula": "Nebula Prism"
+        }
+      },
+      "backdrop": {
+        "label": "페이지 배경",
+        "visible": "배경 이미지 표시",
+        "help": "유리 효과와 따로 고를 수 있습니다. 기본값은 표시입니다.",
+        "choose": "배경 이미지",
+        "option": "배경 {{id}}"
       }
     },
     "fieldSettings": {
@@ -396,8 +422,13 @@
     "builderPanel": {
       "title": "빌더 미리보기",
       "subtitle": "편집 중인 Form Schema를 바로 확인할 수 있습니다.",
+      "background": "배경",
       "expand": "펼치기",
       "collapse": "접기"
+    },
+    "backdropDialog": {
+      "title": "배경",
+      "description": "Liquid Glass와 페이지 배경을 설정합니다. 필드가 아니라 폼 전체에 적용됩니다."
     },
     "toolbar": {
       "viewportLabel": "미리보기 너비",

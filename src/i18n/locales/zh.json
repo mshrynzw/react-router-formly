@@ -291,6 +291,32 @@
           "sm": "弱",
           "md": "中"
         }
+      },
+      "liquidGlass": {
+        "label": "Liquid Glass",
+        "help": "为整个表单应用玻璃折射。预设会改变扭曲方式。输入文字不会变形。",
+        "options": {
+          "off": "关闭",
+          "crystal": "Liquid Crystal",
+          "amber": "Fluid Amber",
+          "ice": "Ice Ripple",
+          "mercury": "Mercury Drop",
+          "ocean": "Ocean Wave",
+          "mist": "Crystal Mist",
+          "molten": "Molten Glass",
+          "silk": "Silk Veil",
+          "plasma": "Plasma Flow",
+          "frost": "Frost Lens",
+          "aurora": "Aurora Gel",
+          "nebula": "Nebula Prism"
+        }
+      },
+      "backdrop": {
+        "label": "页面背景",
+        "visible": "显示背景图片",
+        "help": "可与玻璃效果分开选择。默认显示。",
+        "choose": "背景图片",
+        "option": "背景 {{id}}"
       }
     },
     "fieldSettings": {
@@ -396,8 +422,13 @@
     "builderPanel": {
       "title": "构建器预览",
       "subtitle": "编辑时可即时确认 Form Schema。",
+      "background": "背景",
       "expand": "展开",
       "collapse": "折叠"
+    },
+    "backdropDialog": {
+      "title": "背景",
+      "description": "设置 Liquid Glass 和页面背景。这些设置应用于整个表单，而不是单个字段。"
     },
     "toolbar": {
       "viewportLabel": "预览宽度",

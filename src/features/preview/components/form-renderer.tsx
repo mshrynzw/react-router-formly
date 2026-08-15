@@ -2,8 +2,9 @@ import { useId, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import { appearanceToCssVars, type FormSchema } from "@/domain/form-schema";
+import { appearanceToCssVars, isLiquidGlassEnabled, type FormSchema } from "@/domain/form-schema";
 import { PreviewField } from "@/features/preview/components/preview-field";
+import { PreviewGlassLayers } from "@/features/preview/components/preview-glass-layers";
 import {
   createInitialValues,
   type FieldValue,
@@ -70,6 +71,9 @@ export function FormRenderer({
 }: FormRendererProps) {
   const { t } = useTranslation();
   const formTitleId = useId();
+  const glassFilterId = `preview-liquid-${useId().replace(/:/g, "")}`;
+  const glassOn = isLiquidGlassEnabled(schema.appearance);
+  const backdropOn = schema.appearance.backdropVisible;
   const valuesSignature = getValuesSignature(schema);
   const [trackedSignature, setTrackedSignature] = useState(valuesSignature);
   const [values, setValues] = useState<FormValues>(() => createInitialValues(schema));
@@ -159,19 +163,26 @@ export function FormRenderer({
       )}
       style={{
         ...appearanceToCssVars(schema.appearance),
-        background: "var(--formly-page-bg)",
+        backgroundColor: "var(--formly-page-bg)",
+        backgroundImage: backdropOn ? "var(--formly-backdrop)" : undefined,
+        backgroundSize: backdropOn ? "cover" : undefined,
+        backgroundPosition: backdropOn ? "center" : undefined,
+        backgroundRepeat: backdropOn ? "no-repeat" : undefined,
+        backgroundAttachment: backdropOn ? "fixed" : undefined,
         padding: compact ? "0.75rem" : "1rem",
       }}
     >
       <form
         aria-labelledby={formTitleId}
-        className="w-full max-w-full border"
+        className={cn("relative w-full max-w-full overflow-hidden border", glassOn && "isolate")}
         style={{
-          background: "var(--formly-bg)",
+          background: glassOn ? "transparent" : "var(--formly-bg)",
           color: "var(--formly-text)",
           borderColor: "var(--formly-border)",
           borderRadius: "var(--formly-radius-form)",
-          boxShadow: "var(--formly-shadow)",
+          boxShadow: glassOn
+            ? "var(--formly-shadow), 0px 0px 21px -8px rgba(255, 255, 255, 0.3)"
+            : "var(--formly-shadow)",
           fontFamily: "var(--formly-font)",
           fontSize: "var(--formly-body-size)",
           padding: compact ? "1rem" : "var(--formly-padding)",
@@ -185,7 +196,8 @@ export function FormRenderer({
           void handleSubmit(event);
         }}
       >
-        <div className="space-y-1">
+        {glassOn ? <PreviewGlassLayers appearance={schema.appearance} filterId={glassFilterId} /> : null}
+        <div className="relative z-[2] space-y-1">
           <h3
             id={formTitleId}
             className="font-semibold tracking-tight"
@@ -200,7 +212,7 @@ export function FormRenderer({
           ) : null}
         </div>
 
-        <div className="grid" style={{ gap: "var(--formly-gap)" }}>
+        <div className="relative z-[2] grid" style={{ gap: "var(--formly-gap)" }}>
           {schema.fields.map((field) => (
             <PreviewField
               key={field.id}
@@ -215,7 +227,7 @@ export function FormRenderer({
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 pt-2">
+        <div className="relative z-[2] flex flex-wrap items-center gap-2 pt-2">
           <button
             type="submit"
             disabled={isSubmitting}
@@ -241,7 +253,7 @@ export function FormRenderer({
         {result?.status === "success" ? (
           <div
             role="status"
-            className="p-4 text-sm"
+            className="relative z-[2] p-4 text-sm"
             style={{
               borderRadius: "var(--formly-radius)",
               border: "1px solid var(--formly-success)",
@@ -270,7 +282,7 @@ export function FormRenderer({
         {result?.status === "error" ? (
           <div
             role="alert"
-            className="p-4 text-sm"
+            className="relative z-[2] p-4 text-sm"
             style={{
               borderRadius: "var(--formly-radius)",
               border: "1px solid var(--formly-danger)",

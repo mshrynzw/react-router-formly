@@ -2152,6 +2152,8 @@ Previewでは、
 
 を確認することを優先する。
 
+生成フォームの Liquid Glass は Preview に出してよい。Formly 本体の chrome には使わない。
+
 ---
 
 # 100. Generated Code UI

@@ -29,6 +29,30 @@ describe("generateFormCss", () => {
     expect(css).not.toContain("cdn.tailwindcss.com");
   });
 
+  it("includes the default page backdrop and omits glass distortion", () => {
+    const css = generateFormCss(createEmptyForm());
+
+    expect(css).toContain(".formly-page--backdrop");
+    expect(css).toContain("backdrops/01.avif");
+    expect(css).not.toContain("feDisplacementMap");
+    expect(css).not.toContain(".formly-form--glass");
+  });
+
+  it("emits liquid glass refraction CSS for an allowlisted preset", () => {
+    const schema = createEmptyForm();
+    schema.appearance.liquidGlass = "ocean";
+    schema.appearance.backdropId = "03";
+
+    const css = generateFormCss(schema);
+
+    expect(css).toContain(".formly-form--glass");
+    expect(css).toContain("filter: url(#formly-liquid-");
+    expect(css).toContain("backdrops/03.avif");
+    expect(css).toContain("backdrop-filter: blur(10px)");
+    expect(css).toContain(".formly-form--glass::after");
+    expect(css).not.toContain(".formly-glass-layer");
+  });
+
   it("emits a companion stylesheet in Tailwind mode", () => {
     const schema = createEmptyForm();
     schema.appearance.cssFlavor = "tailwind";

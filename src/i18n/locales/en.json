@@ -291,6 +291,32 @@
           "sm": "Small",
           "md": "Medium"
         }
+      },
+      "liquidGlass": {
+        "label": "Liquid Glass",
+        "help": "Applies a refractive glass effect to the whole form. Each preset changes the distortion. Field text is not distorted.",
+        "options": {
+          "off": "Off",
+          "crystal": "Liquid Crystal",
+          "amber": "Fluid Amber",
+          "ice": "Ice Ripple",
+          "mercury": "Mercury Drop",
+          "ocean": "Ocean Wave",
+          "mist": "Crystal Mist",
+          "molten": "Molten Glass",
+          "silk": "Silk Veil",
+          "plasma": "Plasma Flow",
+          "frost": "Frost Lens",
+          "aurora": "Aurora Gel",
+          "nebula": "Nebula Prism"
+        }
+      },
+      "backdrop": {
+        "label": "Page backdrop",
+        "visible": "Show background image",
+        "help": "Chosen independently from the glass preset. Visible by default.",
+        "choose": "Background image",
+        "option": "Backdrop {{id}}"
       }
     },
     "fieldSettings": {
@@ -396,8 +422,13 @@
     "builderPanel": {
       "title": "Builder Preview",
       "subtitle": "Verify the Form Schema while you edit.",
+      "background": "Background",
       "expand": "Expand",
       "collapse": "Collapse"
+    },
+    "backdropDialog": {
+      "title": "Background",
+      "description": "Set Liquid Glass and the page backdrop. These apply to the whole form, not to individual fields."
     },
     "toolbar": {
       "viewportLabel": "Preview width",

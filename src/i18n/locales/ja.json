@@ -291,6 +291,32 @@
           "sm": "弱",
           "md": "中"
         }
+      },
+      "liquidGlass": {
+        "label": "Liquid Glass",
+        "help": "フォーム全体のガラス屈折です。プリセットで歪み方が変わります。入力テキストは歪みません。",
+        "options": {
+          "off": "オフ",
+          "crystal": "Liquid Crystal",
+          "amber": "Fluid Amber",
+          "ice": "Ice Ripple",
+          "mercury": "Mercury Drop",
+          "ocean": "Ocean Wave",
+          "mist": "Crystal Mist",
+          "molten": "Molten Glass",
+          "silk": "Silk Veil",
+          "plasma": "Plasma Flow",
+          "frost": "Frost Lens",
+          "aurora": "Aurora Gel",
+          "nebula": "Nebula Prism"
+        }
+      },
+      "backdrop": {
+        "label": "ページ背景",
+        "visible": "背景画像を表示する",
+        "help": "ガラス効果とは別に選べます。初期状態は表示オンです。",
+        "choose": "背景画像",
+        "option": "背景 {{id}}"
       }
     },
     "fieldSettings": {
@@ -396,8 +422,13 @@
     "builderPanel": {
       "title": "ビルダープレビュー",
       "subtitle": "編集中の Form Schema をその場で確認できます。",
+      "background": "背景",
       "expand": "展開",
       "collapse": "折りたたむ"
+    },
+    "backdropDialog": {
+      "title": "背景",
+      "description": "Liquid Glass とページ背景を設定します。フォーム全体に適用され、フィールド単位の設定ではありません。"
     },
     "toolbar": {
       "viewportLabel": "プレビュー幅",

@@ -425,10 +425,12 @@ Typography
 Spacing
 Shadow
 CSS flavor
-Reset to defaults
+Reset to defaults (does not reset Liquid Glass / page backdrop)
 ```
 
-Field固有設定をFormSettingsへ持ち込まない。フィールド単位の独自 CSS は持たない。
+Liquid Glass（default off）と page backdrop（default on, independent of glass）も Form 全体の Appearance Tokens だが、編集 UI は Design タブではなく Builder Preview の「背景」ダイアログにある。
+
+Field固有設定をFormSettingsへ持ち込まない。フィールド単位の独自 CSS は持たない。生成フォームの Liquid Glass は Appearance トークンから適用する。Formly 本体 chrome には使わない。
 
 ---
 
@@ -446,7 +448,9 @@ BuilderPreview
 Form Renderer
 ```
 
-BuilderPreviewはForm Schemaを変更しない。
+BuilderPreview はフィールド構造を変更しない。
+
+例外: 「背景」ダイアログは Form 全体の Appearance Tokens（Liquid Glass / page backdrop）のみを更新する。更新は Builder の `updateAppearance` 経由で行い、Preview は LocalStorage に直接書き込まない。
 
 ---
 
@@ -466,6 +470,8 @@ features/preview/
 - PreviewToolbar
 - PreviewCanvas
 - PreviewViewport
+- BuilderPreviewPanel
+- BackdropSettingsDialog
 - FormRenderer
 - FormRendererField
 

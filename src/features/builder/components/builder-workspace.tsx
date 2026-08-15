@@ -214,6 +214,7 @@ export function BuilderWorkspace() {
               "xl:col-span-1 xl:col-start-3 xl:row-start-1 xl:h-full xl:min-h-0 xl:overflow-hidden",
             )}
             schema={builder.schema}
+            onChangeAppearance={builder.updateAppearance}
           />
           <section
             aria-labelledby="builder-settings-title"
@@ -268,7 +269,10 @@ export function BuilderWorkspace() {
             onMoveField={builder.moveField}
           />
 
-          <BuilderPreviewPanel schema={builder.schema} />
+          <BuilderPreviewPanel
+            schema={builder.schema}
+            onChangeAppearance={builder.updateAppearance}
+          />
 
           <Sheet
             open={isPaletteOpen}

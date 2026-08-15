@@ -810,7 +810,7 @@ Layout
 Submit Button Label
 ```
 
-デザイン設定（フォーム全体の Appearance Tokens）:
+デザイン設定（フォーム全体の Appearance Tokens。Design タブ）:
 
 ```text
 Colors (page / form / input / text / muted / border / accent / submit / danger / success)
@@ -821,7 +821,16 @@ Shadow
 CSS flavor (css | tailwind, default css)
 ```
 
-Appearance は Form Schema に保存する。自由記述の CSS は受け入れない。
+背景設定（同じ Appearance Tokens。Builder Preview の「背景」ダイアログ）:
+
+```text
+Liquid Glass (off | 12 presets, default off)
+Page backdrop (visible default on, 6 allowlisted images)
+```
+
+Appearance は Form Schema に保存する。自由記述の CSS は受け入れない。Design タブのリセットは色・半径・タイポグラフィ・余白・影・CSS flavor のみを戻し、Liquid Glass / page backdrop は保持する。
+
+Liquid Glass は生成フォームのカードにのみ適用する。屈折はカード背面の `backdrop-filter` と SVG フィルタ（`feTurbulence` → ノイズの `feGaussianBlur` → `feDisplacementMap`）で行う。入力テキストは歪めない。12 プリセットは歪み周波数・変位量・霜の強さを変える。背景画像はガラス種別と独立して選ぶ。ユーザー任意の画像 URL は受け入れない。
 
 ---
 
@@ -864,7 +873,9 @@ Form Schema Update
 Builder Preview Update
 ```
 
-Builder PreviewはForm Schemaを変更しない。
+Builder Preview はフィールド構造を変更しない。
+
+ヘッダーの「背景」は `role="dialog"` の背景設定ダイアログを開く（Escape / オーバーレイ / 閉じるで閉じる）。ダイアログから Liquid Glass と page backdrop を更新する。更新は Builder の appearance update を経由し、Preview は LocalStorage に直接書き込まない。
 
 ---
 
@@ -1505,6 +1516,8 @@ tailwind  HTML に Tailwind utility。CSS タブは JS 用の companion styleshe
 ```
 
 Code 画面で切り替え可能。値は Form Schema の `appearance.cssFlavor` に保存する。
+
+Liquid Glass と page backdrop も Appearance Tokens から同じ CSS / HTML に出力する。生成 CSS が backdrop 画像を参照する場合、ホスト側に `backdrops/{id}.avif` を置く。
 
 ---
 

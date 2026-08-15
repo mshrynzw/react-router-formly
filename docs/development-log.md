@@ -6,6 +6,54 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-15 — Liquid Glass presets match Aether-style refraction
+
+### Summary
+
+Liquid Glass の 12 プリセットを、壁紙クローン＋弱い変位から、カード背面の `backdrop-filter` と強い `feDisplacementMap` に切り替えた。Presets を変えると歪み方と霜の強さが変わる。
+
+### Decision
+
+- フィルタ順は `feTurbulence` → ノイズの `feGaussianBlur` → `feDisplacementMap`
+- 色付き tint はやめる。見た目の差は屈折パラメータ
+- Jane Doe デモカード HTML は使わない。数値だけ Formly のフォームカードへ適用
+- 生成 HTML は SVG フィルタのみ追加し、ガラス層は `::before` / `::after` で出す
+
+---
+
+## 2026-08-15 — Background settings moved to Builder Preview
+
+### Summary
+
+Liquid Glass / page backdrop の編集 UI を Design タブから外し、ビルダープレビューヘッダーの「背景」ダイアログへ移した。トークンは従来どおり Form 全体の Appearance として Schema に保存する。
+
+### Decision
+
+- ConfirmDialog（`alertdialog`）は使わず、Template Preview と同じ `role="dialog"` パターン
+- Preview は LocalStorage に直接書き込まない。`updateAppearance` を経由する
+- Design タブのリセットはガラス / 背景トークンを保持する
+
+---
+
+## 2026-08-15 — Liquid Glass appearance + page backdrop
+
+### Summary
+
+生成フォームに Liquid Glass（12 プリセット、デフォルト OFF）と、独立したページ背景（6 枚の許可リスト AVIF、デフォルト表示 ON）を追加した。
+
+### Decision
+
+- 自由記述 CSS / 任意画像 URL は採用しない
+- 屈折はカード背面の `backdrop-filter` + SVG（ノイズをぼかしてから `feDisplacementMap`）
+- 歪みはフォームカードの背面のみ。ラベルと入力は歪めない
+- 12 プリセットは Aether CSS 相当の `baseFrequency` / `scale` / frost blur を使う（CSS の丸コピーはしない）
+- 背景の表示とガラス種別は独立
+- 生成 CSS は相対パス `backdrops/{id}.avif`。Preview は `/backdrops/{id}.avif`
+- Formly 本体 UI には適用しない
+- 編集 UI は Builder Preview の「背景」ダイアログ（Design タブではない）
+
+---
+
 ## 2026-08-15 — Global scrollbar styling
 
 ### Summary

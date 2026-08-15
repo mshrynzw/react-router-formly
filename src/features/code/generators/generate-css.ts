@@ -5,6 +5,7 @@ import {
   type FormAppearance,
   type FormSchema,
 } from "@/domain/form-schema";
+import { generateSurfaceCss } from "@/features/code/generators/generate-surface-css";
 
 function standaloneCss(appearance: FormAppearance): string {
   const colors = appearance.colors;
@@ -313,9 +314,11 @@ function tailwindCompanionCss(appearance: FormAppearance): string {
  * Standalone form styles. Independent from Formly application CSS.
  */
 export function generateFormCss(schema: FormSchema): string {
+  const surface = generateSurfaceCss(schema, "export");
+
   if (schema.appearance.cssFlavor === "tailwind") {
-    return tailwindCompanionCss(schema.appearance);
+    return `${tailwindCompanionCss(schema.appearance)}${surface}`;
   }
 
-  return standaloneCss(schema.appearance);
+  return `${standaloneCss(schema.appearance)}${surface}`;
 }

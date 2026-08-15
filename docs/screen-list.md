@@ -263,7 +263,7 @@ Preview
 - Form Settings
 - Design Settings (appearance tokens)
 - Field Settings
-- Builder Preview
+- Builder Preview (includes background dialog for Liquid Glass / page backdrop)
 - Undo / Redo where appropriate
 - LocalStorage Save
 - LocalStorage Restore
@@ -351,6 +351,8 @@ Builder画面内にPreview機能を提供する。
 ユーザーはBuilderを離れずに、現在のFormがどのように表示されるか確認できる。
 
 Builder Previewは独立した`/preview`とは異なり、編集作業を補助するためのPreviewとして扱う。
+
+ヘッダーの「背景」から、Form 全体の Liquid Glass / page backdrop をダイアログで編集できる。フィールド単位の設定ではない。
 
 ### Form Schema
 

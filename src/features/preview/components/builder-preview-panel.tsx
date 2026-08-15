@@ -1,20 +1,30 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import type { FormSchema } from "@/domain/form-schema";
+import type { FormAppearance, FormSchema } from "@/domain/form-schema";
+import { BackdropSettingsDialog } from "@/features/preview/components/backdrop-settings-dialog";
 import { FormRenderer } from "@/features/preview/components/form-renderer";
 import { cn } from "@/lib/utils";
 
 interface BuilderPreviewPanelProps {
   schema: FormSchema;
+  onChangeAppearance: (appearance: FormAppearance) => void;
   className?: string;
 }
 
-export function BuilderPreviewPanel({ schema, className }: BuilderPreviewPanelProps) {
+export function BuilderPreviewPanel({
+  schema,
+  onChangeAppearance,
+  className,
+}: BuilderPreviewPanelProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(true);
+  const [isBackdropOpen, setIsBackdropOpen] = useState(false);
   const [simulateError, setSimulateError] = useState(false);
+  const closeBackdropDialog = useCallback(() => {
+    setIsBackdropOpen(false);
+  }, []);
 
   return (
     <section
@@ -46,6 +56,18 @@ export function BuilderPreviewPanel({ schema, className }: BuilderPreviewPanelPr
             type="button"
             size="sm"
             variant="secondary"
+            aria-haspopup="dialog"
+            aria-expanded={isBackdropOpen}
+            onClick={() => {
+              setIsBackdropOpen(true);
+            }}
+          >
+            {t("preview.builderPanel.background")}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
             aria-expanded={isOpen}
             onClick={() => {
               setIsOpen((previous) => !previous);
@@ -67,6 +89,13 @@ export function BuilderPreviewPanel({ schema, className }: BuilderPreviewPanelPr
           />
         </div>
       ) : null}
+
+      <BackdropSettingsDialog
+        open={isBackdropOpen}
+        appearance={schema.appearance}
+        onChange={onChangeAppearance}
+        onClose={closeBackdropDialog}
+      />
     </section>
   );
 }

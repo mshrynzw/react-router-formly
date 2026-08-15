@@ -681,6 +681,8 @@ CSS GeneratorはFormのVisual Styleを生成する。
 - Error State
 - Responsive Behavior
 - User-configured colors, radius, fonts, spacing, and shadow
+- Optional Liquid Glass preset (default `off`)
+- Optional page backdrop image (allowlisted AVIF, default visible)
 
 `appearance.cssFlavor`:
 
@@ -689,7 +691,7 @@ CSS GeneratorはFormのVisual Styleを生成する。
 
 Generated CSSはFormly本体のCSSへ依存しない。
 
-Preview は生成 JS を実行せず、同じ Appearance Tokens を CSS 変数として Form Renderer に適用する。
+Preview は生成 JS を実行せず、同じ Appearance Tokens を CSS 変数として Form Renderer に適用する。Liquid Glass が ON のときは同じプリセット表から SVG フィルタと `backdrop-filter` を Preview のフォームカードにも出す。生成 CSS を Formly 本体の chrome へ注入しない。Liquid Glass / page backdrop の編集 UI は Builder Preview の「背景」ダイアログ。Design タブではない。
 
 ---
 

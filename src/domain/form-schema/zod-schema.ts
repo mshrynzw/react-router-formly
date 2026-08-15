@@ -7,6 +7,8 @@ import {
   FONT_FAMILIES,
   FORM_SCHEMA_VERSION,
   HTTP_METHODS,
+  LIQUID_GLASS_IDS,
+  BACKDROP_IDS,
   SHADOW_LEVELS,
 } from "@/domain/form-schema/types";
 
@@ -121,6 +123,9 @@ export const formAppearanceSchema = z.object({
     maxWidth: z.number().int().min(320).max(800),
   }),
   shadow: z.enum(SHADOW_LEVELS),
+  liquidGlass: z.enum(LIQUID_GLASS_IDS),
+  backdropVisible: z.boolean(),
+  backdropId: z.enum(BACKDROP_IDS),
 });
 
 export const formSchemaSchema = z.object({

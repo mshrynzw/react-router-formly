@@ -104,6 +104,32 @@ export const SHADOW_LEVELS = ["none", "sm", "md"] as const;
 
 export type ShadowLevel = (typeof SHADOW_LEVELS)[number];
 
+export const LIQUID_GLASS_IDS = [
+  "off",
+  "crystal",
+  "amber",
+  "ice",
+  "mercury",
+  "ocean",
+  "mist",
+  "molten",
+  "silk",
+  "plasma",
+  "frost",
+  "aurora",
+  "nebula",
+] as const;
+
+export type LiquidGlassId = (typeof LIQUID_GLASS_IDS)[number];
+
+export const LIQUID_GLASS_PRESET_IDS = LIQUID_GLASS_IDS.filter(
+  (id): id is Exclude<LiquidGlassId, "off"> => id !== "off",
+);
+
+export const BACKDROP_IDS = ["01", "02", "03", "04", "05", "06"] as const;
+
+export type BackdropId = (typeof BACKDROP_IDS)[number];
+
 export const APPEARANCE_COLOR_KEYS = [
   "pageBackground",
   "formBackground",
@@ -140,6 +166,9 @@ export interface FormAppearance {
     maxWidth: number;
   };
   shadow: ShadowLevel;
+  liquidGlass: LiquidGlassId;
+  backdropVisible: boolean;
+  backdropId: BackdropId;
 }
 
 export interface FormSchema {
