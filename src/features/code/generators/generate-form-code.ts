@@ -4,6 +4,9 @@ import { escapeHtml } from "@/features/code/generators/escape";
 import { generateFormCss } from "@/features/code/generators/generate-css";
 import { generateFormHtml } from "@/features/code/generators/generate-html";
 import { generateFormJavaScript } from "@/features/code/generators/generate-javascript";
+import { getFormHtmlClassNames } from "@/features/code/generators/html-classes";
+
+export const TAILWIND_PLAY_CDN = "https://cdn.tailwindcss.com";
 
 export type CodeLanguage = "html" | "css" | "javascript";
 
@@ -16,7 +19,7 @@ export interface GeneratedFormCode {
 
 export function generateFormCode(schema: FormSchema): GeneratedFormCode {
   const html = generateFormHtml(schema);
-  const css = generateFormCss();
+  const css = generateFormCss(schema);
   const javascript = generateFormJavaScript(schema);
   const combined = generateCombinedHtml(schema, html, css, javascript);
 
@@ -71,6 +74,13 @@ function generateCombinedHtml(
   javascript: string,
 ): string {
   const title = escapeHtml(schema.name || "Untitled form");
+  const pageClass = getFormHtmlClassNames(schema).page;
+  const tailwindCdn =
+    schema.appearance.cssFlavor === "tailwind"
+      ? `  <!-- Tailwind Play CDN is for previewing this file. Use a production Tailwind build in real sites. -->
+  <script src="${TAILWIND_PLAY_CDN}"></script>
+`
+      : "";
 
   return `<!doctype html>
 <html lang="en">
@@ -78,11 +88,11 @@ function generateCombinedHtml(
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title}</title>
-  <style>
+${tailwindCdn}  <style>
 ${css}
   </style>
 </head>
-<body class="formly-page">
+<body class="${pageClass}">
 ${html}
   <script>
 ${javascript}

@@ -20,7 +20,13 @@ interface PreviewFieldProps {
   onChange: (value: FieldValue) => void;
 }
 
-export function PreviewField({ field, value, error, disabled = false, onChange }: PreviewFieldProps) {
+export function PreviewField({
+  field,
+  value,
+  error,
+  disabled = false,
+  onChange,
+}: PreviewFieldProps) {
   const { t } = useTranslation();
 
   if (field.type === "submit") {
@@ -34,21 +40,24 @@ export function PreviewField({ field, value, error, disabled = false, onChange }
   const isGrouped =
     field.type === "radio" || (field.type === "checkbox" && field.options.length > 0);
   const isSingleCheckbox = field.type === "checkbox" && field.options.length === 0;
-  const describedBy = [descriptionId, hasError ? errorId : undefined].filter(Boolean).join(" ") || undefined;
+  const describedBy =
+    [descriptionId, hasError ? errorId : undefined].filter(Boolean).join(" ") || undefined;
 
   return (
     <div className="space-y-2">
       {!isSingleCheckbox ? (
         <div className="flex items-baseline gap-2">
           {isGrouped ? (
-            <span className="text-sm font-medium text-[var(--text-primary)]">
+            <span className="text-sm font-medium" style={{ color: "var(--formly-text)" }}>
               {field.label || t("preview.field.untitled")}
             </span>
           ) : (
-            <Label htmlFor={controlId}>{field.label || t("preview.field.untitled")}</Label>
+            <Label htmlFor={controlId} className="text-[var(--formly-text)]">
+              {field.label || t("preview.field.untitled")}
+            </Label>
           )}
           {field.required ? (
-            <span className="text-xs text-[var(--danger)]" aria-hidden="true">
+            <span className="text-xs" style={{ color: "var(--formly-danger)" }} aria-hidden="true">
               *
             </span>
           ) : null}
@@ -56,7 +65,7 @@ export function PreviewField({ field, value, error, disabled = false, onChange }
       ) : null}
 
       {field.description ? (
-        <p id={descriptionId} className="text-xs text-[var(--text-secondary)]">
+        <p id={descriptionId} className="text-xs" style={{ color: "var(--formly-muted)" }}>
           {field.description}
         </p>
       ) : null}
@@ -70,6 +79,7 @@ export function PreviewField({ field, value, error, disabled = false, onChange }
           disabled={disabled}
           aria-invalid={hasError}
           aria-describedby={describedBy}
+          className="border-[var(--formly-border)] bg-[var(--formly-input-bg)] text-[var(--formly-text)] placeholder:text-[var(--formly-muted)] focus-visible:ring-[var(--formly-accent)]"
           onChange={(event) => {
             onChange(event.target.value);
           }}
@@ -91,6 +101,7 @@ export function PreviewField({ field, value, error, disabled = false, onChange }
           maxLength={field.validation.maxLength}
           aria-invalid={hasError}
           aria-describedby={describedBy}
+          className="border-[var(--formly-border)] bg-[var(--formly-input-bg)] text-[var(--formly-text)] placeholder:text-[var(--formly-muted)] focus-visible:ring-[var(--formly-accent)]"
           onChange={(event) => {
             onChange(event.target.value);
           }}
@@ -105,7 +116,7 @@ export function PreviewField({ field, value, error, disabled = false, onChange }
           disabled={disabled}
           aria-invalid={hasError}
           aria-describedby={describedBy}
-          className="flex h-10 w-full rounded-md border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-10 w-full rounded-md border border-[var(--formly-border)] bg-[var(--formly-input-bg)] px-3 py-2 text-sm text-[var(--formly-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--formly-accent)] disabled:cursor-not-allowed disabled:opacity-50"
           onChange={(event) => {
             onChange(event.target.value);
           }}
@@ -166,7 +177,7 @@ export function PreviewField({ field, value, error, disabled = false, onChange }
             <span>{field.label || t("preview.field.untitled")}</span>
           </label>
           {field.required ? (
-            <span className="text-xs text-[var(--danger)]" aria-hidden="true">
+            <span className="text-xs" style={{ color: "var(--formly-danger)" }} aria-hidden="true">
               *
             </span>
           ) : null}
@@ -209,7 +220,7 @@ export function PreviewField({ field, value, error, disabled = false, onChange }
       ) : null}
 
       {error ? (
-        <p id={errorId} className="text-xs text-[var(--danger)]" role="alert">
+        <p id={errorId} className="text-xs" role="alert" style={{ color: "var(--formly-danger)" }}>
           {t(`preview.validation.${error}`)}
         </p>
       ) : null}

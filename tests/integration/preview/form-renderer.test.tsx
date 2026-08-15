@@ -65,4 +65,19 @@ describe("FormRenderer", () => {
 
     expect(screen.getByText("プレビューするフィールドがありません")).toBeInTheDocument();
   });
+
+  it("applies appearance tokens to the preview surface", () => {
+    const schema = createEmptyForm("Themed");
+    const text = createField("text");
+    text.label = "お名前";
+    schema.fields = [text, ...schema.fields];
+    schema.appearance.colors.pageBackground = "#abcdef";
+    schema.appearance.colors.accent = "#112233";
+
+    const { container } = render(<FormRenderer schema={schema} />);
+    const surface = container.querySelector('[style*="--formly-page-bg"]');
+
+    expect(surface).not.toBeNull();
+    expect(surface).toHaveStyle({ "--formly-page-bg": "#abcdef", "--formly-accent": "#112233" });
+  });
 });

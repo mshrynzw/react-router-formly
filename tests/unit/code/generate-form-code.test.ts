@@ -26,5 +26,17 @@ describe("generateFormCode", () => {
     expect(code.css).toContain(".formly-sr-only");
     expect(code.html).toContain("formly-sr-only");
   });
-});
 
+  it("includes the Tailwind Play CDN in combined HTML when flavor is tailwind", () => {
+    const schema = createEmptyForm("Tailwind Form");
+    const text = createField("text");
+    schema.fields = [text, ...schema.fields];
+    schema.appearance.cssFlavor = "tailwind";
+
+    const code = generateFormCode(schema);
+
+    expect(code.combined).toContain("cdn.tailwindcss.com");
+    expect(code.html).toContain("bg-[#");
+    expect(code.css).toContain("Tailwind companion stylesheet");
+  });
+});

@@ -225,6 +225,7 @@
       "tabsLabel": "设置面板",
       "tabs": {
         "form": "表单",
+        "design": "设计",
         "field": "字段",
         "submission": "提交"
       }
@@ -232,6 +233,65 @@
     "formSettings": {
       "name": "表单名称",
       "description": "说明"
+    },
+    "appearance": {
+      "reset": "恢复默认",
+      "cssFlavor": {
+        "label": "生成样式",
+        "help": "默认使用原始 CSS。Tailwind 会在 HTML 上添加 utility class。",
+        "options": {
+          "css": "原始 CSS",
+          "tailwind": "Tailwind CSS"
+        }
+      },
+      "colors": {
+        "label": "颜色",
+        "fields": {
+          "pageBackground": "页面背景",
+          "formBackground": "表单背景",
+          "inputBackground": "输入背景",
+          "text": "文字",
+          "muted": "辅助文字",
+          "border": "边框",
+          "accent": "强调色",
+          "accentHover": "强调色（悬停）",
+          "submitText": "提交按钮文字",
+          "danger": "错误",
+          "success": "成功"
+        }
+      },
+      "radius": {
+        "label": "圆角",
+        "form": "表单",
+        "control": "输入和按钮"
+      },
+      "typography": {
+        "label": "字体",
+        "fontFamily": "字体",
+        "bodySize": "正文大小",
+        "titleSize": "标题大小",
+        "fonts": {
+          "system": "系统",
+          "sans": "无衬线",
+          "serif": "衬线",
+          "mono": "等宽",
+          "rounded": "圆角"
+        }
+      },
+      "spacing": {
+        "label": "间距",
+        "padding": "内边距",
+        "fieldGap": "字段间距",
+        "maxWidth": "最大宽度"
+      },
+      "shadow": {
+        "label": "阴影",
+        "options": {
+          "none": "无",
+          "sm": "弱",
+          "md": "中"
+        }
+      }
     },
     "fieldSettings": {
       "empty": "选择字段以编辑其设置。",
@@ -399,6 +459,14 @@
       "subtitle": "从相同的 Form Schema 生成独立的前端代码。"
     },
     "tabsLabel": "生成语言",
+    "cssFlavor": {
+      "label": "生成样式",
+      "help": "原始 CSS 可单独使用。Tailwind 需要宿主页面提供 Tailwind。",
+      "options": {
+        "css": "原始 CSS",
+        "tailwind": "Tailwind CSS"
+      }
+    },
     "languages": {
       "html": "HTML",
       "css": "CSS",

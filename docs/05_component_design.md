@@ -416,7 +416,19 @@ Submit Button Label
 Layout
 ```
 
-Field固有設定をFormSettingsへ持ち込まない。
+Appearance / Design は Form 全体の設定として別タブ（Design）で編集する。
+
+```text
+Colors
+Radius
+Typography
+Spacing
+Shadow
+CSS flavor
+Reset to defaults
+```
+
+Field固有設定をFormSettingsへ持ち込まない。フィールド単位の独自 CSS は持たない。
 
 ---
 

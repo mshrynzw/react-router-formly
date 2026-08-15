@@ -225,6 +225,7 @@
       "tabsLabel": "設定パネル",
       "tabs": {
         "form": "フォーム",
+        "design": "デザイン",
         "field": "フィールド",
         "submission": "送信"
       }
@@ -232,6 +233,65 @@
     "formSettings": {
       "name": "フォーム名",
       "description": "説明"
+    },
+    "appearance": {
+      "reset": "デフォルトに戻す",
+      "cssFlavor": {
+        "label": "生成スタイル",
+        "help": "デフォルトは生の CSS です。Tailwind は HTML に utility class を付けます。",
+        "options": {
+          "css": "生の CSS",
+          "tailwind": "Tailwind CSS"
+        }
+      },
+      "colors": {
+        "label": "色",
+        "fields": {
+          "pageBackground": "ページ背景",
+          "formBackground": "フォーム背景",
+          "inputBackground": "入力背景",
+          "text": "文字色",
+          "muted": "補助文字色",
+          "border": "枠線",
+          "accent": "アクセント",
+          "accentHover": "アクセント（ホバー）",
+          "submitText": "送信ボタンの文字",
+          "danger": "エラー",
+          "success": "成功"
+        }
+      },
+      "radius": {
+        "label": "角の丸み",
+        "form": "フォーム",
+        "control": "入力・ボタン"
+      },
+      "typography": {
+        "label": "フォント",
+        "fontFamily": "フォント",
+        "bodySize": "本文サイズ",
+        "titleSize": "タイトルサイズ",
+        "fonts": {
+          "system": "システム",
+          "sans": "ゴシック",
+          "serif": "明朝",
+          "mono": "等幅",
+          "rounded": "ラウンド"
+        }
+      },
+      "spacing": {
+        "label": "余白",
+        "padding": "内側の余白",
+        "fieldGap": "フィールド間隔",
+        "maxWidth": "最大幅"
+      },
+      "shadow": {
+        "label": "影",
+        "options": {
+          "none": "なし",
+          "sm": "弱",
+          "md": "中"
+        }
+      }
     },
     "fieldSettings": {
       "empty": "フィールドを選択すると設定を編集できます。",
@@ -399,6 +459,14 @@
       "subtitle": "同じ Form Schema から独立したフロントエンドコードを生成します。"
     },
     "tabsLabel": "生成言語",
+    "cssFlavor": {
+      "label": "生成スタイル",
+      "help": "生の CSS は単体で使えます。Tailwind はプロジェクト側の Tailwind が必要です。",
+      "options": {
+        "css": "生の CSS",
+        "tailwind": "Tailwind CSS"
+      }
+    },
     "languages": {
       "html": "HTML",
       "css": "CSS",

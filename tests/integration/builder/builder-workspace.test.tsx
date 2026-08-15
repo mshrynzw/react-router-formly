@@ -84,4 +84,19 @@ describe("BuilderWorkspace", () => {
 
     expect(screen.getByText("フィールド 1 件")).toBeInTheDocument();
   });
+
+  it("updates appearance from the design panel", async () => {
+    const user = userEvent.setup();
+    render(<BuilderWorkspace />);
+
+    await user.click(screen.getByRole("tab", { name: "デザイン" }));
+
+    const accent = screen.getByRole("textbox", { name: "アクセント" });
+    await user.clear(accent);
+    await user.type(accent, "#112233");
+
+    await waitFor(() => {
+      expect(window.localStorage.getItem(FORM_STORAGE_KEY)).toContain("#112233");
+    });
+  });
 });

@@ -15,7 +15,7 @@ describe("generateFormHtml", () => {
 
     expect(html).toContain('method="GET"');
     expect(html).toContain('action="https://example.com/submit"');
-    expect(html).toContain("type=\"submit\"");
+    expect(html).toContain('type="submit"');
   });
 
   it("escapes malicious labels and placeholders", () => {
@@ -30,7 +30,7 @@ describe("generateFormHtml", () => {
 
     expect(html).not.toContain("<img src=x");
     expect(html).toContain("&lt;img src=x onerror=alert(1)&gt;");
-    expect(html).toContain("placeholder=\"&quot; onclick=&quot;alert(1)\"");
+    expect(html).toContain('placeholder="&quot; onclick=&quot;alert(1)"');
   });
 
   it("generates accessible labels and required markers", () => {
@@ -59,5 +59,17 @@ describe("generateFormHtml", () => {
     expect(html).toContain("<select");
     expect(html).toContain("Option 1");
     expect(html).toContain('value="option_1"');
+  });
+
+  it("adds Tailwind utility classes when cssFlavor is tailwind", () => {
+    const schema = createEmptyForm("Contact");
+    schema.appearance.cssFlavor = "tailwind";
+    schema.appearance.colors.formBackground = "#123456";
+
+    const html = generateFormHtml(schema);
+
+    expect(html).toContain("formly-form");
+    expect(html).toContain("bg-[#123456]");
+    expect(html).toContain("font-sans");
   });
 });

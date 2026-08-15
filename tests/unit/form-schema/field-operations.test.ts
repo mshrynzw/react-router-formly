@@ -7,6 +7,7 @@ import {
   moveField,
   parseFormSchema,
   removeField,
+  updateAppearance,
   updateFormMeta,
   updateSubmission,
 } from "@/domain/form-schema";
@@ -81,6 +82,18 @@ describe("form schema operations", () => {
 
     expect(next.name).toBe("Inquiry");
     expect(next.submission).toEqual({ action: "/api/submit", method: "GET" });
+  });
+
+  it("updates appearance tokens", () => {
+    const form = createEmptyForm();
+    const next = updateAppearance(form, {
+      ...form.appearance,
+      cssFlavor: "tailwind",
+      colors: { ...form.appearance.colors, accent: "#010203" },
+    });
+
+    expect(next.appearance.cssFlavor).toBe("tailwind");
+    expect(next.appearance.colors.accent).toBe("#010203");
   });
 
   it("parses a valid form schema", () => {

@@ -869,6 +869,16 @@ CSS GeneratorはFormの外観を再現する。
 - States
 - Validation Error State
 - Submission State
+- User-configured appearance tokens
+
+ユーザーはフォーム全体の文字色・背景色・角丸・フォント・余白・影を Builder で設定できる。
+
+生成コードのスタイル出力は次のいずれかである。
+
+- 生の CSS（デフォルト）
+- Tailwind CSS（HTML utility classes）
+
+任意の生 CSS 文字列は受け付けない。色は `#RRGGBB`、フォントは許可リスト、数値は範囲制限する。
 
 ## JavaScript
 

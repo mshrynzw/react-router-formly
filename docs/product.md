@@ -312,6 +312,8 @@ The output should be usable independently of Formly.
 
 The CSS generator should produce styles required to reproduce the configured form appearance.
 
+Form appearance is stored as validated design tokens on the Form Schema (colors, radius, typography, spacing, shadow). Users configure these tokens in the Builder. Preview and generated code both derive from the same tokens.
+
 Generated CSS should prioritize:
 
 - Readability
@@ -320,7 +322,11 @@ Generated CSS should prioritize:
 - Clear selectors
 - Minimal unnecessary rules
 
+The default output is standalone raw CSS. Users may instead choose Tailwind CSS utility classes on the generated HTML. Tailwind mode still keeps semantic `formly-*` classes for generated JavaScript. Combined HTML in Tailwind mode may include the Tailwind Play CDN so a downloaded file is previewable; production sites should use their own Tailwind build.
+
 The generated CSS should not require Formly itself to function.
+
+Arbitrary user CSS is not accepted. Only allowlisted tokens (hex colors, numeric radii, font presets) are persisted.
 
 ---
 

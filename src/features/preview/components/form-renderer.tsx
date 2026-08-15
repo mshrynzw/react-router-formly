@@ -2,7 +2,7 @@ import { useId, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import type { FormSchema } from "@/domain/form-schema";
+import { appearanceToCssVars, type FormSchema } from "@/domain/form-schema";
 import { PreviewField } from "@/features/preview/components/preview-field";
 import {
   createInitialValues,
@@ -93,8 +93,12 @@ export function FormRenderer({
           className,
         )}
       >
-        <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("preview.empty.title")}</h3>
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">{t("preview.empty.description")}</p>
+        <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+          {t("preview.empty.title")}
+        </h3>
+        <p className="mt-2 text-sm text-[var(--text-secondary)]">
+          {t("preview.empty.description")}
+        </p>
       </div>
     );
   }
@@ -147,34 +151,56 @@ export function FormRenderer({
   return (
     <div
       className={cn(
-        "mx-auto w-full transition-[max-width] duration-200",
+        "mx-auto w-full rounded-xl transition-[max-width] duration-200",
         viewport === "desktop" && "max-w-2xl",
         viewport === "tablet" && "max-w-[768px]",
         viewport === "mobile" && "max-w-[375px]",
         className,
       )}
+      style={{
+        ...appearanceToCssVars(schema.appearance),
+        background: "var(--formly-page-bg)",
+        padding: compact ? "0.75rem" : "1rem",
+      }}
     >
       <form
         aria-labelledby={formTitleId}
-        className={cn(
-          "space-y-5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]",
-          compact ? "p-4" : "p-6",
-        )}
+        className="w-full max-w-full border"
+        style={{
+          background: "var(--formly-bg)",
+          color: "var(--formly-text)",
+          borderColor: "var(--formly-border)",
+          borderRadius: "var(--formly-radius-form)",
+          boxShadow: "var(--formly-shadow)",
+          fontFamily: "var(--formly-font)",
+          fontSize: "var(--formly-body-size)",
+          padding: compact ? "1rem" : "var(--formly-padding)",
+          maxWidth: "min(var(--formly-max-width), 100%)",
+          margin: "0 auto",
+          display: "grid",
+          gap: "var(--formly-gap)",
+        }}
         noValidate
         onSubmit={(event) => {
           void handleSubmit(event);
         }}
       >
         <div className="space-y-1">
-          <h3 id={formTitleId} className="text-lg font-semibold text-[var(--text-primary)]">
+          <h3
+            id={formTitleId}
+            className="font-semibold tracking-tight"
+            style={{ fontSize: "var(--formly-title-size)", color: "var(--formly-text)" }}
+          >
             {schema.name || t("preview.form.untitled")}
           </h3>
           {schema.description ? (
-            <p className="text-sm text-[var(--text-secondary)]">{schema.description}</p>
+            <p className="text-sm" style={{ color: "var(--formly-muted)" }}>
+              {schema.description}
+            </p>
           ) : null}
         </div>
 
-        <div className="space-y-4">
+        <div className="grid" style={{ gap: "var(--formly-gap)" }}>
           {schema.fields.map((field) => (
             <PreviewField
               key={field.id}
@@ -190,9 +216,21 @@ export function FormRenderer({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 pt-2">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? t("preview.actions.submitting") : getSubmitLabel(schema, t("preview.actions.submit"))}
-          </Button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="inline-flex min-h-10 items-center justify-center border-0 px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-65"
+            style={{
+              background: "var(--formly-accent)",
+              color: "var(--formly-submit-text)",
+              borderRadius: "var(--formly-radius)",
+              fontFamily: "inherit",
+            }}
+          >
+            {isSubmitting
+              ? t("preview.actions.submitting")
+              : getSubmitLabel(schema, t("preview.actions.submit"))}
+          </button>
           {result ? (
             <Button type="button" variant="secondary" size="sm" onClick={handleResetResult}>
               {t("preview.actions.tryAgain")}
@@ -203,11 +241,20 @@ export function FormRenderer({
         {result?.status === "success" ? (
           <div
             role="status"
-            className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-elevated)] p-4 text-sm text-[var(--text-primary)]"
+            className="p-4 text-sm"
+            style={{
+              borderRadius: "var(--formly-radius)",
+              border: "1px solid var(--formly-success)",
+              color: "var(--formly-text)",
+            }}
           >
-            <p className="font-medium text-[var(--success)]">{t("preview.submission.successTitle")}</p>
-            <p className="mt-1 text-[var(--text-secondary)]">{t("preview.submission.successDescription")}</p>
-            <dl className="mt-3 space-y-1 text-xs text-[var(--text-secondary)]">
+            <p className="font-medium" style={{ color: "var(--formly-success)" }}>
+              {t("preview.submission.successTitle")}
+            </p>
+            <p className="mt-1" style={{ color: "var(--formly-muted)" }}>
+              {t("preview.submission.successDescription")}
+            </p>
+            <dl className="mt-3 space-y-1 text-xs" style={{ color: "var(--formly-muted)" }}>
               <div className="flex gap-2">
                 <dt className="font-medium">{t("preview.submission.method")}</dt>
                 <dd>{result.method}</dd>
@@ -223,10 +270,19 @@ export function FormRenderer({
         {result?.status === "error" ? (
           <div
             role="alert"
-            className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-elevated)] p-4 text-sm text-[var(--text-primary)]"
+            className="p-4 text-sm"
+            style={{
+              borderRadius: "var(--formly-radius)",
+              border: "1px solid var(--formly-danger)",
+              color: "var(--formly-text)",
+            }}
           >
-            <p className="font-medium text-[var(--danger)]">{t("preview.submission.errorTitle")}</p>
-            <p className="mt-1 text-[var(--text-secondary)]">{t(result.messageKey)}</p>
+            <p className="font-medium" style={{ color: "var(--formly-danger)" }}>
+              {t("preview.submission.errorTitle")}
+            </p>
+            <p className="mt-1" style={{ color: "var(--formly-muted)" }}>
+              {t(result.messageKey)}
+            </p>
           </div>
         ) : null}
       </form>

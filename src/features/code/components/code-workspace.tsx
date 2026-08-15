@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import {
   FORM_STORAGE_KEY,
   loadFormFromStorage,
+  saveFormToStorage,
+  updateAppearance,
+  type CssFlavor,
   type FormSchema,
   type LoadFormResult,
 } from "@/domain/form-schema";
@@ -18,10 +21,7 @@ import {
   type GeneratedFormCode,
 } from "@/features/code/generators/generate-form-code";
 import { copyToClipboard } from "@/features/code/utils/copy-to-clipboard";
-import {
-  downloadTextFile,
-  mimeTypeForLanguage,
-} from "@/features/code/utils/download-text-file";
+import { downloadTextFile, mimeTypeForLanguage } from "@/features/code/utils/download-text-file";
 import { useRovingTabs } from "@/hooks/use-roving-tabs";
 import { cn } from "@/lib/utils";
 
@@ -80,6 +80,19 @@ export function CodeWorkspace() {
   const activeCode = getCodeByLanguage(generated, language);
   const interactiveCount = schema.fields.filter((field) => field.type !== "submit").length;
 
+  const handleCssFlavorChange = (flavor: CssFlavor) => {
+    if (schema.appearance.cssFlavor === flavor) {
+      return;
+    }
+
+    const next = updateAppearance(schema, { ...schema.appearance, cssFlavor: flavor });
+    const saved = saveFormToStorage(next);
+    setLoadResult({
+      status: saved.ok ? "ok" : loadResult.status,
+      schema: next,
+    });
+  };
+
   const handleCopy = async () => {
     const succeeded = await copyToClipboard(activeCode);
     setFeedback(succeeded ? "copied" : "copyFailed");
@@ -108,7 +121,9 @@ export function CodeWorkspace() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{t("code.title")}</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("code.workspace.subtitle")}</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            {t("code.workspace.subtitle")}
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link
@@ -136,17 +151,38 @@ export function CodeWorkspace() {
 
       {interactiveCount === 0 ? (
         <div className="rounded-xl border border-dashed border-[var(--border-default)] bg-[var(--bg-elevated)] p-6 text-center">
-          <h2 className="text-sm font-semibold text-[var(--text-primary)]">{t("code.empty.title")}</h2>
+          <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+            {t("code.empty.title")}
+          </h2>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">{t("code.empty.description")}</p>
         </div>
       ) : null}
 
+      <div className="flex flex-col gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-3">
+        <p className="text-xs font-medium text-[var(--text-secondary)]">
+          {t("code.cssFlavor.label")}
+        </p>
+        <div className="flex flex-wrap gap-1" role="group" aria-label={t("code.cssFlavor.label")}>
+          {(["css", "tailwind"] as const).map((flavor) => (
+            <Button
+              key={flavor}
+              type="button"
+              size="sm"
+              variant={schema.appearance.cssFlavor === flavor ? "default" : "secondary"}
+              aria-pressed={schema.appearance.cssFlavor === flavor}
+              onClick={() => {
+                handleCssFlavorChange(flavor);
+              }}
+            >
+              {t(`code.cssFlavor.options.${flavor}`)}
+            </Button>
+          ))}
+        </div>
+        <p className="text-xs text-[var(--text-muted)]">{t("code.cssFlavor.help")}</p>
+      </div>
+
       <div className="flex flex-col gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-3 sm:flex-row sm:items-center sm:justify-between">
-        <div
-          role="tablist"
-          aria-label={t("code.tabsLabel")}
-          className="flex flex-wrap gap-1"
-        >
+        <div role="tablist" aria-label={t("code.tabsLabel")} className="flex flex-wrap gap-1">
           {languages.map((item) => (
             <button
               key={item}

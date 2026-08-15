@@ -1,3 +1,4 @@
+import { mergeAppearance } from "@/domain/form-schema/appearance";
 import { FORM_SCHEMA_VERSION, type FormSchema } from "@/domain/form-schema/types";
 
 /**
@@ -15,5 +16,6 @@ export function normalizeFormSchema(schema: FormSchema): FormSchema {
       action: schema.submission.action,
       method: schema.submission.method,
     },
+    appearance: mergeAppearance(schema.appearance),
   };
 }

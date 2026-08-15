@@ -94,4 +94,19 @@ describe("Form Schema import/export", () => {
 
     expect(result.schema).not.toHaveProperty("extra");
   });
+
+  it("fills default appearance when importing a schema without it", () => {
+    const schema = createEmptyForm("Legacy Import");
+    const legacy: Record<string, unknown> = { ...schema };
+    delete legacy.appearance;
+    const result = importFormSchemaFromUnknown(legacy);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+
+    expect(result.schema.appearance.cssFlavor).toBe("css");
+    expect(result.schema.appearance.colors.accent).toBe("#4c6fff");
+  });
 });

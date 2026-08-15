@@ -11,18 +11,20 @@ import {
   removeField,
   removeOption,
   saveFormToStorage,
+  updateAppearance,
   updateField,
   updateFormMeta,
   updateOption,
   updateSubmission,
   type FieldType,
+  type FormAppearance,
   type FormField,
   type FormSchema,
   type HttpMethod,
   type SaveFailureReason,
 } from "@/domain/form-schema";
 
-export type BuilderPanel = "form" | "field" | "submission";
+export type BuilderPanel = "form" | "design" | "field" | "submission";
 
 export type BuilderSaveStatus = "saved" | "saving" | "failed";
 
@@ -168,6 +170,10 @@ export function useFormBuilder() {
     commitSchema(updateSubmission(schema, patch));
   }
 
+  function handleUpdateAppearance(appearance: FormAppearance) {
+    commitSchema(updateAppearance(schema, appearance));
+  }
+
   function handleResetForm() {
     const next = createEmptyForm();
     commitSchema(next, next.fields[0]?.id ?? null, true);
@@ -221,6 +227,7 @@ export function useFormBuilder() {
     updateField: handleUpdateField,
     updateFormMeta: handleUpdateFormMeta,
     updateSubmission: handleUpdateSubmission,
+    updateAppearance: handleUpdateAppearance,
     addOption: (fieldId: string) => {
       commitSchema(addOption(schema, fieldId));
     },

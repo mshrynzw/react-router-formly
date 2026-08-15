@@ -1,4 +1,5 @@
 import { createId } from "@/domain/form-schema/id";
+import { DEFAULT_FORM_APPEARANCE } from "@/domain/form-schema/appearance";
 import { normalizeFormSchema } from "@/domain/form-schema/normalization";
 import { parseFormSchema } from "@/domain/form-schema/zod-schema";
 import {
@@ -7,14 +8,10 @@ import {
   type FormField,
   type FormSchema,
 } from "@/domain/form-schema/types";
-import type {
-  FormTemplateDefinition,
-  TemplateFieldSpec,
-} from "@/features/templates/types";
+import type { FormTemplateDefinition, TemplateFieldSpec } from "@/features/templates/types";
 
 export type CreateFormFromTemplateResult =
-  | { ok: true; schema: FormSchema }
-  | { ok: false; reason: "unknown_template" | "validation" };
+  { ok: true; schema: FormSchema } | { ok: false; reason: "unknown_template" | "validation" };
 
 export function createFormFromTemplate(
   template: FormTemplateDefinition,
@@ -34,6 +31,13 @@ export function createFormFromTemplate(
     submission: {
       action: template.submission.action,
       method: template.submission.method,
+    },
+    appearance: {
+      ...DEFAULT_FORM_APPEARANCE,
+      colors: { ...DEFAULT_FORM_APPEARANCE.colors },
+      radius: { ...DEFAULT_FORM_APPEARANCE.radius },
+      typography: { ...DEFAULT_FORM_APPEARANCE.typography },
+      spacing: { ...DEFAULT_FORM_APPEARANCE.spacing },
     },
   };
 

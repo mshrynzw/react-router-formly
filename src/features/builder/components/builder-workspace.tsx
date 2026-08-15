@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
+import { AppearanceSettingsPanel } from "@/features/builder/components/appearance-settings-panel";
 import { BuilderImportExport } from "@/features/builder/components/builder-import-export";
 import { FieldPalette } from "@/features/builder/components/field-palette";
 import { FieldSettingsPanel } from "@/features/builder/components/field-settings-panel";
@@ -17,7 +18,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { useRovingTabs } from "@/hooks/use-roving-tabs";
 import { cn } from "@/lib/utils";
 
-const panels: BuilderPanel[] = ["form", "field", "submission"];
+const panels: BuilderPanel[] = ["form", "design", "field", "submission"];
 
 function SettingsContent({
   builder,
@@ -67,6 +68,12 @@ function SettingsContent({
         ) : null}
       </div>
 
+      <div {...tabs.getPanelProps("design")}>
+        {builder.activePanel === "design" ? (
+          <AppearanceSettingsPanel schema={builder.schema} onChange={builder.updateAppearance} />
+        ) : null}
+      </div>
+
       <div {...tabs.getPanelProps("field")}>
         {builder.activePanel === "field" ? (
           <FieldSettingsPanel
@@ -81,10 +88,7 @@ function SettingsContent({
 
       <div {...tabs.getPanelProps("submission")}>
         {builder.activePanel === "submission" ? (
-          <SubmissionSettingsPanel
-            schema={builder.schema}
-            onChange={builder.updateSubmission}
-          />
+          <SubmissionSettingsPanel schema={builder.schema} onChange={builder.updateSubmission} />
         ) : null}
       </div>
     </>
@@ -124,7 +128,9 @@ export function BuilderWorkspace() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{t("builder.title")}</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("builder.workspace.subtitle")}</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            {t("builder.workspace.subtitle")}
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <p
@@ -132,9 +138,7 @@ export function BuilderWorkspace() {
             aria-live="polite"
             className={cn(
               "text-xs",
-              builder.saveStatus === "failed"
-                ? "text-[var(--danger)]"
-                : "text-[var(--text-muted)]",
+              builder.saveStatus === "failed" ? "text-[var(--danger)]" : "text-[var(--text-muted)]",
             )}
           >
             {saveStatusMessage}

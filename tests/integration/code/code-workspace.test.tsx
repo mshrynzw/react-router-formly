@@ -53,6 +53,25 @@ describe("CodeWorkspace", () => {
     expect(screen.getByLabelText("JavaScript コード")).toHaveTextContent("function validateForm");
   });
 
+  it("switches generated output to Tailwind CSS", async () => {
+    const user = userEvent.setup();
+    const schema = createEmptyForm("Contact Form");
+    const email = createField("email");
+    email.label = "メール";
+    schema.fields = [email, ...schema.fields];
+    saveFormToStorage(schema);
+
+    renderCode();
+
+    await user.click(screen.getByRole("button", { name: "Tailwind CSS" }));
+
+    expect(screen.getByRole("button", { name: "Tailwind CSS" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(screen.getByLabelText("HTML コード").textContent).toContain("bg-[#");
+  });
+
   it("copies the active code to the clipboard", async () => {
     const user = userEvent.setup();
     const schema = createEmptyForm("Copy Form");

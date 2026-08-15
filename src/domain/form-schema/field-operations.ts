@@ -1,6 +1,13 @@
+import { mergeAppearance } from "@/domain/form-schema/appearance";
 import { createField } from "@/domain/form-schema/create-field";
 import { createId } from "@/domain/form-schema/id";
-import type { FieldOption, FieldType, FormField, FormSchema } from "@/domain/form-schema/types";
+import type {
+  FieldOption,
+  FieldType,
+  FormAppearance,
+  FormField,
+  FormSchema,
+} from "@/domain/form-schema/types";
 import { hasOptions } from "@/domain/form-schema/types";
 
 function cloneField(field: FormField): FormField {
@@ -167,6 +174,13 @@ export function updateSubmission(
       ...schema.submission,
       ...patch,
     },
+  };
+}
+
+export function updateAppearance(schema: FormSchema, appearance: FormAppearance): FormSchema {
+  return {
+    ...schema,
+    appearance: mergeAppearance(appearance),
   };
 }
 

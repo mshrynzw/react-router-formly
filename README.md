@@ -32,8 +32,9 @@ Landing (/)
 ## Features
 
 - Visual Form Builder（追加・編集・並び替え）
-- Live Preview（同一 Form Schema）
-- Clean Code Export（standalone HTML / CSS / JS）
+- デザインカスタマイズ（色・角丸・フォント・余白・影）
+- Live Preview（同一 Form Schema / Appearance）
+- Clean Code Export（standalone HTML / CSS / JS、または Tailwind CSS）
 - Form Schema Import / Export（`*.formly.json`）
 - Templates（お問い合わせ、フィードバックなど）
 - i18n（日本語 / English / 中文 / 한국어）
@@ -105,8 +106,9 @@ pnpm run deploy   # Cloudflare Workers へデプロイ
 生成物は Form Schema から導出されます。
 
 - HTML: semantic labels / `aria-invalid` / エラー領域
-- CSS: standalone、レスポンシブ、`prefers-reduced-motion`
+- CSS: デフォルトは standalone。Tailwind モードでは utility class + companion CSS
 - JavaScript: クライアントバリデーションと送信ハンドリング（外部送信は action URL 設定時）
+- Appearance: Builder のデザイントークンが Preview と生成コードに反映される
 
 Preview は React 描画のモック送信であり、生成 JS をアプリ本体では実行しません。
 

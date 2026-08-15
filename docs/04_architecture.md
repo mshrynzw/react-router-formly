@@ -477,6 +477,8 @@ Form Schemaは以下を表現する。
 - Validation
 - Presentation Configuration
 - Form Settings
+- Appearance tokens (colors, radius, typography, spacing, shadow)
+- Generated CSS flavor (`css` | `tailwind`)
 
 詳細なSchemaは `03_detail_design.md` および実装時のType Definitionで定義する。
 
@@ -662,6 +664,8 @@ User-generated Textは適切にEscapeする。
 
 CSS GeneratorはFormのVisual Styleを生成する。
 
+入力は Form Schema の Appearance Tokens である。自由な CSS 文字列は受け取らない。
+
 対象:
 
 - Layout
@@ -676,8 +680,16 @@ CSS GeneratorはFormのVisual Styleを生成する。
 - Focus State
 - Error State
 - Responsive Behavior
+- User-configured colors, radius, fonts, spacing, and shadow
+
+`appearance.cssFlavor`:
+
+- `css`（デフォルト）: セマンティック class + スタンドアロン CSS
+- `tailwind`: 同じセマンティック class に Tailwind utility を付与。CSS 出力は validation / success 用の companion stylesheet。Combined HTML は Tailwind Play CDN を含めてもよい
 
 Generated CSSはFormly本体のCSSへ依存しない。
+
+Preview は生成 JS を実行せず、同じ Appearance Tokens を CSS 変数として Form Renderer に適用する。
 
 ---
 

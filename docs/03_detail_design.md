@@ -796,7 +796,18 @@ Layout
 Submit Button Label
 ```
 
-将来的にTheme / Styling設定を追加できる。
+デザイン設定（フォーム全体の Appearance Tokens）:
+
+```text
+Colors (page / form / input / text / muted / border / accent / submit / danger / success)
+Radius (form / control)
+Typography (font preset / body size / title size)
+Spacing (padding / field gap / max width)
+Shadow
+CSS flavor (css | tailwind, default css)
+```
+
+Appearance は Form Schema に保存する。自由記述の CSS は受け入れない。
 
 ---
 
@@ -1448,6 +1459,16 @@ CSS Generatorから生成されたCSSを表示する。
 - Button
 - State
 - Responsive
+- Configured appearance tokens
+
+出力形式:
+
+```text
+css       スタンドアロン CSS（デフォルト）
+tailwind  HTML に Tailwind utility。CSS タブは JS 用の companion stylesheet
+```
+
+Code 画面で切り替え可能。値は Form Schema の `appearance.cssFlavor` に保存する。
 
 ---
 

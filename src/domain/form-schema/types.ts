@@ -92,6 +92,56 @@ export interface FormSubmission {
   method: HttpMethod;
 }
 
+export const CSS_FLAVORS = ["css", "tailwind"] as const;
+
+export type CssFlavor = (typeof CSS_FLAVORS)[number];
+
+export const FONT_FAMILIES = ["system", "sans", "serif", "mono", "rounded"] as const;
+
+export type FontFamilyId = (typeof FONT_FAMILIES)[number];
+
+export const SHADOW_LEVELS = ["none", "sm", "md"] as const;
+
+export type ShadowLevel = (typeof SHADOW_LEVELS)[number];
+
+export const APPEARANCE_COLOR_KEYS = [
+  "pageBackground",
+  "formBackground",
+  "inputBackground",
+  "text",
+  "muted",
+  "border",
+  "accent",
+  "accentHover",
+  "submitText",
+  "danger",
+  "success",
+] as const;
+
+export type AppearanceColorKey = (typeof APPEARANCE_COLOR_KEYS)[number];
+
+export type AppearanceColors = Record<AppearanceColorKey, string>;
+
+export interface FormAppearance {
+  cssFlavor: CssFlavor;
+  colors: AppearanceColors;
+  radius: {
+    form: number;
+    control: number;
+  };
+  typography: {
+    fontFamily: FontFamilyId;
+    bodySize: number;
+    titleSize: number;
+  };
+  spacing: {
+    padding: number;
+    fieldGap: number;
+    maxWidth: number;
+  };
+  shadow: ShadowLevel;
+}
+
 export interface FormSchema {
   version: typeof FORM_SCHEMA_VERSION;
   id: string;
@@ -99,10 +149,9 @@ export interface FormSchema {
   description: string;
   fields: FormField[];
   submission: FormSubmission;
+  appearance: FormAppearance;
 }
 
-export function hasOptions(
-  field: FormField,
-): field is SelectField | RadioField | CheckboxField {
+export function hasOptions(field: FormField): field is SelectField | RadioField | CheckboxField {
   return field.type === "select" || field.type === "radio" || field.type === "checkbox";
 }

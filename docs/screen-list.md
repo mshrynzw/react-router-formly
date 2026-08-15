@@ -71,14 +71,14 @@ BuilderからPreviewおよびCodeへ直接移動することもできる。
 
 # 3. Screen Summary
 
-| ID      | Screen               | Route         | Auth | Priority | Status  |
-| ------- | -------------------- | ------------- | ---- | -------- | ------- |
+| ID      | Screen               | Route         | Auth | Priority | Status      |
+| ------- | -------------------- | ------------- | ---- | -------- | ----------- |
 | SCR-001 | Landing / Home       | `/`           | No   | P0       | Implemented |
-| SCR-002 | Form Builder         | `/builder`    | No   | P0       | Planned |
-| SCR-003 | Form Preview         | `/preview`    | No   | P0       | Planned |
-| SCR-004 | Generated Code       | `/code`       | No   | P0       | Planned |
-| SCR-005 | Application Settings | `/settings`   | No   | P1       | Planned |
-| SCR-006 | Responsive Layout    | Responsive UI | No   | P0       | Planned |
+| SCR-002 | Form Builder         | `/builder`    | No   | P0       | Planned     |
+| SCR-003 | Form Preview         | `/preview`    | No   | P0       | Planned     |
+| SCR-004 | Generated Code       | `/code`       | No   | P0       | Planned     |
+| SCR-005 | Application Settings | `/settings`   | No   | P1       | Planned     |
+| SCR-006 | Responsive Layout    | Responsive UI | No   | P0       | Planned     |
 | SCR-007 | Form Templates       | `/templates`  | No   | P1       | Implemented |
 
 ---
@@ -261,6 +261,7 @@ Preview
 - Reorder Field
 - Duplicate Field
 - Form Settings
+- Design Settings (appearance tokens)
 - Field Settings
 - Builder Preview
 - Undo / Redo where appropriate
@@ -563,6 +564,7 @@ Form Schemaから生成されたHTML / CSS / JavaScriptを確認し、ユーザ�
 - HTML Output
 - CSS Output
 - JavaScript Output
+- CSS flavor toggle (raw CSS / Tailwind CSS)
 - Code Tabs
 - Syntax Highlighting
 - Copy to Clipboard

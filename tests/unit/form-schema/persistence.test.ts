@@ -38,6 +38,19 @@ describe("form persistence", () => {
     expect(loaded.schema.submission.action).toBe("https://example.com/submit");
     expect(loaded.schema.submission.method).toBe("GET");
     expect(loaded.schema.fields.some((field) => field.label === "Email")).toBe(true);
+    expect(loaded.schema.appearance.cssFlavor).toBe("css");
+  });
+
+  it("restores a schema that was stored without appearance", () => {
+    const schema = createEmptyForm("Legacy");
+    const legacy: Record<string, unknown> = { ...schema };
+    delete legacy.appearance;
+    window.localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(legacy));
+
+    const loaded = loadFormFromStorage();
+    expect(loaded.status).toBe("ok");
+    expect(loaded.schema.appearance.cssFlavor).toBe("css");
+    expect(loaded.schema.appearance.colors.accent).toMatch(/^#[0-9A-Fa-f]{6}$/);
   });
 
   it("returns empty status when nothing is stored", () => {
@@ -55,10 +68,7 @@ describe("form persistence", () => {
   });
 
   it("handles invalid schema shape without throwing", () => {
-    window.localStorage.setItem(
-      FORM_STORAGE_KEY,
-      JSON.stringify({ version: 1, name: "Broken" }),
-    );
+    window.localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify({ version: 1, name: "Broken" }));
 
     const loaded = loadFormFromStorage();
     expect(loaded.status).toBe("invalid");

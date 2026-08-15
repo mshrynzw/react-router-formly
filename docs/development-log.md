@@ -6,6 +6,32 @@ Formly の重要な技術判断・アーキテクチャ変更を記録する。
 
 ---
 
+## 2026-08-15 — Form appearance tokens and CSS flavor
+
+### Summary
+
+生成フォームの見た目を Form Schema の Appearance Tokens として保存し、Builder / Preview / Generator が同じトークンから派生するようにした。生成コードは生 CSS（デフォルト）または Tailwind CSS を選択できる。
+
+### Decision
+
+- 自由記述 CSS は採用しない（XSS / CSS injection）
+- 色は `#RRGGBB`、フォントは許可リスト、半径・サイズは数値範囲
+- `cssFlavor: "css" | "tailwind"` は Schema に保存する
+- Tailwind モードでも `formly-*` class と `data-*` は残し、生成 JS のセレクタを壊さない
+- Preview は生成 CSS を本体 DOM に注入せず、同じトークンを CSS 変数として適用する
+- 既存 LocalStorage（appearance なし）はデフォルトトークンで補完する（schema version は 1 のまま）
+
+### Verification
+
+```text
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+---
+
 ## 2026-08-09 — Phase 9 Portfolio and Production Quality
 
 ### Summary

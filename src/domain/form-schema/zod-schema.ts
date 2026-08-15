@@ -1,6 +1,14 @@
 import { z } from "zod";
 
-import { FIELD_TYPES, FORM_SCHEMA_VERSION, HTTP_METHODS } from "@/domain/form-schema/types";
+import { mergeAppearance } from "@/domain/form-schema/appearance";
+import {
+  CSS_FLAVORS,
+  FIELD_TYPES,
+  FONT_FAMILIES,
+  FORM_SCHEMA_VERSION,
+  HTTP_METHODS,
+  SHADOW_LEVELS,
+} from "@/domain/form-schema/types";
 
 /** Maximum number of fields accepted in a Form Schema (including submit). */
 export const MAX_FORM_FIELDS = 100;
@@ -81,6 +89,40 @@ export const formSubmissionSchema = z.object({
   method: z.enum(HTTP_METHODS),
 });
 
+const hexColorSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/);
+
+export const formAppearanceSchema = z.object({
+  cssFlavor: z.enum(CSS_FLAVORS),
+  colors: z.object({
+    pageBackground: hexColorSchema,
+    formBackground: hexColorSchema,
+    inputBackground: hexColorSchema,
+    text: hexColorSchema,
+    muted: hexColorSchema,
+    border: hexColorSchema,
+    accent: hexColorSchema,
+    accentHover: hexColorSchema,
+    submitText: hexColorSchema,
+    danger: hexColorSchema,
+    success: hexColorSchema,
+  }),
+  radius: z.object({
+    form: z.number().int().min(0).max(32),
+    control: z.number().int().min(0).max(32),
+  }),
+  typography: z.object({
+    fontFamily: z.enum(FONT_FAMILIES),
+    bodySize: z.number().int().min(12).max(20),
+    titleSize: z.number().int().min(16).max(36),
+  }),
+  spacing: z.object({
+    padding: z.number().int().min(8).max(48),
+    fieldGap: z.number().int().min(4).max(32),
+    maxWidth: z.number().int().min(320).max(800),
+  }),
+  shadow: z.enum(SHADOW_LEVELS),
+});
+
 export const formSchemaSchema = z.object({
   version: z.literal(FORM_SCHEMA_VERSION),
   id: z.string().min(1),
@@ -88,6 +130,7 @@ export const formSchemaSchema = z.object({
   description: z.string().max(2000),
   fields: z.array(formFieldSchema).max(MAX_FORM_FIELDS),
   submission: formSubmissionSchema,
+  appearance: z.preprocess((value) => mergeAppearance(value), formAppearanceSchema),
 });
 
 export function parseFormSchema(data: unknown) {

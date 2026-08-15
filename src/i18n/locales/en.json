@@ -225,6 +225,7 @@
       "tabsLabel": "Settings panels",
       "tabs": {
         "form": "Form",
+        "design": "Design",
         "field": "Field",
         "submission": "Submission"
       }
@@ -232,6 +233,65 @@
     "formSettings": {
       "name": "Form name",
       "description": "Description"
+    },
+    "appearance": {
+      "reset": "Reset to defaults",
+      "cssFlavor": {
+        "label": "Generated styles",
+        "help": "Raw CSS is the default. Tailwind adds utility classes to the HTML.",
+        "options": {
+          "css": "Raw CSS",
+          "tailwind": "Tailwind CSS"
+        }
+      },
+      "colors": {
+        "label": "Colors",
+        "fields": {
+          "pageBackground": "Page background",
+          "formBackground": "Form background",
+          "inputBackground": "Input background",
+          "text": "Text",
+          "muted": "Muted text",
+          "border": "Border",
+          "accent": "Accent",
+          "accentHover": "Accent hover",
+          "submitText": "Submit button text",
+          "danger": "Error",
+          "success": "Success"
+        }
+      },
+      "radius": {
+        "label": "Corner radius",
+        "form": "Form",
+        "control": "Inputs and buttons"
+      },
+      "typography": {
+        "label": "Typography",
+        "fontFamily": "Font",
+        "bodySize": "Body size",
+        "titleSize": "Title size",
+        "fonts": {
+          "system": "System",
+          "sans": "Sans",
+          "serif": "Serif",
+          "mono": "Mono",
+          "rounded": "Rounded"
+        }
+      },
+      "spacing": {
+        "label": "Spacing",
+        "padding": "Padding",
+        "fieldGap": "Field gap",
+        "maxWidth": "Max width"
+      },
+      "shadow": {
+        "label": "Shadow",
+        "options": {
+          "none": "None",
+          "sm": "Small",
+          "md": "Medium"
+        }
+      }
     },
     "fieldSettings": {
       "empty": "Select a field to edit its settings.",
@@ -399,6 +459,14 @@
       "subtitle": "Generate standalone frontend code from the same Form Schema."
     },
     "tabsLabel": "Generated languages",
+    "cssFlavor": {
+      "label": "Generated styles",
+      "help": "Raw CSS works standalone. Tailwind requires Tailwind in the host page.",
+      "options": {
+        "css": "Raw CSS",
+        "tailwind": "Tailwind CSS"
+      }
+    },
     "languages": {
       "html": "HTML",
       "css": "CSS",
